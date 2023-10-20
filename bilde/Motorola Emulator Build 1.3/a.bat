@@ -1,1 +1,0 @@
-C:\Programs\Qt\6.5.1\mingw_64\bin\windeployqt.exe .
