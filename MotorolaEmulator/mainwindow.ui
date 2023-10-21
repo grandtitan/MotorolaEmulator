@@ -1816,6 +1816,26 @@
       <string>Operation/second:</string>
      </property>
     </widget>
+    <widget class="QLabel" name="labelRunningCycleNum">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>80</y>
+       <width>141</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>8</pointsize>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Instruction cycle:</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
@@ -1833,7 +1853,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -2312,8 +2332,8 @@
      <widget class="QSpinBox" name="spinBoxLow">
       <property name="geometry">
        <rect>
-        <x>299</x>
-        <y>210</y>
+        <x>300</x>
+        <y>250</y>
         <width>42</width>
         <height>25</height>
        </rect>
@@ -2331,8 +2351,8 @@
      <widget class="QSpinBox" name="spinBoxUp">
       <property name="geometry">
        <rect>
-        <x>300</x>
-        <y>240</y>
+        <x>301</x>
+        <y>280</y>
         <width>41</width>
         <height>25</height>
        </rect>
@@ -2350,8 +2370,8 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>9</x>
-        <y>210</y>
+        <x>10</x>
+        <y>250</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -2363,8 +2383,8 @@
      <widget class="QLabel" name="label_2">
       <property name="geometry">
        <rect>
-        <x>9</x>
-        <y>240</y>
+        <x>10</x>
+        <y>280</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -2377,7 +2397,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>270</y>
+        <y>220</y>
         <width>341</width>
         <height>21</height>
        </rect>
@@ -2406,7 +2426,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>180</y>
+        <y>200</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -2416,6 +2436,22 @@
       </property>
       <property name="checked">
        <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxAutoReset_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>170</y>
+        <width>501</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Use cycles per second instead of instructions per second</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     CompileScripts.cpp \
-    ExecuteScripts.cpp \
     instructionblock.cpp \
     main.cpp \
     mainwindow.cpp

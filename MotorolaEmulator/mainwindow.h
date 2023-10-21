@@ -31,12 +31,9 @@ public:
     ~MainWindow();
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
-    void executeInstruction();
+    int executeInstruction();
+    void executeLoop();
     bool compileMix(int ver);
-    bool executeInstructionM6800();
-    bool executeInstructionM6803();
-    bool compileM6800();
-    bool compileM6803();
     QString softwareVersion = "1.3.2";
     uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};
@@ -58,6 +55,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
 private:
+    int cycleNum = 1;
+    bool useCyclesPerSecond = true;
+    int waitCycles = 0;
     void resetEmulator(bool failedCompile);
     void updateMemoryTab();
     void updateLinesBox();
@@ -149,5 +149,6 @@ private slots:
     void on_checkBoxSimpleMemory_clicked(bool checked);
     void on_spinBox_valueChanged(int arg1);
     void on_comboBoxVersionSelector_currentIndexChanged(int index);
+    void on_checkBoxAutoReset_2_clicked(bool checked);
 };
 #endif // MAINWINDOW_H
