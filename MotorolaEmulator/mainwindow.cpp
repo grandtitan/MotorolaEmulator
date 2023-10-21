@@ -25,40 +25,26 @@ MainWindow::MainWindow(QWidget *parent)
     clearInstructions();
     QWidget::setWindowTitle("Motorola M68XX Emulator-"+softwareVersion);
     updateMemoryTab();
-    /*/for (int row = 0; row < ui->tableWidget->rowCount(); ++row) {
-        for (int col = 0; col < ui->tableWidget->columnCount(); ++col) {
-            QTableWidgetItem* item = ui->tableWidget->item(row, col);
-            if (item) {
-                item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-            }
-        }
-    }
-    ui->tableWidget->setColumnWidth(0, 150);
-/*/
-    ui->tabWidget->removeTab(4);
 
     for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
         if(col == 0){
-            ui->treeWidget->setColumnWidth(col, 88);
+            ui->treeWidget->setColumnWidth(col, 90);
         }else if (col == 1){
             ui->treeWidget->setColumnWidth(col, 200);
         }else{
             ui->treeWidget->setColumnWidth(col, 30);
         }
-
     }
     for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row) {
         QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
 
         if (row % 2 == 0) {
-            // Set background colors for all columns in even rows
             for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
-                item->setBackground(col, QBrush(QColor(230, 230, 230))); // You can adjust the color
+                item->setBackground(col, QBrush(QColor(230, 230, 230)));
             }
         } else {
-            // Set background colors for all columns in odd rows
             for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
-                item->setBackground(col, QBrush(QColor(255, 255, 255))); // You can adjust the color
+                item->setBackground(col, QBrush(QColor(240, 240, 240)));
             }
         }
     }
