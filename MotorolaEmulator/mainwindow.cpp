@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
             ui->treeWidget->setColumnWidth(col, 90);
         }else if (col == 1){
             ui->treeWidget->setColumnWidth(col, 200);
+        }else if (col == 8){
+            ui->treeWidget->setColumnWidth(col, 50);
+        }else if (col == 9 || col == 10){
+            ui->treeWidget->setColumnWidth(col, 60);
         }else{
             ui->treeWidget->setColumnWidth(col, 30);
         }

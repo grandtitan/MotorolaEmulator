@@ -1853,7 +1853,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -2685,12 +2685,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </column>
       <column>
        <property name="text">
-        <string>EXT</string>
+        <string>IND</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>IND</string>
+        <string>EXT</string>
        </property>
       </column>
       <column>
@@ -2701,6 +2701,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
       <column>
        <property name="text">
         <string>flags</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>cycles</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>bytes</string>
        </property>
       </column>
       <item>
@@ -2740,6 +2750,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>*-****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -2774,6 +2790,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -2801,16 +2823,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>99</string>
        </property>
        <property name="text">
-        <string>B9</string>
+        <string>A9</string>
        </property>
        <property name="text">
-        <string>A9</string>
+        <string>B9</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>*-****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2830,16 +2858,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D9</string>
        </property>
        <property name="text">
-        <string>F9</string>
+        <string>E9</string>
        </property>
        <property name="text">
-        <string>E9</string>
+        <string>F9</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>*-****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2859,16 +2893,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9B</string>
        </property>
        <property name="text">
-        <string>BB</string>
+        <string>AB</string>
        </property>
        <property name="text">
-        <string>AB</string>
+        <string>BB</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>*-****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2888,16 +2928,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>DB</string>
        </property>
        <property name="text">
-        <string>FB</string>
+        <string>EB</string>
        </property>
        <property name="text">
-        <string>EB</string>
+        <string>FB</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>*-****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2917,16 +2963,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D3</string>
        </property>
        <property name="text">
-        <string>F3</string>
+        <string>E3</string>
        </property>
        <property name="text">
-        <string>E3</string>
+        <string>F3</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>4,5,6,6</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2946,16 +2998,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>94</string>
        </property>
        <property name="text">
-        <string>B4</string>
+        <string>A4</string>
        </property>
        <property name="text">
-        <string>A4</string>
+        <string>B4</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -2975,16 +3033,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D4</string>
        </property>
        <property name="text">
-        <string>F4</string>
+        <string>E4</string>
        </property>
        <property name="text">
-        <string>E4</string>
+        <string>F4</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -3004,16 +3068,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>78</string>
+        <string>68</string>
        </property>
        <property name="text">
-        <string>68</string>
+        <string>78</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -3044,6 +3114,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3072,6 +3148,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -3102,6 +3184,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3120,16 +3208,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>77</string>
+        <string>67</string>
        </property>
        <property name="text">
-        <string>67</string>
+        <string>77</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -3160,6 +3254,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3188,6 +3288,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -3218,6 +3324,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3246,6 +3358,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3276,6 +3394,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3304,6 +3428,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3334,6 +3464,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3363,6 +3499,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3381,16 +3523,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>95</string>
        </property>
        <property name="text">
-        <string>B5</string>
+        <string>A5</string>
        </property>
        <property name="text">
-        <string>A5</string>
+        <string>B5</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -3410,16 +3558,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D5</string>
        </property>
        <property name="text">
-        <string>F5</string>
+        <string>E5</string>
        </property>
        <property name="text">
-        <string>E5</string>
+        <string>F5</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -3450,6 +3604,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3478,6 +3638,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3508,6 +3674,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3536,6 +3708,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3566,6 +3744,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3594,6 +3778,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3624,6 +3814,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3652,6 +3848,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3682,6 +3884,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>6</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3710,6 +3918,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
        </property>
       </item>
       <item>
@@ -3740,6 +3954,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3768,6 +3988,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -3798,6 +4024,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>-----0</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3827,6 +4059,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>-0----</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3845,16 +4083,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>7F</string>
+        <string>6F</string>
        </property>
        <property name="text">
-        <string>6F</string>
+        <string>7F</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--0100</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -3885,6 +4129,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--0100</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3913,6 +4163,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--0100</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -3943,6 +4199,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>----0-</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -3961,16 +4223,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>91</string>
        </property>
        <property name="text">
-        <string>B1</string>
+        <string>A1</string>
        </property>
        <property name="text">
-        <string>A1</string>
+        <string>B1</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -3990,16 +4258,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D1</string>
        </property>
        <property name="text">
-        <string>F1</string>
+        <string>E1</string>
        </property>
        <property name="text">
-        <string>E1</string>
+        <string>F1</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4019,16 +4293,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>73</string>
+        <string>63</string>
        </property>
        <property name="text">
-        <string>63</string>
+        <string>73</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**01</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4059,6 +4339,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--**01</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4088,6 +4374,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--**01</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4106,16 +4398,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9C</string>
        </property>
        <property name="text">
-        <string>BC</string>
+        <string>AC</string>
        </property>
        <property name="text">
-        <string>AC</string>
+        <string>BC</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>4,5,6,6</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4146,6 +4444,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4164,16 +4468,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>7A</string>
+        <string>6A</string>
        </property>
        <property name="text">
-        <string>6A</string>
+        <string>7A</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--***-</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4204,6 +4514,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--***-</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4232,6 +4548,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--***-</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -4262,6 +4584,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4291,6 +4619,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>---*--</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4309,16 +4643,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>98</string>
        </property>
        <property name="text">
-        <string>B8</string>
+        <string>A8</string>
        </property>
        <property name="text">
-        <string>A8</string>
+        <string>B8</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4338,16 +4678,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D8</string>
        </property>
        <property name="text">
-        <string>F8</string>
+        <string>E8</string>
        </property>
        <property name="text">
-        <string>E8</string>
+        <string>F8</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4367,16 +4713,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>7C</string>
+        <string>6C</string>
        </property>
        <property name="text">
-        <string>6C</string>
+        <string>7C</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--***-</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4407,6 +4759,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--***-</string>
        </property>
+       <property name="text">
+        <string>2,2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4435,6 +4793,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--***-</string>
+       </property>
+       <property name="text">
+        <string>2,2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -4465,6 +4829,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4494,6 +4864,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>---*--</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4512,16 +4888,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>7E</string>
+        <string>6E</string>
        </property>
        <property name="text">
-        <string>6E</string>
+        <string>7E</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3,3</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4538,19 +4920,25 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string>BD</string>
+        <string>9D</string>
        </property>
        <property name="text">
         <string>AF</string>
+       </property>
+       <property name="text">
+        <string>BD</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>5,5,5</string>
+       </property>
+       <property name="text">
+        <string>2,2,3</string>
        </property>
       </item>
       <item>
@@ -4570,16 +4958,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>96</string>
        </property>
        <property name="text">
-        <string>B6</string>
+        <string>A6</string>
        </property>
        <property name="text">
-        <string>A6</string>
+        <string>B6</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4599,16 +4993,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D6</string>
        </property>
        <property name="text">
-        <string>F6</string>
+        <string>E6</string>
        </property>
        <property name="text">
-        <string>E6</string>
+        <string>F6</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4628,16 +5028,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>DC</string>
        </property>
        <property name="text">
-        <string>FC</string>
+        <string>EC</string>
        </property>
        <property name="text">
-        <string>EC</string>
+        <string>FC</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>3,4,5,5</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4657,16 +5063,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9E</string>
        </property>
        <property name="text">
-        <string>BE</string>
+        <string>AE</string>
        </property>
        <property name="text">
-        <string>AE</string>
+        <string>BE</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>3,4,5,5</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4686,16 +5098,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>DE</string>
        </property>
        <property name="text">
-        <string>FE</string>
+        <string>EE</string>
        </property>
        <property name="text">
-        <string>EE</string>
+        <string>FE</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>3,4,5,5</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -4715,16 +5133,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>74</string>
+        <string>64</string>
        </property>
        <property name="text">
-        <string>64</string>
+        <string>74</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--0***</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4755,6 +5179,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--0***</string>
        </property>
+       <property name="text">
+        <string>2,2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4783,6 +5213,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--0***</string>
+       </property>
+       <property name="text">
+        <string>2,2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -4813,6 +5249,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--0***</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4842,6 +5284,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>-----*</string>
        </property>
+       <property name="text">
+        <string>10</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4860,16 +5308,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>70</string>
+        <string>60</string>
        </property>
        <property name="text">
-        <string>60</string>
+        <string>70</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -4900,6 +5354,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4928,6 +5388,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -4958,6 +5424,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4976,16 +5448,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9A</string>
        </property>
        <property name="text">
-        <string>BA</string>
+        <string>AA</string>
        </property>
        <property name="text">
-        <string>AA</string>
+        <string>BA</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5005,16 +5483,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>DA</string>
        </property>
        <property name="text">
-        <string>FA</string>
+        <string>EA</string>
        </property>
        <property name="text">
-        <string>EA</string>
+        <string>FA</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5045,6 +5529,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5073,6 +5563,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5103,6 +5599,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>4</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5131,6 +5633,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>4</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5161,6 +5669,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>4</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5190,6 +5704,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>5</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5208,16 +5728,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>79</string>
+        <string>69</string>
        </property>
        <property name="text">
-        <string>69</string>
+        <string>79</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -5248,6 +5774,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5277,6 +5809,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5295,16 +5833,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>76</string>
+        <string>66</string>
        </property>
        <property name="text">
-        <string>66</string>
+        <string>76</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -5313,15 +5857,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>ACCA rotate right</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
        </property>
        <property name="text">
         <string>46</string>
@@ -5333,7 +5868,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5342,15 +5892,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>ACCB rotate right</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="text">
-        <string/>
        </property>
        <property name="text">
         <string>56</string>
@@ -5362,7 +5903,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5393,6 +5949,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>******</string>
        </property>
+       <property name="text">
+        <string>10</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5421,6 +5983,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>5</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5451,6 +6019,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--****</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5469,16 +6043,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>92</string>
        </property>
        <property name="text">
-        <string>B2</string>
+        <string>A2</string>
        </property>
        <property name="text">
-        <string>A2</string>
+        <string>B2</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5498,16 +6078,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D2</string>
        </property>
        <property name="text">
-        <string>F2</string>
+        <string>E2</string>
        </property>
        <property name="text">
-        <string>E2</string>
+        <string>F2</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5538,6 +6124,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>-----1</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5566,6 +6158,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>-1----</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5596,6 +6194,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>----1-</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5614,16 +6218,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>97</string>
        </property>
        <property name="text">
-        <string>B7</string>
+        <string>A7</string>
        </property>
        <property name="text">
-        <string>A7</string>
+        <string>B7</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,3</string>
        </property>
       </item>
       <item>
@@ -5643,16 +6253,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D7</string>
        </property>
        <property name="text">
-        <string>F7</string>
+        <string>E7</string>
        </property>
        <property name="text">
-        <string>E7</string>
+        <string>F7</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,3</string>
        </property>
       </item>
       <item>
@@ -5672,16 +6288,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9F</string>
        </property>
        <property name="text">
-        <string>BF</string>
+        <string>AF</string>
        </property>
        <property name="text">
-        <string>AF</string>
+        <string>BF</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>4,5,5</string>
+       </property>
+       <property name="text">
+        <string>2,2,3</string>
        </property>
       </item>
       <item>
@@ -5701,16 +6323,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>DF</string>
        </property>
        <property name="text">
-        <string>FF</string>
+        <string>EF</string>
        </property>
        <property name="text">
-        <string>EF</string>
+        <string>FF</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>4,5,5</string>
+       </property>
+       <property name="text">
+        <string>2,2,3</string>
        </property>
       </item>
       <item>
@@ -5730,16 +6358,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>90</string>
        </property>
        <property name="text">
-        <string>B0</string>
+        <string>A0</string>
        </property>
        <property name="text">
-        <string>A0</string>
+        <string>B0</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5759,16 +6393,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>D0</string>
        </property>
        <property name="text">
-        <string>F0</string>
+        <string>E0</string>
        </property>
        <property name="text">
-        <string>E0</string>
+        <string>F0</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>2,3,4,4</string>
+       </property>
+       <property name="text">
+        <string>2,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5788,16 +6428,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>93</string>
        </property>
        <property name="text">
-        <string>B3</string>
+        <string>A3</string>
        </property>
        <property name="text">
-        <string>A3</string>
+        <string>B3</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--****</string>
+       </property>
+       <property name="text">
+        <string>4,5,6,6</string>
+       </property>
+       <property name="text">
+        <string>3,2,2,3</string>
        </property>
       </item>
       <item>
@@ -5828,6 +6474,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>-1----</string>
        </property>
+       <property name="text">
+        <string>12</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5856,6 +6508,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5886,6 +6544,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>******</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5914,6 +6578,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--**0-</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -5944,6 +6614,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -5962,16 +6638,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>7D</string>
+        <string>6D</string>
        </property>
        <property name="text">
-        <string>6D</string>
+        <string>7D</string>
        </property>
        <property name="text">
         <string/>
        </property>
        <property name="text">
         <string>--**00</string>
+       </property>
+       <property name="text">
+        <string>6,6</string>
+       </property>
+       <property name="text">
+        <string>2,3</string>
        </property>
       </item>
       <item>
@@ -6002,6 +6684,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>--**00</string>
        </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -6030,6 +6718,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>--**00</string>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
       <item>
@@ -6060,6 +6754,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -6089,6 +6789,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>------</string>
        </property>
+       <property name="text">
+        <string>3</string>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -6117,6 +6823,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>------</string>
+       </property>
+       <property name="text">
+        <string>9</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </item>
      </widget>
