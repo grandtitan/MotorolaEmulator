@@ -53,4 +53,5 @@ compile_commands.json
 
 *_qmlcache.qrc
 
+build-*/
 build-MotorolaEmulator-Desktop_Qt_6_5_1_MinGW_64_bit-Debug/
