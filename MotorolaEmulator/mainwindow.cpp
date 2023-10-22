@@ -66,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent)
                 item->child(0)->setForeground(0, QBrush(QColor(colorR, 0, 0)));
                 item->child(0)->setForeground(1, QBrush(QColor(colorR, 0, 0)));
         }
-
     }
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningIndicatior->setText("Operation/second: " + QString::number(std::pow(2, ui->comboBoxSpeedSelector->currentIndex())));
