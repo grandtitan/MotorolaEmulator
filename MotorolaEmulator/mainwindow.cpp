@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "instructionblock.h"
 #include "ui_mainwindow.h"
 #include <QStringBuilder>
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     clearInstructions();
     QWidget::setWindowTitle("Motorola M68XX Emulator-"+softwareVersion);
     updateMemoryTab();
-
+    ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
     for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
         if(col == 0){
             ui->treeWidget->setColumnWidth(col, 90);
@@ -51,6 +51,22 @@ MainWindow::MainWindow(QWidget *parent)
                 item->setBackground(col, QBrush(QColor(240, 240, 240)));
             }
         }
+    }
+    for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row) {
+        QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
+        int colorR = 180;
+        if (row == 1 || row == 6 ||row == 12 ||row == 31 ||row == 65 ||row == 71 ||row == 72 || row == 81 || row == 84 || row == 106) {
+            for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
+                item->setForeground(col, QBrush(QColor(colorR, 0, 0)));
+            }
+        } else if (row == 62) {
+                item->setForeground(4, QBrush(QColor(colorR, 0, 0)));
+        }
+        if (row == 9 || row == 10 || row == 11 ||row == 12 ||row == 16||row == 17) {
+                item->child(0)->setForeground(0, QBrush(QColor(colorR, 0, 0)));
+                item->child(0)->setForeground(1, QBrush(QColor(colorR, 0, 0)));
+        }
+
     }
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningIndicatior->setText("Operation/second: " + QString::number(std::pow(2, ui->comboBoxSpeedSelector->currentIndex())));
