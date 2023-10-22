@@ -883,16 +883,13 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                             int lineNumber = cursor.blockNumber();
                             int totalLines = ui->plainTextLines->document()->blockCount();
                             if (lineNumber >= 0 && lineNumber < totalLines) {
-                                qDebug() << "Clicked on line number:" << lineNumber;
                                 updateSelectionsLines(lineNumber);
                             } else {
                                 clearSelection(1);
-                                qDebug() << "Clicked out of bounds";
                             }
                         }
                     } else if (mouseEvent->button() == Qt::RightButton) {
                         clearSelection(1);
-                        qDebug() << "Right-clicked";
                     }
                 }
                 return true;

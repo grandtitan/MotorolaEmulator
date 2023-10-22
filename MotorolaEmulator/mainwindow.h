@@ -34,7 +34,7 @@ public:
     int executeInstruction();
     void executeLoop();
     bool compileMix(int ver);
-    QString softwareVersion = "1.3.2";
+    QString softwareVersion = "1.4";
     uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};
     uint8_t aReg = 0,bReg = 0;
