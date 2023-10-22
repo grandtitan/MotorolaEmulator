@@ -75,11 +75,12 @@ static constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers:
     "on_comboBoxBreakWhen_currentIndexChanged",
     "on_checkBoxSimpleMemory_clicked",
     "on_spinBox_valueChanged",
-    "on_comboBoxVersionSelector_currentIndexChanged"
+    "on_comboBoxVersionSelector_currentIndexChanged",
+    "on_checkBoxAutoReset_2_clicked"
 );
 #else  // !QT_MOC_HAS_STRING_DATA
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {
-    uint offsetsAndSizes[76];
+    uint offsetsAndSizes[78];
     char stringdata0[11];
     char stringdata1[8];
     char stringdata2[1];
@@ -118,6 +119,7 @@ struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {
     char stringdata35[32];
     char stringdata36[24];
     char stringdata37[47];
+    char stringdata38[31];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_CLASSMainWindowENDCLASS_t::offsetsAndSizes) + ofs), len 
@@ -160,7 +162,8 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSMainWindowENDCLASS_t qt_meta_st
         QT_MOC_LITERAL(764, 40),  // "on_comboBoxBreakWhen_currentI..."
         QT_MOC_LITERAL(805, 31),  // "on_checkBoxSimpleMemory_clicked"
         QT_MOC_LITERAL(837, 23),  // "on_spinBox_valueChanged"
-        QT_MOC_LITERAL(861, 46)   // "on_comboBoxVersionSelector_cu..."
+        QT_MOC_LITERAL(861, 46),  // "on_comboBoxVersionSelector_cu..."
+        QT_MOC_LITERAL(908, 30)   // "on_checkBoxAutoReset_2_clicked"
     },
     "MainWindow",
     "resized",
@@ -199,7 +202,8 @@ Q_CONSTINIT static const qt_meta_stringdata_CLASSMainWindowENDCLASS_t qt_meta_st
     "on_comboBoxBreakWhen_currentIndexChanged",
     "on_checkBoxSimpleMemory_clicked",
     "on_spinBox_valueChanged",
-    "on_comboBoxVersionSelector_currentIndexChanged"
+    "on_comboBoxVersionSelector_currentIndexChanged",
+    "on_checkBoxAutoReset_2_clicked"
 };
 #undef QT_MOC_LITERAL
 #endif // !QT_MOC_HAS_STRING_DATA
@@ -211,7 +215,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
       11,       // revision
        0,       // classname
        0,    0, // classinfo
-      31,   14, // methods
+      32,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -219,39 +223,40 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,  200,    2, 0x06,    1 /* Public */,
+       1,    1,  206,    2, 0x06,    1 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    1,  203,    2, 0x0a,    3 /* Public */,
-       6,    0,  206,    2, 0x0a,    5 /* Public */,
-       7,    0,  207,    2, 0x0a,    6 /* Public */,
-       8,    0,  208,    2, 0x0a,    7 /* Public */,
-       9,    0,  209,    2, 0x0a,    8 /* Public */,
-      10,    1,  210,    2, 0x08,    9 /* Private */,
-      11,    0,  213,    2, 0x08,   11 /* Private */,
-      12,    0,  214,    2, 0x08,   12 /* Private */,
-      13,    0,  215,    2, 0x08,   13 /* Private */,
-      14,    0,  216,    2, 0x08,   14 /* Private */,
-      15,    0,  217,    2, 0x08,   15 /* Private */,
-      16,    1,  218,    2, 0x08,   16 /* Private */,
-      18,    1,  221,    2, 0x08,   18 /* Private */,
-      20,    1,  224,    2, 0x08,   20 /* Private */,
-      21,    1,  227,    2, 0x08,   22 /* Private */,
-      22,    1,  230,    2, 0x08,   24 /* Private */,
-      24,    1,  233,    2, 0x08,   26 /* Private */,
-      25,    0,  236,    2, 0x08,   28 /* Private */,
-      26,    0,  237,    2, 0x08,   29 /* Private */,
-      27,    1,  238,    2, 0x08,   30 /* Private */,
-      28,    1,  241,    2, 0x08,   32 /* Private */,
-      29,    1,  244,    2, 0x08,   34 /* Private */,
-      30,    1,  247,    2, 0x08,   36 /* Private */,
-      31,    0,  250,    2, 0x08,   38 /* Private */,
-      32,    1,  251,    2, 0x08,   39 /* Private */,
-      33,    0,  254,    2, 0x08,   41 /* Private */,
-      34,    1,  255,    2, 0x08,   42 /* Private */,
-      35,    1,  258,    2, 0x08,   44 /* Private */,
-      36,    1,  261,    2, 0x08,   46 /* Private */,
-      37,    1,  264,    2, 0x08,   48 /* Private */,
+       4,    1,  209,    2, 0x0a,    3 /* Public */,
+       6,    0,  212,    2, 0x0a,    5 /* Public */,
+       7,    0,  213,    2, 0x0a,    6 /* Public */,
+       8,    0,  214,    2, 0x0a,    7 /* Public */,
+       9,    0,  215,    2, 0x0a,    8 /* Public */,
+      10,    1,  216,    2, 0x08,    9 /* Private */,
+      11,    0,  219,    2, 0x08,   11 /* Private */,
+      12,    0,  220,    2, 0x08,   12 /* Private */,
+      13,    0,  221,    2, 0x08,   13 /* Private */,
+      14,    0,  222,    2, 0x08,   14 /* Private */,
+      15,    0,  223,    2, 0x08,   15 /* Private */,
+      16,    1,  224,    2, 0x08,   16 /* Private */,
+      18,    1,  227,    2, 0x08,   18 /* Private */,
+      20,    1,  230,    2, 0x08,   20 /* Private */,
+      21,    1,  233,    2, 0x08,   22 /* Private */,
+      22,    1,  236,    2, 0x08,   24 /* Private */,
+      24,    1,  239,    2, 0x08,   26 /* Private */,
+      25,    0,  242,    2, 0x08,   28 /* Private */,
+      26,    0,  243,    2, 0x08,   29 /* Private */,
+      27,    1,  244,    2, 0x08,   30 /* Private */,
+      28,    1,  247,    2, 0x08,   32 /* Private */,
+      29,    1,  250,    2, 0x08,   34 /* Private */,
+      30,    1,  253,    2, 0x08,   36 /* Private */,
+      31,    0,  256,    2, 0x08,   38 /* Private */,
+      32,    1,  257,    2, 0x08,   39 /* Private */,
+      33,    0,  260,    2, 0x08,   41 /* Private */,
+      34,    1,  261,    2, 0x08,   42 /* Private */,
+      35,    1,  264,    2, 0x08,   44 /* Private */,
+      36,    1,  267,    2, 0x08,   46 /* Private */,
+      37,    1,  270,    2, 0x08,   48 /* Private */,
+      38,    1,  273,    2, 0x08,   50 /* Private */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::QSize,    3,
@@ -287,6 +292,7 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
     QMetaType::Void, QMetaType::Bool,   19,
     QMetaType::Void, QMetaType::Int,   23,
     QMetaType::Void, QMetaType::Int,   17,
+    QMetaType::Void, QMetaType::Bool,   19,
 
        0        // eod
 };
@@ -379,7 +385,10 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
         // method 'on_comboBoxVersionSelector_currentIndexChanged'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<int, std::false_type>
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        // method 'on_checkBoxAutoReset_2_clicked'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<bool, std::false_type>
     >,
     nullptr
 } };
@@ -422,6 +431,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 28: _t->on_checkBoxSimpleMemory_clicked((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         case 29: _t->on_spinBox_valueChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
         case 30: _t->on_comboBoxVersionSelector_currentIndexChanged((*reinterpret_cast< std::add_pointer_t<int>>(_a[1]))); break;
+        case 31: _t->on_checkBoxAutoReset_2_clicked((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -455,13 +465,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 31)
+        if (_id < 32)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 31;
+        _id -= 32;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 31)
+        if (_id < 32)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 31;
+        _id -= 32;
     }
     return _id;
 }

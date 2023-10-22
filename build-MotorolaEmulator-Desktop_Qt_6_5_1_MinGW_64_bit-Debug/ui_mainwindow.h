@@ -68,6 +68,7 @@ public:
     QLineEdit *lineEditHValue;
     QLineEdit *lineEditHName;
     QLabel *labelRunningIndicatior;
+    QLabel *labelRunningCycleNum;
     QTabWidget *tabWidget;
     QWidget *tabConsole;
     QPlainTextEdit *plainTextConsole;
@@ -102,6 +103,7 @@ public:
     QCheckBox *checkBoxWriteMemory;
     QCheckBox *checkBoxAutoReset;
     QCheckBox *checkBoxSimpleMemory;
+    QCheckBox *checkBoxAutoReset_2;
     QWidget *Info;
     QTextEdit *plainTextInfo;
     QWidget *opCodes;
@@ -502,6 +504,10 @@ public:
         font3.setPointSize(8);
         font3.setBold(false);
         labelRunningIndicatior->setFont(font3);
+        labelRunningCycleNum = new QLabel(groupBox);
+        labelRunningCycleNum->setObjectName("labelRunningCycleNum");
+        labelRunningCycleNum->setGeometry(QRect(20, 80, 141, 16));
+        labelRunningCycleNum->setFont(font3);
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName("tabWidget");
         tabWidget->setGeometry(QRect(910, 300, 361, 361));
@@ -627,33 +633,37 @@ public:
         checkBoxCompileOnRun->setChecked(true);
         spinBoxLow = new QSpinBox(tabSettings);
         spinBoxLow->setObjectName("spinBoxLow");
-        spinBoxLow->setGeometry(QRect(299, 210, 42, 25));
+        spinBoxLow->setGeometry(QRect(300, 250, 42, 25));
         spinBoxLow->setMinimum(1);
         spinBoxLow->setMaximum(34);
         spinBoxLow->setValue(5);
         spinBoxUp = new QSpinBox(tabSettings);
         spinBoxUp->setObjectName("spinBoxUp");
-        spinBoxUp->setGeometry(QRect(300, 240, 41, 25));
+        spinBoxUp->setGeometry(QRect(301, 280, 41, 25));
         spinBoxUp->setMinimum(2);
         spinBoxUp->setMaximum(35);
         spinBoxUp->setValue(20);
         label = new QLabel(tabSettings);
         label->setObjectName("label");
-        label->setGeometry(QRect(9, 210, 281, 21));
+        label->setGeometry(QRect(10, 250, 281, 21));
         label_2 = new QLabel(tabSettings);
         label_2->setObjectName("label_2");
-        label_2->setGeometry(QRect(9, 240, 281, 21));
+        label_2->setGeometry(QRect(10, 280, 281, 21));
         checkBoxWriteMemory = new QCheckBox(tabSettings);
         checkBoxWriteMemory->setObjectName("checkBoxWriteMemory");
-        checkBoxWriteMemory->setGeometry(QRect(10, 270, 341, 21));
+        checkBoxWriteMemory->setGeometry(QRect(10, 220, 341, 21));
         checkBoxAutoReset = new QCheckBox(tabSettings);
         checkBoxAutoReset->setObjectName("checkBoxAutoReset");
         checkBoxAutoReset->setGeometry(QRect(10, 150, 241, 22));
         checkBoxAutoReset->setChecked(true);
         checkBoxSimpleMemory = new QCheckBox(tabSettings);
         checkBoxSimpleMemory->setObjectName("checkBoxSimpleMemory");
-        checkBoxSimpleMemory->setGeometry(QRect(10, 180, 241, 22));
+        checkBoxSimpleMemory->setGeometry(QRect(10, 200, 241, 22));
         checkBoxSimpleMemory->setChecked(false);
+        checkBoxAutoReset_2 = new QCheckBox(tabSettings);
+        checkBoxAutoReset_2->setObjectName("checkBoxAutoReset_2");
+        checkBoxAutoReset_2->setGeometry(QRect(10, 170, 501, 22));
+        checkBoxAutoReset_2->setChecked(true);
         tabWidget->addTab(tabSettings, QString());
         Info = new QWidget();
         Info->setObjectName("Info");
@@ -665,21 +675,144 @@ public:
         tabWidget->addTab(Info, QString());
         opCodes = new QWidget();
         opCodes->setObjectName("opCodes");
-        opCodes->setEnabled(false);
+        opCodes->setEnabled(true);
         treeWidget = new QTreeWidget(opCodes);
         QBrush brush9(QColor(0, 0, 0, 255));
         brush9.setStyle(Qt::NoBrush);
+        QFont font4;
+        font4.setBold(false);
         QBrush brush10(QColor(0, 0, 0, 255));
         brush10.setStyle(Qt::NoBrush);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
         QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem(treeWidget);
-        __qtreewidgetitem->setBackground(0, brush9);
+        new QTreeWidgetItem(__qtreewidgetitem);
         QTreeWidgetItem *__qtreewidgetitem1 = new QTreeWidgetItem(treeWidget);
-        __qtreewidgetitem1->setBackground(2, brush10);
+        new QTreeWidgetItem(__qtreewidgetitem1);
         new QTreeWidgetItem(treeWidget);
         new QTreeWidgetItem(treeWidget);
         new QTreeWidgetItem(treeWidget);
+        QTreeWidgetItem *__qtreewidgetitem2 = new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(__qtreewidgetitem2);
+        QTreeWidgetItem *__qtreewidgetitem3 = new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(__qtreewidgetitem3);
+        QTreeWidgetItem *__qtreewidgetitem4 = new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(__qtreewidgetitem4);
+        QTreeWidgetItem *__qtreewidgetitem5 = new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(__qtreewidgetitem5);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        new QTreeWidgetItem(treeWidget);
+        QTreeWidgetItem *__qtreewidgetitem6 = new QTreeWidgetItem(treeWidget);
+        __qtreewidgetitem6->setBackground(2, brush9);
+        QTreeWidgetItem *__qtreewidgetitem7 = new QTreeWidgetItem(treeWidget);
+        __qtreewidgetitem7->setFont(1, font4);
+        QTreeWidgetItem *__qtreewidgetitem8 = new QTreeWidgetItem(treeWidget);
+        __qtreewidgetitem8->setBackground(0, brush10);
         treeWidget->setObjectName("treeWidget");
-        treeWidget->setGeometry(QRect(10, 30, 256, 192));
+        treeWidget->setEnabled(true);
+        treeWidget->setGeometry(QRect(10, 10, 311, 261));
         QPalette palette33;
         QBrush brush11(QColor(198, 198, 198, 255));
         brush11.setStyle(Qt::SolidPattern);
@@ -687,9 +820,14 @@ public:
         palette33.setBrush(QPalette::Inactive, QPalette::AlternateBase, brush11);
         palette33.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush11);
         treeWidget->setPalette(palette33);
+        treeWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        treeWidget->setAutoScroll(true);
+        treeWidget->setEditTriggers(QAbstractItemView::AllEditTriggers);
+        treeWidget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
         treeWidget->setUniformRowHeights(true);
-        treeWidget->setItemsExpandable(false);
-        treeWidget->setSortingEnabled(false);
+        treeWidget->setItemsExpandable(true);
+        treeWidget->setSortingEnabled(true);
+        treeWidget->setAnimated(true);
         treeWidget->setWordWrap(true);
         treeWidget->header()->setCascadingSectionResizes(false);
         treeWidget->header()->setMinimumSectionSize(30);
@@ -844,11 +982,11 @@ public:
         spinBox = new QSpinBox(groupBoxSimpleMemory);
         spinBox->setObjectName("spinBox");
         spinBox->setGeometry(QRect(40, 19, 81, 31));
-        QFont font4;
-        font4.setFamilies({QString::fromUtf8("Consolas")});
-        font4.setPointSize(16);
-        font4.setBold(true);
-        spinBox->setFont(font4);
+        QFont font5;
+        font5.setFamilies({QString::fromUtf8("Consolas")});
+        font5.setPointSize(16);
+        font5.setBold(true);
+        spinBox->setFont(font5);
         spinBox->setMaximum(65516);
         spinBox->setDisplayIntegerBase(16);
         tableWidget = new QTableWidget(centralwidget);
@@ -1108,6 +1246,7 @@ public:
         lineEditHValue->setText(QCoreApplication::translate("MainWindow", "0", nullptr));
         lineEditHName->setText(QCoreApplication::translate("MainWindow", "H", nullptr));
         labelRunningIndicatior->setText(QCoreApplication::translate("MainWindow", "Operation/second:", nullptr));
+        labelRunningCycleNum->setText(QCoreApplication::translate("MainWindow", "Instruction cycle:", nullptr));
         plainTextConsole->setPlainText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tabConsole), QCoreApplication::translate("MainWindow", "Console", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Binary:", nullptr));
@@ -1146,6 +1285,7 @@ public:
         checkBoxWriteMemory->setText(QCoreApplication::translate("MainWindow", "Enable manual writing to Memory", nullptr));
         checkBoxAutoReset->setText(QCoreApplication::translate("MainWindow", "Auto reset", nullptr));
         checkBoxSimpleMemory->setText(QCoreApplication::translate("MainWindow", "Simple memory", nullptr));
+        checkBoxAutoReset_2->setText(QCoreApplication::translate("MainWindow", "Use cycles per second instead of instructions per second", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tabSettings), QCoreApplication::translate("MainWindow", "Settings", nullptr));
         plainTextInfo->setHtml(QCoreApplication::translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
@@ -1155,119 +1295,123 @@ public:
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Consolas'; font-size:9pt; font-weight:700; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Assembly Statement Format:</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt; color:#00007f;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><"
-                        "span style=\" font-size:10pt; font-weight:400;\">Assembly statements contain the following fields:</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Assembly statements contain the following fields:</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin"
+                        "-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">[Label] *tab* Instruction *space* [operand] *;* [comment]</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Label:</span><span style=\" font-size:10pt; font-weight:400;\"> Can be used to define a symbol, to skip the field use a tab. "
-                        "Label must beggin with a letter and can contain letters numbers or *_*;</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Instruction/Operation:</span><span style=\" font-size:10pt; font-weight:400;\"> Must be preceded with a tab. Defines the opcode or directive. Opcodes are not case-sensitive.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Label:</span><span style=\" font-size:10pt; font-weight:400;\"> Can be used to define a symbol, to skip the field use a tab. Label must beggin with a letter and can contain letters numbers or *_*;</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; tex"
+                        "t-indent:0px;\"><span style=\" font-size:10pt;\">Instruction/Operation:</span><span style=\" font-size:10pt; font-weight:400;\"> Must be preceded with a tab. Defines the opcode or directive. Opcodes are not case-sensitive.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Operand:</span><span style=\" font-size:10pt; font-weight:400;\"> Contains an address or data.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Comment:</span><span style=\" font-size:10pt; font-weight:400;\"> Optional and used for software documentation. Preceded by a semicolon</span></p>\n"
-"<p style=\"-qt-paragraph-t"
-                        "ype:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Compiler instructions:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Comment:</span><span style=\" font-size:10pt; font-weight:400;\"> Optional and used for software documentation. Preceded by a semicolon.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:"
+                        "0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Compiler instructions:</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">.ORG - sets the current address of compilation to its operand.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">.BYTE - sets the current address of "
-                        "compilation to its operand. The label will be the location of the set byte.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">.BYTE - sets the current address of compilation to its operand. The label will be the location of the set byte.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-righ"
+                        "t:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">.EQU - sets its label to the value of the operand. (calling LABEL .ORG 56 will return 56)</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Emulator functionality:</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bo"
-                        "ttom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Lines tab:</span><span style=\" font-size:10pt; font-weight:400;\"> On the most left of the window. Displays the line number and the hexadecimal address of the line's instruction(when compiled), which are separated by a colon. If the setting \342\200\234Advanced code info\342\200\235 is ticked, the lines tab will also display opcodes and operands. If the current code is compiled you will also be able to click on a line and mark it and its address in the memory with a green background. To unmark a line use the right click mouse button.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br "
-                        "/></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Code tab:</span><span style=\" font-size:10pt; font-weight:400;\"> Next to the lines tab. Click on the tab to be able to write assembly code. For the syntax, refer to the assembly statement format section above.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Lines tab:</span><span style=\" font-size:10pt; font-weight:400;\"> On the most left of the window."
+                        " Displays the line number and the hexadecimal address of the line's instruction(when compiled), which are separated by a colon. If the setting \342\200\234Advanced code info\342\200\235 is ticked, the lines tab will also display opcodes and operands. If the current code is compiled you will also be able to click on a line and mark it and its address in the memory with a green background. To unmark a line use the right click mouse button.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Code tab:</span><span style=\" font-size:10pt; font-weight:400;\"> Next to the lines tab. Click on the tab to be able to write assembly code. For the syntax, refer to the assembly statement format section above.</span></"
+                        "p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Memory tab:</span><span style=\" font-size:10pt; font-weight:400;\"> Next to the code tab. </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">When th"
-                        "e &quot;Simple memory&quot; setting is disabled, the tab will display 16 memory locations per line. Each one of these memory cells contains the data at that memory address in hex. </span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">When the &quot;Simple memory&quot; setting is enabled, the tab will display 20 memory locations per page in a 2x20 grid. The address is displayed on the left and the content of the memory location is displayed on the right.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	When the &quot;Simple memory&quot; setting is disabled, the tab will display 16 memory locations per line. Each one of these memory cells contains the data at that memory address in hex. </span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	When the &quot;S"
+                        "imple memory&quot; setting is enabled, the tab will display 20 memory locations per page in a 2x20 grid. The address is displayed on the left and the content of the memory location is displayed on the right.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Multiple tab selection:</span><span style=\" font-size:10pt; font-weigh"
-                        "t:400;\"> On the bottom right.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Console:</span><span style=\" font-size:10pt; font-weight:400;\"> Displays errors, debugging and warnings based on your preferences in the settings tab.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Debug tools:</span><span style=\" font-size:10pt; font-weight:400;\"> Contains a number converter(dec, hex, oct, bin) and a break function that stops the program's automatic execution when a specific event occurs.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Settings:</span><span style=\" font-size:10pt; font-weight:400;\"> Contains optional features that can be changed by the"
-                        " user:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Show errors: Display errors in the console tab.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Show warnings: Display warnings in the console tab.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Show debug: Display debugging information in the console tab(mostly in case of suspecting an emulator bug).</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px;"
-                        " margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Advanced lines info: Show the hex machine code for each instruction in the lines tab.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Show values of registers in hex: If toggled registers will display contents in hexadecimal.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Compile on run: If toggled the compile button will become unnecessary.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Auto reset: If the contents of memory at the address of PC is 0 then reset the emulator a"
-                        "s soon as Run/Stop is pressed.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Simple memory: Replaces the 16 memory addresses per line with a simple table of 20 addresses per page. This representation does not have all the features of the original and does not support manual editing.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Enable manual writing to Memory: Enable a button that enables switching writing modes:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><s"
-                        "pan style=\" font-size:10pt; font-weight:400;\">		Click the button labelled &quot;Switch writing mode&quot; to change the writing mode. The label next to the button shows the current active mode:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		Memory: Click on the memory tab to set focus to it and then use the arrow keys to select memory cells. After selecting a memory cell type a hex number(characters from 0-9 and A-F) to replace the contents of memory at that address. During &quot;memory&quot; mode you will not be able to compile or change the assembly code.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		Code: This is the default mode. You are unable to change the contents of memory manually.</span></p>\n"
-"<p style=\" margin-top:0p"
-                        "x; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Scroll up when the current line is above: If the current line of the next instruction is above the current X line relative to the current scroll(if the first line visible is 6 then the decisive line is (6 + X)) the code tab will automatically scroll up.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Scroll down when the current line is below: If the current line of the next instruction is below the current X line relative to the current scroll(if the first line visible is 6 then the decisive line is (6 + X)) the code tab will automatically scroll down.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:"
-                        "400;\">Info: Displays this page with information about the emulators features and functionality.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Multiple tab selection:</span><span style=\" font-size:10pt; font-weight:400;\"> On the bottom right.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">	-Console:</span><span style=\" font-size:10pt; font-weight:400;\"> Displays errors, debugging and warnings based on your preferences in the settings tab.</span></p>\n"
+"<p style=\" m"
+                        "argin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">	-Debug tools:</span><span style=\" font-size:10pt; font-weight:400;\"> Contains a number converter(dec, hex, oct, bin) and a break function that stops the program's automatic execution when a specific event occurs.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">	-Settings:</span><span style=\" font-size:10pt; font-weight:400;\"> Contains optional features that can be changed by the user:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Show errors: Display errors in the console tab.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"
+                        "\"><span style=\" font-size:10pt; font-weight:400;\">		*Show warnings: Display warnings in the console tab.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Show debug: Display debugging information in the console tab(mostly in case of suspecting an emulator bug).</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Advanced lines info: Show the hex machine code for each instruction in the lines tab.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-"
+                        "size:10pt; font-weight:400;\">		*Show values of registers in hex: If toggled registers will display contents in hexadecimal.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Compile on run: If toggled the compile button will become unnecessary.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Auto reset: If the contents of memory at the address of PC is 0 then reset the emulator as soon as Run/Stop is pressed.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Use cycles per second instead of instructions per second: </span><span style=\" font-weight:400;\">Toggle between CPS (cycles per second) for "
+                        "precise timing and IPS (instructions per second) for user-friendly operation.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">			</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Simple memory: Replaces the 16 memory addresses per line with a simple table of 20 addresses per page. This representation does not have all the features of the original and does not support manual editing.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Enable manual writing to Memory: Enable a button that enables switching writing modes:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin"
+                        "-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">			-&gt;Click the button labelled &quot;Switch writing mode&quot; to change the writing mode. The label next to the button shows the current active mode:</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">			</span><span style=\" font-size:10pt;\">-&gt;</span><span style=\" font-size:10pt; font-weight:400;\">Memory: Click on the memory tab to set focus to it and then use the arrow keys to select memory cells. After selecting a memory cell type a hex number(characters from 0-9 and A-F) to replace the contents of memory at that address. During &quot;memory&quot; mode you will not be able to compile or change the assembly code.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-"
+                        "size:10pt; font-weight:400;\">			</span><span style=\" font-size:10pt;\">-&gt;</span><span style=\" font-size:10pt; font-weight:400;\">Code: This is the default mode. You are unable to change the contents of memory manually.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Registers:</span><span style=\" font-size:10pt; font-weight:400;\"> In the top right. Displays registers, accumulators and status flags.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">		*Scroll up when the current line is above: If the current line of the next instruction is above the current X line relative to the current scroll(if the first line visible is 6 then the decisive line is (6 + X)) the code tab will automatically scroll up.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10"
+                        "pt; font-weight:400;\">		*Scroll down when the current line is below: If the current line of the next instruction is below the current X line relative to the current scroll(if the first line visible is 6 then the decisive line is (6 + X)) the code tab will automatically scroll down.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">	-Info:</span><span style=\" font-size:10pt; font-weight:400;\"> Displays this page with information about the emulators features and functionality.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">	-OPC:</span><span style=\" font-size:10pt; font-weight:400;\"> Displays a </span>list of supported instructions with cycle times, opcodes, and descriptions. Instructions or opCodes marked with the color red are only supported on m6803.</p>\n"
+"<p style="
+                        "\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Registers:</span><span style=\" font-size:10pt; font-weight:400;\"> In the top right. Displays registers, accumulators and status flags. When emulator is in running mode(run/stop) the processors speed will be displayed under the PC box. If the emulator is in CPS mode, the current cycle of an instruction will also be displayed. </span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Display tab:</span><span style=\" font-size:10pt; font-weight:400"
-                        ";\"> Expand the window horizontally to show the display tab. The display uses a buffer to display ASCII characters. The display also receives keyboard input, mouse location(x and y of the character that the mouse is currently hovering over) and mouse input. When the display and its input buffers are active it will be outlined in blue.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Display tab:</span><span s"
+                        "tyle=\" font-size:10pt; font-weight:400;\"> Expand the window horizontally to show the display tab. The display uses a buffer to display ASCII characters. The display also receives keyboard input, mouse location(x and y of the character that the mouse is currently hovering over) and mouse input. When the display and its input buffers are active it will be outlined in blue.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Buttons and selectors:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Compile button to compile the script inside of the script editor tab using the selected version of the Motorola MCU"
-                        ". This button will have a red outline if the code is uncompiled or has changed since the last compilation and a green outline if the code is currently compiled.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Compile button to compile the script inside of the script editor tab using t"
+                        "he selected version of the Motorola MCU. This button will have a red outline if the code is uncompiled or has changed since the last compilation and a green outline if the code is currently compiled.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Version selection button to change the version of the processor. Choose between m6800 and mc6803(same instruction set as m6801)</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Load button to load a script from a local file.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Save button to save the script to a local file.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; "
-                        "margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Reset button to reset the emulator. Sets all registers to default value, and returns memory to previously compiled machine code.</span></p>\n"
+"<p style=\" margin-top:0p"
+                        "x; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Reset button to reset the emulator. Sets all registers to default value, and returns memory to previously compiled machine code.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Step button to execute the instruction in memory at the current address of PC. If the instruction in memory at the current address of PC is unknown PC will be incremented by one and a warning will be displayed in the console tab.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Run/Stop button to run or pause the execution of instructions at x per second speed. Execution will stop if the content of memory at the address of PC is 0.</span></p>\n"
-"<p style=\" "
-                        "margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Speed selection menu to select the instruction per second speed.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Run/Stop button to run or pause the execution of instructions at x per second speed. Execution will stop if the content of memory at the address "
+                        "of PC is 0.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	Speed selection menu to select the instructions/cycles per second speed.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">	</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Buffers and interrupt pointers:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Display buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> The Display Buffer spans memory addresses 0xFB00 to 0xFF37 inclusively. This memory region functions as a dynamic visual representation for the system. As"
-                        " data changes within this range, the display instantaneously updates, reflecting alterations in real-time using the standard ASCII encoding.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Display buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> The Display Buffer spans memory addresses 0xFB00 to 0xFF37 inclusively. This memory region functions as a d"
+                        "ynamic visual representation for the system. As data changes within this range, the display instantaneously updates, reflecting alterations in real-time using the standard ASCII encoding.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Keyboard buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> When the display tab is active (outlined in blue), it becomes the recipient of keyboard input. This input is then used to update the content of memory address 0xFFF0 with the corresponding keycode, following the standard ASCII encoding.</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Mouse key buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> If the display tab is in focus address 0xFFF1 will be set to 1 when left mouse button is pressed. It will be set to 2 when right mouse button is pressed. It wil"
-                        "l be set to 3 when middle mouse button is pressed. It will be set to 4 when left mouse button is released. It will be set to 5 when right mouse button is released. It will be set to 6 when middle mouse button is released. This will happen instantaneously and will not wait for the next instruction.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Mouse key buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> If the display tab is in focus address 0xFFF1 will be set to 1 when left mouse button is pressed. It will be set "
+                        "to 2 when right mouse button is pressed. It will be set to 3 when middle mouse button is pressed. It will be set to 4 when left mouse button is released. It will be set to 5 when right mouse button is released. It will be set to 6 when middle mouse button is released. This will happen instantaneously and will not wait for the next instruction.</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Mouse location buffer:</span><span style=\" font-size:10pt; font-weight:400;\"> The position of the mouse pointer relative to the display tab is denoted by its X and Y coordinates, corresponding to the cell/character over which the mouse hovers. Before executing a pending instruction, if the display tab is in focus, the content of memory address 0xFFF2 will be set to the X coordinate, and the content of memory address 0xFFF3 will be set to the Y coordinate. </span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-"
-                        "left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:em"
+                        "pty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt;\">Interrupt pointers:</span><span style=\" font-size:10pt; font-weight:400;\"> A block of memory is reserved for pointers, which provide for read-only storage of the addresses of programs that are to be executed in the event of a reset (or power on), a low state of the Non-Maskable Interrupt control input, a software interrupt, or a response to an interrupt signal from a peripheral device. The respective pointers each occupy two bytes of memory and are disposed at locations from &quot;n - 7&quot;(0xFFF8) to &quot;n&quot;(0xFFFF).</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Internal interrupt pointer spans fro"
-                        "m n-7 to n-6. n-7 contains the most significant byte of the address. n-6 contains the least significant byte of the address. *NOT IMPLEMENTED*</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-wei"
+                        "ght:400;\">Internal interrupt pointer spans from n-7 to n-6. n-7 contains the most significant byte of the address. n-6 contains the least significant byte of the address. *NOT IMPLEMENTED*</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Software interrupt pointer spans from n-5 to n-4. (called with the SWI instruction) </span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Non-maskable interrupt pointer spans from n-3 to n-2. *NOT IMPLEMENTED* </span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Reset pointer spans from n-1 to n-0. *NOT IMPLEMENTED* </span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin"
-                        "-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:"
+                        "0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">The WAI instruction will not act as an interrupt because there is already a buffer for that. That instruction will only suspend the execution of the program until the display tab receives a keyboard input(0xFFF0 changes).</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt; color:#00007f;\">Credits:</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span styl"
-                        "e=\" font-size:10pt; font-weight:400;\">Vladimir Janu\305\241.</span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -q"
+                        "t-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Vladimir Janu\305\241.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Made in August 2023.</span></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:10pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Current version: 1.3.2</span></p></body></html>", nullptr));
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10pt; font-weight:400;\">Current version: 1.4</span></p></body></html>", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(Info), QCoreApplication::translate("MainWindow", "Info", nullptr));
         QTreeWidgetItem *___qtreewidgetitem = treeWidget->headerItem();
+        ___qtreewidgetitem->setText(10, QCoreApplication::translate("MainWindow", "bytes", nullptr));
+        ___qtreewidgetitem->setText(9, QCoreApplication::translate("MainWindow", "cycles", nullptr));
         ___qtreewidgetitem->setText(8, QCoreApplication::translate("MainWindow", "flags", nullptr));
         ___qtreewidgetitem->setText(7, QCoreApplication::translate("MainWindow", "REL", nullptr));
-        ___qtreewidgetitem->setText(6, QCoreApplication::translate("MainWindow", "IND", nullptr));
-        ___qtreewidgetitem->setText(5, QCoreApplication::translate("MainWindow", "EXT", nullptr));
+        ___qtreewidgetitem->setText(6, QCoreApplication::translate("MainWindow", "EXT", nullptr));
+        ___qtreewidgetitem->setText(5, QCoreApplication::translate("MainWindow", "IND", nullptr));
         ___qtreewidgetitem->setText(4, QCoreApplication::translate("MainWindow", "DIR", nullptr));
         ___qtreewidgetitem->setText(3, QCoreApplication::translate("MainWindow", "IMM", nullptr));
         ___qtreewidgetitem->setText(2, QCoreApplication::translate("MainWindow", "INH", nullptr));
@@ -1277,42 +1421,951 @@ public:
         const bool __sortingEnabled = treeWidget->isSortingEnabled();
         treeWidget->setSortingEnabled(false);
         QTreeWidgetItem *___qtreewidgetitem1 = treeWidget->topLevelItem(0);
-        ___qtreewidgetitem1->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
-        ___qtreewidgetitem1->setText(2, QCoreApplication::translate("MainWindow", "1B", nullptr));
-        ___qtreewidgetitem1->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- (ACCA) + (ACCB)", nullptr));
-        ___qtreewidgetitem1->setText(0, QCoreApplication::translate("MainWindow", "ABA", nullptr));
+        ___qtreewidgetitem1->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem1->setText(9, QCoreApplication::translate("MainWindow", "9", nullptr));
+        ___qtreewidgetitem1->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem1->setText(2, QCoreApplication::translate("MainWindow", "3E", nullptr));
+        ___qtreewidgetitem1->setText(1, QCoreApplication::translate("MainWindow", "wait for interrupt", nullptr));
+        ___qtreewidgetitem1->setText(0, QCoreApplication::translate("MainWindow", "WAI", nullptr));
         QTreeWidgetItem *___qtreewidgetitem2 = treeWidget->topLevelItem(1);
-        ___qtreewidgetitem2->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
-        ___qtreewidgetitem2->setText(6, QCoreApplication::translate("MainWindow", "A9", nullptr));
-        ___qtreewidgetitem2->setText(5, QCoreApplication::translate("MainWindow", "B9", nullptr));
-        ___qtreewidgetitem2->setText(4, QCoreApplication::translate("MainWindow", "99", nullptr));
-        ___qtreewidgetitem2->setText(3, QCoreApplication::translate("MainWindow", "89", nullptr));
-        ___qtreewidgetitem2->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- (ACCA) + (M) + (C)", nullptr));
-        ___qtreewidgetitem2->setText(0, QCoreApplication::translate("MainWindow", "ADCA", nullptr));
+        ___qtreewidgetitem2->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem2->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem2->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem2->setText(2, QCoreApplication::translate("MainWindow", "35", nullptr));
+        ___qtreewidgetitem2->setText(1, QCoreApplication::translate("MainWindow", "SP <- X - 1", nullptr));
+        ___qtreewidgetitem2->setText(0, QCoreApplication::translate("MainWindow", "TXS", nullptr));
         QTreeWidgetItem *___qtreewidgetitem3 = treeWidget->topLevelItem(2);
-        ___qtreewidgetitem3->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
-        ___qtreewidgetitem3->setText(6, QCoreApplication::translate("MainWindow", "E9", nullptr));
-        ___qtreewidgetitem3->setText(5, QCoreApplication::translate("MainWindow", "F9", nullptr));
-        ___qtreewidgetitem3->setText(4, QCoreApplication::translate("MainWindow", "D9", nullptr));
-        ___qtreewidgetitem3->setText(3, QCoreApplication::translate("MainWindow", "C9", nullptr));
-        ___qtreewidgetitem3->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- (ACCB) + (M) + (C", nullptr));
-        ___qtreewidgetitem3->setText(0, QCoreApplication::translate("MainWindow", "ADCB", nullptr));
+        ___qtreewidgetitem3->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem3->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem3->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem3->setText(2, QCoreApplication::translate("MainWindow", "30", nullptr));
+        ___qtreewidgetitem3->setText(1, QCoreApplication::translate("MainWindow", "X <- SP + 1", nullptr));
+        ___qtreewidgetitem3->setText(0, QCoreApplication::translate("MainWindow", "TSX", nullptr));
         QTreeWidgetItem *___qtreewidgetitem4 = treeWidget->topLevelItem(3);
-        ___qtreewidgetitem4->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
-        ___qtreewidgetitem4->setText(6, QCoreApplication::translate("MainWindow", "AB", nullptr));
-        ___qtreewidgetitem4->setText(5, QCoreApplication::translate("MainWindow", "BB", nullptr));
-        ___qtreewidgetitem4->setText(4, QCoreApplication::translate("MainWindow", "9B", nullptr));
-        ___qtreewidgetitem4->setText(3, QCoreApplication::translate("MainWindow", "8B", nullptr));
-        ___qtreewidgetitem4->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- (ACCA) + (M)", nullptr));
-        ___qtreewidgetitem4->setText(0, QCoreApplication::translate("MainWindow", "ADDA", nullptr));
+        ___qtreewidgetitem4->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem4->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem4->setText(8, QCoreApplication::translate("MainWindow", "--**00", nullptr));
+        ___qtreewidgetitem4->setText(2, QCoreApplication::translate("MainWindow", "5D", nullptr));
+        ___qtreewidgetitem4->setText(1, QCoreApplication::translate("MainWindow", "ACCB - 00", nullptr));
+        ___qtreewidgetitem4->setText(0, QCoreApplication::translate("MainWindow", "TSTB", nullptr));
         QTreeWidgetItem *___qtreewidgetitem5 = treeWidget->topLevelItem(4);
-        ___qtreewidgetitem5->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
-        ___qtreewidgetitem5->setText(6, QCoreApplication::translate("MainWindow", "EB", nullptr));
-        ___qtreewidgetitem5->setText(5, QCoreApplication::translate("MainWindow", "FB", nullptr));
-        ___qtreewidgetitem5->setText(4, QCoreApplication::translate("MainWindow", "DB", nullptr));
-        ___qtreewidgetitem5->setText(3, QCoreApplication::translate("MainWindow", "CB", nullptr));
-        ___qtreewidgetitem5->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- (ACCB) + (M)", nullptr));
-        ___qtreewidgetitem5->setText(0, QCoreApplication::translate("MainWindow", "ADDB", nullptr));
+        ___qtreewidgetitem5->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem5->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem5->setText(8, QCoreApplication::translate("MainWindow", "--**00", nullptr));
+        ___qtreewidgetitem5->setText(2, QCoreApplication::translate("MainWindow", "4D", nullptr));
+        ___qtreewidgetitem5->setText(1, QCoreApplication::translate("MainWindow", "ACCA - 00", nullptr));
+        ___qtreewidgetitem5->setText(0, QCoreApplication::translate("MainWindow", "TSTA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem6 = treeWidget->topLevelItem(5);
+        ___qtreewidgetitem6->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem6->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem6->setText(8, QCoreApplication::translate("MainWindow", "--**00", nullptr));
+        ___qtreewidgetitem6->setText(6, QCoreApplication::translate("MainWindow", "7D", nullptr));
+        ___qtreewidgetitem6->setText(5, QCoreApplication::translate("MainWindow", "6D", nullptr));
+        ___qtreewidgetitem6->setText(1, QCoreApplication::translate("MainWindow", "M - 00", nullptr));
+        ___qtreewidgetitem6->setText(0, QCoreApplication::translate("MainWindow", "TST", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem7 = treeWidget->topLevelItem(6);
+        ___qtreewidgetitem7->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem7->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem7->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem7->setText(2, QCoreApplication::translate("MainWindow", "07", nullptr));
+        ___qtreewidgetitem7->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- 11HINZVC", nullptr));
+        ___qtreewidgetitem7->setText(0, QCoreApplication::translate("MainWindow", "TPA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem8 = treeWidget->topLevelItem(7);
+        ___qtreewidgetitem8->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem8->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem8->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem8->setText(2, QCoreApplication::translate("MainWindow", "17", nullptr));
+        ___qtreewidgetitem8->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCB", nullptr));
+        ___qtreewidgetitem8->setText(0, QCoreApplication::translate("MainWindow", "TBA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem9 = treeWidget->topLevelItem(8);
+        ___qtreewidgetitem9->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem9->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem9->setText(8, QCoreApplication::translate("MainWindow", "******", nullptr));
+        ___qtreewidgetitem9->setText(2, QCoreApplication::translate("MainWindow", "06", nullptr));
+        ___qtreewidgetitem9->setText(1, QCoreApplication::translate("MainWindow", "11HINZVC <- ACCA", nullptr));
+        ___qtreewidgetitem9->setText(0, QCoreApplication::translate("MainWindow", "TAP", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem10 = treeWidget->topLevelItem(9);
+        ___qtreewidgetitem10->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem10->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem10->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem10->setText(2, QCoreApplication::translate("MainWindow", "16", nullptr));
+        ___qtreewidgetitem10->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCA", nullptr));
+        ___qtreewidgetitem10->setText(0, QCoreApplication::translate("MainWindow", "TAB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem11 = treeWidget->topLevelItem(10);
+        ___qtreewidgetitem11->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem11->setText(9, QCoreApplication::translate("MainWindow", "12", nullptr));
+        ___qtreewidgetitem11->setText(8, QCoreApplication::translate("MainWindow", "-1----", nullptr));
+        ___qtreewidgetitem11->setText(2, QCoreApplication::translate("MainWindow", "3F", nullptr));
+        ___qtreewidgetitem11->setText(1, QCoreApplication::translate("MainWindow", "software interrupt", nullptr));
+        ___qtreewidgetitem11->setText(0, QCoreApplication::translate("MainWindow", "SWI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem12 = treeWidget->topLevelItem(11);
+        ___qtreewidgetitem12->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem12->setText(9, QCoreApplication::translate("MainWindow", "4,5,6,6", nullptr));
+        ___qtreewidgetitem12->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem12->setText(6, QCoreApplication::translate("MainWindow", "B3", nullptr));
+        ___qtreewidgetitem12->setText(5, QCoreApplication::translate("MainWindow", "A3", nullptr));
+        ___qtreewidgetitem12->setText(4, QCoreApplication::translate("MainWindow", "93", nullptr));
+        ___qtreewidgetitem12->setText(3, QCoreApplication::translate("MainWindow", "83", nullptr));
+        ___qtreewidgetitem12->setText(1, QCoreApplication::translate("MainWindow", "ACCA:ACCB <- ACCA:ACCB  - M:(M+1)", nullptr));
+        ___qtreewidgetitem12->setText(0, QCoreApplication::translate("MainWindow", "SUBD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem13 = treeWidget->topLevelItem(12);
+        ___qtreewidgetitem13->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem13->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem13->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem13->setText(6, QCoreApplication::translate("MainWindow", "F0", nullptr));
+        ___qtreewidgetitem13->setText(5, QCoreApplication::translate("MainWindow", "E0", nullptr));
+        ___qtreewidgetitem13->setText(4, QCoreApplication::translate("MainWindow", "D0", nullptr));
+        ___qtreewidgetitem13->setText(3, QCoreApplication::translate("MainWindow", "C0", nullptr));
+        ___qtreewidgetitem13->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB - M", nullptr));
+        ___qtreewidgetitem13->setText(0, QCoreApplication::translate("MainWindow", "SUBB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem14 = treeWidget->topLevelItem(13);
+        ___qtreewidgetitem14->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem14->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem14->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem14->setText(6, QCoreApplication::translate("MainWindow", "B0", nullptr));
+        ___qtreewidgetitem14->setText(5, QCoreApplication::translate("MainWindow", "A0", nullptr));
+        ___qtreewidgetitem14->setText(4, QCoreApplication::translate("MainWindow", "90", nullptr));
+        ___qtreewidgetitem14->setText(3, QCoreApplication::translate("MainWindow", "80", nullptr));
+        ___qtreewidgetitem14->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA - M", nullptr));
+        ___qtreewidgetitem14->setText(0, QCoreApplication::translate("MainWindow", "SUBA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem15 = treeWidget->topLevelItem(14);
+        ___qtreewidgetitem15->setText(10, QCoreApplication::translate("MainWindow", "2,2,3", nullptr));
+        ___qtreewidgetitem15->setText(9, QCoreApplication::translate("MainWindow", "4,5,5", nullptr));
+        ___qtreewidgetitem15->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem15->setText(6, QCoreApplication::translate("MainWindow", "FF", nullptr));
+        ___qtreewidgetitem15->setText(5, QCoreApplication::translate("MainWindow", "EF", nullptr));
+        ___qtreewidgetitem15->setText(4, QCoreApplication::translate("MainWindow", "DF", nullptr));
+        ___qtreewidgetitem15->setText(1, QCoreApplication::translate("MainWindow", "M:(M+1) <- X", nullptr));
+        ___qtreewidgetitem15->setText(0, QCoreApplication::translate("MainWindow", "STX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem16 = treeWidget->topLevelItem(15);
+        ___qtreewidgetitem16->setText(10, QCoreApplication::translate("MainWindow", "2,2,3", nullptr));
+        ___qtreewidgetitem16->setText(9, QCoreApplication::translate("MainWindow", "4,5,5", nullptr));
+        ___qtreewidgetitem16->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem16->setText(6, QCoreApplication::translate("MainWindow", "BF", nullptr));
+        ___qtreewidgetitem16->setText(5, QCoreApplication::translate("MainWindow", "AF", nullptr));
+        ___qtreewidgetitem16->setText(4, QCoreApplication::translate("MainWindow", "9F", nullptr));
+        ___qtreewidgetitem16->setText(1, QCoreApplication::translate("MainWindow", "M:(M+1) <- SP", nullptr));
+        ___qtreewidgetitem16->setText(0, QCoreApplication::translate("MainWindow", "STS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem17 = treeWidget->topLevelItem(16);
+        ___qtreewidgetitem17->setText(10, QCoreApplication::translate("MainWindow", "2,3,3", nullptr));
+        ___qtreewidgetitem17->setText(9, QCoreApplication::translate("MainWindow", "4,5,5", nullptr));
+        ___qtreewidgetitem17->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem17->setText(6, QCoreApplication::translate("MainWindow", "FD", nullptr));
+        ___qtreewidgetitem17->setText(5, QCoreApplication::translate("MainWindow", "ED", nullptr));
+        ___qtreewidgetitem17->setText(4, QCoreApplication::translate("MainWindow", "DD", nullptr));
+        ___qtreewidgetitem17->setText(1, QCoreApplication::translate("MainWindow", "M:(M+1) <- ACCA:ACCB", nullptr));
+        ___qtreewidgetitem17->setText(0, QCoreApplication::translate("MainWindow", "STD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem18 = treeWidget->topLevelItem(17);
+        ___qtreewidgetitem18->setText(10, QCoreApplication::translate("MainWindow", "2,2,3", nullptr));
+        ___qtreewidgetitem18->setText(9, QCoreApplication::translate("MainWindow", "3,4,4", nullptr));
+        ___qtreewidgetitem18->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem18->setText(6, QCoreApplication::translate("MainWindow", "F7", nullptr));
+        ___qtreewidgetitem18->setText(5, QCoreApplication::translate("MainWindow", "E7", nullptr));
+        ___qtreewidgetitem18->setText(4, QCoreApplication::translate("MainWindow", "D7", nullptr));
+        ___qtreewidgetitem18->setText(1, QCoreApplication::translate("MainWindow", "M <- ACCB", nullptr));
+        ___qtreewidgetitem18->setText(0, QCoreApplication::translate("MainWindow", "STAB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem19 = treeWidget->topLevelItem(18);
+        ___qtreewidgetitem19->setText(10, QCoreApplication::translate("MainWindow", "2,2,3", nullptr));
+        ___qtreewidgetitem19->setText(9, QCoreApplication::translate("MainWindow", "3,4,4", nullptr));
+        ___qtreewidgetitem19->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem19->setText(6, QCoreApplication::translate("MainWindow", "B7", nullptr));
+        ___qtreewidgetitem19->setText(5, QCoreApplication::translate("MainWindow", "A7", nullptr));
+        ___qtreewidgetitem19->setText(4, QCoreApplication::translate("MainWindow", "97", nullptr));
+        ___qtreewidgetitem19->setText(1, QCoreApplication::translate("MainWindow", "M <- ACCA", nullptr));
+        ___qtreewidgetitem19->setText(0, QCoreApplication::translate("MainWindow", "STAA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem20 = treeWidget->topLevelItem(19);
+        ___qtreewidgetitem20->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem20->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem20->setText(8, QCoreApplication::translate("MainWindow", "----1-", nullptr));
+        ___qtreewidgetitem20->setText(2, QCoreApplication::translate("MainWindow", "0B", nullptr));
+        ___qtreewidgetitem20->setText(1, QCoreApplication::translate("MainWindow", "V <- 1", nullptr));
+        ___qtreewidgetitem20->setText(0, QCoreApplication::translate("MainWindow", "SEV", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem21 = treeWidget->topLevelItem(20);
+        ___qtreewidgetitem21->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem21->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem21->setText(8, QCoreApplication::translate("MainWindow", "-1----", nullptr));
+        ___qtreewidgetitem21->setText(2, QCoreApplication::translate("MainWindow", "0F", nullptr));
+        ___qtreewidgetitem21->setText(1, QCoreApplication::translate("MainWindow", "I <- 1", nullptr));
+        ___qtreewidgetitem21->setText(0, QCoreApplication::translate("MainWindow", "SEI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem22 = treeWidget->topLevelItem(21);
+        ___qtreewidgetitem22->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem22->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem22->setText(8, QCoreApplication::translate("MainWindow", "-----1", nullptr));
+        ___qtreewidgetitem22->setText(2, QCoreApplication::translate("MainWindow", "0D", nullptr));
+        ___qtreewidgetitem22->setText(1, QCoreApplication::translate("MainWindow", "C <- 1", nullptr));
+        ___qtreewidgetitem22->setText(0, QCoreApplication::translate("MainWindow", "SEC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem23 = treeWidget->topLevelItem(22);
+        ___qtreewidgetitem23->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem23->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem23->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem23->setText(6, QCoreApplication::translate("MainWindow", "F2", nullptr));
+        ___qtreewidgetitem23->setText(5, QCoreApplication::translate("MainWindow", "E2", nullptr));
+        ___qtreewidgetitem23->setText(4, QCoreApplication::translate("MainWindow", "D2", nullptr));
+        ___qtreewidgetitem23->setText(3, QCoreApplication::translate("MainWindow", "C2", nullptr));
+        ___qtreewidgetitem23->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB - M - C", nullptr));
+        ___qtreewidgetitem23->setText(0, QCoreApplication::translate("MainWindow", "SBCB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem24 = treeWidget->topLevelItem(23);
+        ___qtreewidgetitem24->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem24->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem24->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem24->setText(6, QCoreApplication::translate("MainWindow", "B2", nullptr));
+        ___qtreewidgetitem24->setText(5, QCoreApplication::translate("MainWindow", "A2", nullptr));
+        ___qtreewidgetitem24->setText(4, QCoreApplication::translate("MainWindow", "92", nullptr));
+        ___qtreewidgetitem24->setText(3, QCoreApplication::translate("MainWindow", "82", nullptr));
+        ___qtreewidgetitem24->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA - M - C", nullptr));
+        ___qtreewidgetitem24->setText(0, QCoreApplication::translate("MainWindow", "SBCA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem25 = treeWidget->topLevelItem(24);
+        ___qtreewidgetitem25->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem25->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem25->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem25->setText(2, QCoreApplication::translate("MainWindow", "10", nullptr));
+        ___qtreewidgetitem25->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA - ACCB", nullptr));
+        ___qtreewidgetitem25->setText(0, QCoreApplication::translate("MainWindow", "SBA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem26 = treeWidget->topLevelItem(25);
+        ___qtreewidgetitem26->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem26->setText(9, QCoreApplication::translate("MainWindow", "5", nullptr));
+        ___qtreewidgetitem26->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem26->setText(2, QCoreApplication::translate("MainWindow", "39", nullptr));
+        ___qtreewidgetitem26->setText(1, QCoreApplication::translate("MainWindow", "return from subroutine", nullptr));
+        ___qtreewidgetitem26->setText(0, QCoreApplication::translate("MainWindow", "RTS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem27 = treeWidget->topLevelItem(26);
+        ___qtreewidgetitem27->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem27->setText(9, QCoreApplication::translate("MainWindow", "10", nullptr));
+        ___qtreewidgetitem27->setText(8, QCoreApplication::translate("MainWindow", "******", nullptr));
+        ___qtreewidgetitem27->setText(2, QCoreApplication::translate("MainWindow", "3B", nullptr));
+        ___qtreewidgetitem27->setText(1, QCoreApplication::translate("MainWindow", "return from interrupt", nullptr));
+        ___qtreewidgetitem27->setText(0, QCoreApplication::translate("MainWindow", "RTI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem28 = treeWidget->topLevelItem(27);
+        ___qtreewidgetitem28->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem28->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem28->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem28->setText(2, QCoreApplication::translate("MainWindow", "56", nullptr));
+        ___qtreewidgetitem28->setText(1, QCoreApplication::translate("MainWindow", "ACCB rotate right", nullptr));
+        ___qtreewidgetitem28->setText(0, QCoreApplication::translate("MainWindow", "RORB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem29 = treeWidget->topLevelItem(28);
+        ___qtreewidgetitem29->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem29->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem29->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem29->setText(2, QCoreApplication::translate("MainWindow", "46", nullptr));
+        ___qtreewidgetitem29->setText(1, QCoreApplication::translate("MainWindow", "ACCA rotate right", nullptr));
+        ___qtreewidgetitem29->setText(0, QCoreApplication::translate("MainWindow", "RORA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem30 = treeWidget->topLevelItem(29);
+        ___qtreewidgetitem30->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem30->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem30->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem30->setText(6, QCoreApplication::translate("MainWindow", "76", nullptr));
+        ___qtreewidgetitem30->setText(5, QCoreApplication::translate("MainWindow", "66", nullptr));
+        ___qtreewidgetitem30->setText(1, QCoreApplication::translate("MainWindow", "M rotate right", nullptr));
+        ___qtreewidgetitem30->setText(0, QCoreApplication::translate("MainWindow", "ROR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem31 = treeWidget->topLevelItem(30);
+        ___qtreewidgetitem31->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem31->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem31->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem31->setText(2, QCoreApplication::translate("MainWindow", "59", nullptr));
+        ___qtreewidgetitem31->setText(1, QCoreApplication::translate("MainWindow", "ACCB rotate left", nullptr));
+        ___qtreewidgetitem31->setText(0, QCoreApplication::translate("MainWindow", "ROLB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem32 = treeWidget->topLevelItem(31);
+        ___qtreewidgetitem32->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem32->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem32->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem32->setText(2, QCoreApplication::translate("MainWindow", "49", nullptr));
+        ___qtreewidgetitem32->setText(1, QCoreApplication::translate("MainWindow", "ACCA rotate left", nullptr));
+        ___qtreewidgetitem32->setText(0, QCoreApplication::translate("MainWindow", "ROLA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem33 = treeWidget->topLevelItem(32);
+        ___qtreewidgetitem33->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem33->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem33->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem33->setText(6, QCoreApplication::translate("MainWindow", "79", nullptr));
+        ___qtreewidgetitem33->setText(5, QCoreApplication::translate("MainWindow", "69", nullptr));
+        ___qtreewidgetitem33->setText(1, QCoreApplication::translate("MainWindow", "M rotate left", nullptr));
+        ___qtreewidgetitem33->setText(0, QCoreApplication::translate("MainWindow", "ROL", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem34 = treeWidget->topLevelItem(33);
+        ___qtreewidgetitem34->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem34->setText(9, QCoreApplication::translate("MainWindow", "5", nullptr));
+        ___qtreewidgetitem34->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem34->setText(2, QCoreApplication::translate("MainWindow", "38", nullptr));
+        ___qtreewidgetitem34->setText(1, QCoreApplication::translate("MainWindow", "pull X", nullptr));
+        ___qtreewidgetitem34->setText(0, QCoreApplication::translate("MainWindow", "PULX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem35 = treeWidget->topLevelItem(34);
+        ___qtreewidgetitem35->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem35->setText(9, QCoreApplication::translate("MainWindow", "4", nullptr));
+        ___qtreewidgetitem35->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem35->setText(2, QCoreApplication::translate("MainWindow", "33", nullptr));
+        ___qtreewidgetitem35->setText(1, QCoreApplication::translate("MainWindow", "pull ACCB", nullptr));
+        ___qtreewidgetitem35->setText(0, QCoreApplication::translate("MainWindow", "PULB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem36 = treeWidget->topLevelItem(35);
+        ___qtreewidgetitem36->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem36->setText(9, QCoreApplication::translate("MainWindow", "4", nullptr));
+        ___qtreewidgetitem36->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem36->setText(2, QCoreApplication::translate("MainWindow", "32", nullptr));
+        ___qtreewidgetitem36->setText(1, QCoreApplication::translate("MainWindow", "pull ACCA", nullptr));
+        ___qtreewidgetitem36->setText(0, QCoreApplication::translate("MainWindow", "PULA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem37 = treeWidget->topLevelItem(36);
+        ___qtreewidgetitem37->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem37->setText(9, QCoreApplication::translate("MainWindow", "4", nullptr));
+        ___qtreewidgetitem37->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem37->setText(2, QCoreApplication::translate("MainWindow", "3C", nullptr));
+        ___qtreewidgetitem37->setText(1, QCoreApplication::translate("MainWindow", "psuh X", nullptr));
+        ___qtreewidgetitem37->setText(0, QCoreApplication::translate("MainWindow", "PSHX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem38 = treeWidget->topLevelItem(37);
+        ___qtreewidgetitem38->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem38->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem38->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem38->setText(2, QCoreApplication::translate("MainWindow", "37", nullptr));
+        ___qtreewidgetitem38->setText(1, QCoreApplication::translate("MainWindow", "push ACCB", nullptr));
+        ___qtreewidgetitem38->setText(0, QCoreApplication::translate("MainWindow", "PSHB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem39 = treeWidget->topLevelItem(38);
+        ___qtreewidgetitem39->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem39->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem39->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem39->setText(2, QCoreApplication::translate("MainWindow", "36", nullptr));
+        ___qtreewidgetitem39->setText(1, QCoreApplication::translate("MainWindow", "push ACCA", nullptr));
+        ___qtreewidgetitem39->setText(0, QCoreApplication::translate("MainWindow", "PSHA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem40 = treeWidget->topLevelItem(39);
+        ___qtreewidgetitem40->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem40->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem40->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem40->setText(6, QCoreApplication::translate("MainWindow", "FA", nullptr));
+        ___qtreewidgetitem40->setText(5, QCoreApplication::translate("MainWindow", "EA", nullptr));
+        ___qtreewidgetitem40->setText(4, QCoreApplication::translate("MainWindow", "DA", nullptr));
+        ___qtreewidgetitem40->setText(3, QCoreApplication::translate("MainWindow", "CA", nullptr));
+        ___qtreewidgetitem40->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB \342\210\250 M", nullptr));
+        ___qtreewidgetitem40->setText(0, QCoreApplication::translate("MainWindow", "ORAB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem41 = treeWidget->topLevelItem(40);
+        ___qtreewidgetitem41->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem41->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem41->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem41->setText(6, QCoreApplication::translate("MainWindow", "BA", nullptr));
+        ___qtreewidgetitem41->setText(5, QCoreApplication::translate("MainWindow", "AA", nullptr));
+        ___qtreewidgetitem41->setText(4, QCoreApplication::translate("MainWindow", "9A", nullptr));
+        ___qtreewidgetitem41->setText(3, QCoreApplication::translate("MainWindow", "8A", nullptr));
+        ___qtreewidgetitem41->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA \342\210\250 M", nullptr));
+        ___qtreewidgetitem41->setText(0, QCoreApplication::translate("MainWindow", "ORAA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem42 = treeWidget->topLevelItem(41);
+        ___qtreewidgetitem42->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem42->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem42->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem42->setText(2, QCoreApplication::translate("MainWindow", "01", nullptr));
+        ___qtreewidgetitem42->setText(1, QCoreApplication::translate("MainWindow", "no operation", nullptr));
+        ___qtreewidgetitem42->setText(0, QCoreApplication::translate("MainWindow", "NOP", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem43 = treeWidget->topLevelItem(42);
+        ___qtreewidgetitem43->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem43->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem43->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem43->setText(2, QCoreApplication::translate("MainWindow", "50", nullptr));
+        ___qtreewidgetitem43->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- 00 - ACCB", nullptr));
+        ___qtreewidgetitem43->setText(0, QCoreApplication::translate("MainWindow", "NEGB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem44 = treeWidget->topLevelItem(43);
+        ___qtreewidgetitem44->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem44->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem44->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem44->setText(2, QCoreApplication::translate("MainWindow", "40", nullptr));
+        ___qtreewidgetitem44->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- 00 - ACCA", nullptr));
+        ___qtreewidgetitem44->setText(0, QCoreApplication::translate("MainWindow", "NEGA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem45 = treeWidget->topLevelItem(44);
+        ___qtreewidgetitem45->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem45->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem45->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem45->setText(6, QCoreApplication::translate("MainWindow", "70", nullptr));
+        ___qtreewidgetitem45->setText(5, QCoreApplication::translate("MainWindow", "60", nullptr));
+        ___qtreewidgetitem45->setText(1, QCoreApplication::translate("MainWindow", "M <- 00 - M", nullptr));
+        ___qtreewidgetitem45->setText(0, QCoreApplication::translate("MainWindow", "NEG", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem46 = treeWidget->topLevelItem(45);
+        ___qtreewidgetitem46->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem46->setText(9, QCoreApplication::translate("MainWindow", "10", nullptr));
+        ___qtreewidgetitem46->setText(8, QCoreApplication::translate("MainWindow", "-----*", nullptr));
+        ___qtreewidgetitem46->setText(2, QCoreApplication::translate("MainWindow", "3D", nullptr));
+        ___qtreewidgetitem46->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCA * ACCB", nullptr));
+        ___qtreewidgetitem46->setText(0, QCoreApplication::translate("MainWindow", "MUL", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem47 = treeWidget->topLevelItem(46);
+        ___qtreewidgetitem47->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem47->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem47->setText(8, QCoreApplication::translate("MainWindow", "--0***", nullptr));
+        ___qtreewidgetitem47->setText(2, QCoreApplication::translate("MainWindow", "04", nullptr));
+        ___qtreewidgetitem47->setText(1, QCoreApplication::translate("MainWindow", "ACCA:ACCB logical shift right", nullptr));
+        ___qtreewidgetitem47->setText(0, QCoreApplication::translate("MainWindow", "LSRD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem48 = treeWidget->topLevelItem(47);
+        ___qtreewidgetitem48->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem48->setText(9, QCoreApplication::translate("MainWindow", "2,2", nullptr));
+        ___qtreewidgetitem48->setText(8, QCoreApplication::translate("MainWindow", "--0***", nullptr));
+        ___qtreewidgetitem48->setText(2, QCoreApplication::translate("MainWindow", "54", nullptr));
+        ___qtreewidgetitem48->setText(1, QCoreApplication::translate("MainWindow", "ACCB logical shift right", nullptr));
+        ___qtreewidgetitem48->setText(0, QCoreApplication::translate("MainWindow", "LSRB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem49 = treeWidget->topLevelItem(48);
+        ___qtreewidgetitem49->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem49->setText(9, QCoreApplication::translate("MainWindow", "2,2", nullptr));
+        ___qtreewidgetitem49->setText(8, QCoreApplication::translate("MainWindow", "--0***", nullptr));
+        ___qtreewidgetitem49->setText(2, QCoreApplication::translate("MainWindow", "44", nullptr));
+        ___qtreewidgetitem49->setText(1, QCoreApplication::translate("MainWindow", "ACCA logical shift right", nullptr));
+        ___qtreewidgetitem49->setText(0, QCoreApplication::translate("MainWindow", "LSRA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem50 = treeWidget->topLevelItem(49);
+        ___qtreewidgetitem50->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem50->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem50->setText(8, QCoreApplication::translate("MainWindow", "--0***", nullptr));
+        ___qtreewidgetitem50->setText(6, QCoreApplication::translate("MainWindow", "74", nullptr));
+        ___qtreewidgetitem50->setText(5, QCoreApplication::translate("MainWindow", "64", nullptr));
+        ___qtreewidgetitem50->setText(1, QCoreApplication::translate("MainWindow", "M logical shift right", nullptr));
+        ___qtreewidgetitem50->setText(0, QCoreApplication::translate("MainWindow", "LSR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem51 = treeWidget->topLevelItem(50);
+        ___qtreewidgetitem51->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem51->setText(9, QCoreApplication::translate("MainWindow", "3,4,5,5", nullptr));
+        ___qtreewidgetitem51->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem51->setText(6, QCoreApplication::translate("MainWindow", "FE", nullptr));
+        ___qtreewidgetitem51->setText(5, QCoreApplication::translate("MainWindow", "EE", nullptr));
+        ___qtreewidgetitem51->setText(4, QCoreApplication::translate("MainWindow", "DE", nullptr));
+        ___qtreewidgetitem51->setText(3, QCoreApplication::translate("MainWindow", "CE", nullptr));
+        ___qtreewidgetitem51->setText(1, QCoreApplication::translate("MainWindow", "X <- M:(M+1)", nullptr));
+        ___qtreewidgetitem51->setText(0, QCoreApplication::translate("MainWindow", "LDX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem52 = treeWidget->topLevelItem(51);
+        ___qtreewidgetitem52->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem52->setText(9, QCoreApplication::translate("MainWindow", "3,4,5,5", nullptr));
+        ___qtreewidgetitem52->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem52->setText(6, QCoreApplication::translate("MainWindow", "BE", nullptr));
+        ___qtreewidgetitem52->setText(5, QCoreApplication::translate("MainWindow", "AE", nullptr));
+        ___qtreewidgetitem52->setText(4, QCoreApplication::translate("MainWindow", "9E", nullptr));
+        ___qtreewidgetitem52->setText(3, QCoreApplication::translate("MainWindow", "8E", nullptr));
+        ___qtreewidgetitem52->setText(1, QCoreApplication::translate("MainWindow", "SP <- M:(M+1)", nullptr));
+        ___qtreewidgetitem52->setText(0, QCoreApplication::translate("MainWindow", "LDS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem53 = treeWidget->topLevelItem(52);
+        ___qtreewidgetitem53->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem53->setText(9, QCoreApplication::translate("MainWindow", "3,4,5,5", nullptr));
+        ___qtreewidgetitem53->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem53->setText(6, QCoreApplication::translate("MainWindow", "FC", nullptr));
+        ___qtreewidgetitem53->setText(5, QCoreApplication::translate("MainWindow", "EC", nullptr));
+        ___qtreewidgetitem53->setText(4, QCoreApplication::translate("MainWindow", "DC", nullptr));
+        ___qtreewidgetitem53->setText(3, QCoreApplication::translate("MainWindow", "CC", nullptr));
+        ___qtreewidgetitem53->setText(1, QCoreApplication::translate("MainWindow", "ACCA:ACCB <- M:(M+1)", nullptr));
+        ___qtreewidgetitem53->setText(0, QCoreApplication::translate("MainWindow", "LDD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem54 = treeWidget->topLevelItem(53);
+        ___qtreewidgetitem54->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem54->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem54->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem54->setText(6, QCoreApplication::translate("MainWindow", "F6", nullptr));
+        ___qtreewidgetitem54->setText(5, QCoreApplication::translate("MainWindow", "E6", nullptr));
+        ___qtreewidgetitem54->setText(4, QCoreApplication::translate("MainWindow", "D6", nullptr));
+        ___qtreewidgetitem54->setText(3, QCoreApplication::translate("MainWindow", "C6", nullptr));
+        ___qtreewidgetitem54->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- M", nullptr));
+        ___qtreewidgetitem54->setText(0, QCoreApplication::translate("MainWindow", "LDAB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem55 = treeWidget->topLevelItem(54);
+        ___qtreewidgetitem55->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem55->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem55->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem55->setText(6, QCoreApplication::translate("MainWindow", "B6", nullptr));
+        ___qtreewidgetitem55->setText(5, QCoreApplication::translate("MainWindow", "A6", nullptr));
+        ___qtreewidgetitem55->setText(4, QCoreApplication::translate("MainWindow", "96", nullptr));
+        ___qtreewidgetitem55->setText(3, QCoreApplication::translate("MainWindow", "86", nullptr));
+        ___qtreewidgetitem55->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- M", nullptr));
+        ___qtreewidgetitem55->setText(0, QCoreApplication::translate("MainWindow", "LDAA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem56 = treeWidget->topLevelItem(55);
+        ___qtreewidgetitem56->setText(10, QCoreApplication::translate("MainWindow", "2,2,3", nullptr));
+        ___qtreewidgetitem56->setText(9, QCoreApplication::translate("MainWindow", "5,5,5", nullptr));
+        ___qtreewidgetitem56->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem56->setText(6, QCoreApplication::translate("MainWindow", "BD", nullptr));
+        ___qtreewidgetitem56->setText(5, QCoreApplication::translate("MainWindow", "AF", nullptr));
+        ___qtreewidgetitem56->setText(4, QCoreApplication::translate("MainWindow", "9D", nullptr));
+        ___qtreewidgetitem56->setText(1, QCoreApplication::translate("MainWindow", "jump to subroutine", nullptr));
+        ___qtreewidgetitem56->setText(0, QCoreApplication::translate("MainWindow", "JSR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem57 = treeWidget->topLevelItem(56);
+        ___qtreewidgetitem57->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem57->setText(9, QCoreApplication::translate("MainWindow", "3,3", nullptr));
+        ___qtreewidgetitem57->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem57->setText(6, QCoreApplication::translate("MainWindow", "7E", nullptr));
+        ___qtreewidgetitem57->setText(5, QCoreApplication::translate("MainWindow", "6E", nullptr));
+        ___qtreewidgetitem57->setText(1, QCoreApplication::translate("MainWindow", "jump to address", nullptr));
+        ___qtreewidgetitem57->setText(0, QCoreApplication::translate("MainWindow", "JMP", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem58 = treeWidget->topLevelItem(57);
+        ___qtreewidgetitem58->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem58->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem58->setText(8, QCoreApplication::translate("MainWindow", "---*--", nullptr));
+        ___qtreewidgetitem58->setText(2, QCoreApplication::translate("MainWindow", "08", nullptr));
+        ___qtreewidgetitem58->setText(1, QCoreApplication::translate("MainWindow", "X <- X + 1", nullptr));
+        ___qtreewidgetitem58->setText(0, QCoreApplication::translate("MainWindow", "INX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem59 = treeWidget->topLevelItem(58);
+        ___qtreewidgetitem59->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem59->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem59->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem59->setText(2, QCoreApplication::translate("MainWindow", "31", nullptr));
+        ___qtreewidgetitem59->setText(1, QCoreApplication::translate("MainWindow", "SP <- SP + 1", nullptr));
+        ___qtreewidgetitem59->setText(0, QCoreApplication::translate("MainWindow", "INS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem60 = treeWidget->topLevelItem(59);
+        ___qtreewidgetitem60->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem60->setText(9, QCoreApplication::translate("MainWindow", "2,2", nullptr));
+        ___qtreewidgetitem60->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem60->setText(2, QCoreApplication::translate("MainWindow", "5C", nullptr));
+        ___qtreewidgetitem60->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB +1", nullptr));
+        ___qtreewidgetitem60->setText(0, QCoreApplication::translate("MainWindow", "INCB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem61 = treeWidget->topLevelItem(60);
+        ___qtreewidgetitem61->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem61->setText(9, QCoreApplication::translate("MainWindow", "2,2", nullptr));
+        ___qtreewidgetitem61->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem61->setText(2, QCoreApplication::translate("MainWindow", "4C", nullptr));
+        ___qtreewidgetitem61->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA + 1", nullptr));
+        ___qtreewidgetitem61->setText(0, QCoreApplication::translate("MainWindow", "INCA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem62 = treeWidget->topLevelItem(61);
+        ___qtreewidgetitem62->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem62->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem62->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem62->setText(6, QCoreApplication::translate("MainWindow", "7C", nullptr));
+        ___qtreewidgetitem62->setText(5, QCoreApplication::translate("MainWindow", "6C", nullptr));
+        ___qtreewidgetitem62->setText(1, QCoreApplication::translate("MainWindow", "M <- M + 1", nullptr));
+        ___qtreewidgetitem62->setText(0, QCoreApplication::translate("MainWindow", "INC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem63 = treeWidget->topLevelItem(62);
+        ___qtreewidgetitem63->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem63->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem63->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem63->setText(6, QCoreApplication::translate("MainWindow", "F8", nullptr));
+        ___qtreewidgetitem63->setText(5, QCoreApplication::translate("MainWindow", "E8", nullptr));
+        ___qtreewidgetitem63->setText(4, QCoreApplication::translate("MainWindow", "D8", nullptr));
+        ___qtreewidgetitem63->setText(3, QCoreApplication::translate("MainWindow", "C8", nullptr));
+        ___qtreewidgetitem63->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB \342\212\225 M", nullptr));
+        ___qtreewidgetitem63->setText(0, QCoreApplication::translate("MainWindow", "EORB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem64 = treeWidget->topLevelItem(63);
+        ___qtreewidgetitem64->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem64->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem64->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem64->setText(6, QCoreApplication::translate("MainWindow", "B8", nullptr));
+        ___qtreewidgetitem64->setText(5, QCoreApplication::translate("MainWindow", "A8", nullptr));
+        ___qtreewidgetitem64->setText(4, QCoreApplication::translate("MainWindow", "98", nullptr));
+        ___qtreewidgetitem64->setText(3, QCoreApplication::translate("MainWindow", "88", nullptr));
+        ___qtreewidgetitem64->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA \342\212\225 M", nullptr));
+        ___qtreewidgetitem64->setText(0, QCoreApplication::translate("MainWindow", "EORA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem65 = treeWidget->topLevelItem(64);
+        ___qtreewidgetitem65->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem65->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem65->setText(8, QCoreApplication::translate("MainWindow", "---*--", nullptr));
+        ___qtreewidgetitem65->setText(2, QCoreApplication::translate("MainWindow", "09", nullptr));
+        ___qtreewidgetitem65->setText(1, QCoreApplication::translate("MainWindow", "X <- X - 1", nullptr));
+        ___qtreewidgetitem65->setText(0, QCoreApplication::translate("MainWindow", "DEX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem66 = treeWidget->topLevelItem(65);
+        ___qtreewidgetitem66->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem66->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem66->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem66->setText(2, QCoreApplication::translate("MainWindow", "34", nullptr));
+        ___qtreewidgetitem66->setText(1, QCoreApplication::translate("MainWindow", "SP <- SP - 1", nullptr));
+        ___qtreewidgetitem66->setText(0, QCoreApplication::translate("MainWindow", "DES", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem67 = treeWidget->topLevelItem(66);
+        ___qtreewidgetitem67->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem67->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem67->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem67->setText(2, QCoreApplication::translate("MainWindow", "5A", nullptr));
+        ___qtreewidgetitem67->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB - 1", nullptr));
+        ___qtreewidgetitem67->setText(0, QCoreApplication::translate("MainWindow", "DECB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem68 = treeWidget->topLevelItem(67);
+        ___qtreewidgetitem68->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem68->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem68->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem68->setText(2, QCoreApplication::translate("MainWindow", "4A", nullptr));
+        ___qtreewidgetitem68->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA - 1", nullptr));
+        ___qtreewidgetitem68->setText(0, QCoreApplication::translate("MainWindow", "DECA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem69 = treeWidget->topLevelItem(68);
+        ___qtreewidgetitem69->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem69->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem69->setText(8, QCoreApplication::translate("MainWindow", "--***-", nullptr));
+        ___qtreewidgetitem69->setText(6, QCoreApplication::translate("MainWindow", "7A", nullptr));
+        ___qtreewidgetitem69->setText(5, QCoreApplication::translate("MainWindow", "6A", nullptr));
+        ___qtreewidgetitem69->setText(1, QCoreApplication::translate("MainWindow", "M <- M - 1", nullptr));
+        ___qtreewidgetitem69->setText(0, QCoreApplication::translate("MainWindow", "DEC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem70 = treeWidget->topLevelItem(69);
+        ___qtreewidgetitem70->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem70->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem70->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem70->setText(2, QCoreApplication::translate("MainWindow", "19", nullptr));
+        ___qtreewidgetitem70->setText(1, QCoreApplication::translate("MainWindow", "decimal adjust ACCA", nullptr));
+        ___qtreewidgetitem70->setText(0, QCoreApplication::translate("MainWindow", "DAA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem71 = treeWidget->topLevelItem(70);
+        ___qtreewidgetitem71->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem71->setText(9, QCoreApplication::translate("MainWindow", "4,5,6,6", nullptr));
+        ___qtreewidgetitem71->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem71->setText(6, QCoreApplication::translate("MainWindow", "BC", nullptr));
+        ___qtreewidgetitem71->setText(5, QCoreApplication::translate("MainWindow", "AC", nullptr));
+        ___qtreewidgetitem71->setText(4, QCoreApplication::translate("MainWindow", "9C", nullptr));
+        ___qtreewidgetitem71->setText(3, QCoreApplication::translate("MainWindow", "8C", nullptr));
+        ___qtreewidgetitem71->setText(1, QCoreApplication::translate("MainWindow", "X - M:(M+1)", nullptr));
+        ___qtreewidgetitem71->setText(0, QCoreApplication::translate("MainWindow", "CPX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem72 = treeWidget->topLevelItem(71);
+        ___qtreewidgetitem72->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem72->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem72->setText(8, QCoreApplication::translate("MainWindow", "--**01", nullptr));
+        ___qtreewidgetitem72->setText(2, QCoreApplication::translate("MainWindow", "53", nullptr));
+        ___qtreewidgetitem72->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- FF - ACCB", nullptr));
+        ___qtreewidgetitem72->setText(0, QCoreApplication::translate("MainWindow", "COMB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem73 = treeWidget->topLevelItem(72);
+        ___qtreewidgetitem73->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem73->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem73->setText(8, QCoreApplication::translate("MainWindow", "--**01", nullptr));
+        ___qtreewidgetitem73->setText(2, QCoreApplication::translate("MainWindow", "43", nullptr));
+        ___qtreewidgetitem73->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- FF - ACCA", nullptr));
+        ___qtreewidgetitem73->setText(0, QCoreApplication::translate("MainWindow", "COMA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem74 = treeWidget->topLevelItem(73);
+        ___qtreewidgetitem74->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem74->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem74->setText(8, QCoreApplication::translate("MainWindow", "--**01", nullptr));
+        ___qtreewidgetitem74->setText(6, QCoreApplication::translate("MainWindow", "73", nullptr));
+        ___qtreewidgetitem74->setText(5, QCoreApplication::translate("MainWindow", "63", nullptr));
+        ___qtreewidgetitem74->setText(1, QCoreApplication::translate("MainWindow", "M <- FF - M", nullptr));
+        ___qtreewidgetitem74->setText(0, QCoreApplication::translate("MainWindow", "COM", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem75 = treeWidget->topLevelItem(74);
+        ___qtreewidgetitem75->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem75->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem75->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem75->setText(6, QCoreApplication::translate("MainWindow", "F1", nullptr));
+        ___qtreewidgetitem75->setText(5, QCoreApplication::translate("MainWindow", "E1", nullptr));
+        ___qtreewidgetitem75->setText(4, QCoreApplication::translate("MainWindow", "D1", nullptr));
+        ___qtreewidgetitem75->setText(3, QCoreApplication::translate("MainWindow", "C1", nullptr));
+        ___qtreewidgetitem75->setText(1, QCoreApplication::translate("MainWindow", "ACCB - M", nullptr));
+        ___qtreewidgetitem75->setText(0, QCoreApplication::translate("MainWindow", "CMPB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem76 = treeWidget->topLevelItem(75);
+        ___qtreewidgetitem76->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem76->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem76->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem76->setText(6, QCoreApplication::translate("MainWindow", "B1", nullptr));
+        ___qtreewidgetitem76->setText(5, QCoreApplication::translate("MainWindow", "A1", nullptr));
+        ___qtreewidgetitem76->setText(4, QCoreApplication::translate("MainWindow", "91", nullptr));
+        ___qtreewidgetitem76->setText(3, QCoreApplication::translate("MainWindow", "81", nullptr));
+        ___qtreewidgetitem76->setText(1, QCoreApplication::translate("MainWindow", "ACCA - M", nullptr));
+        ___qtreewidgetitem76->setText(0, QCoreApplication::translate("MainWindow", "CMPA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem77 = treeWidget->topLevelItem(76);
+        ___qtreewidgetitem77->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem77->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem77->setText(8, QCoreApplication::translate("MainWindow", "----0-", nullptr));
+        ___qtreewidgetitem77->setText(2, QCoreApplication::translate("MainWindow", "0A", nullptr));
+        ___qtreewidgetitem77->setText(1, QCoreApplication::translate("MainWindow", "V <- 0", nullptr));
+        ___qtreewidgetitem77->setText(0, QCoreApplication::translate("MainWindow", "CLV", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem78 = treeWidget->topLevelItem(77);
+        ___qtreewidgetitem78->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem78->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem78->setText(8, QCoreApplication::translate("MainWindow", "--0100", nullptr));
+        ___qtreewidgetitem78->setText(2, QCoreApplication::translate("MainWindow", "5F", nullptr));
+        ___qtreewidgetitem78->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- 00", nullptr));
+        ___qtreewidgetitem78->setText(0, QCoreApplication::translate("MainWindow", "CLRB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem79 = treeWidget->topLevelItem(78);
+        ___qtreewidgetitem79->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem79->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem79->setText(8, QCoreApplication::translate("MainWindow", "--0100", nullptr));
+        ___qtreewidgetitem79->setText(2, QCoreApplication::translate("MainWindow", "4F", nullptr));
+        ___qtreewidgetitem79->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- 00", nullptr));
+        ___qtreewidgetitem79->setText(0, QCoreApplication::translate("MainWindow", "CLRA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem80 = treeWidget->topLevelItem(79);
+        ___qtreewidgetitem80->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem80->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem80->setText(8, QCoreApplication::translate("MainWindow", "--0100", nullptr));
+        ___qtreewidgetitem80->setText(6, QCoreApplication::translate("MainWindow", "7F", nullptr));
+        ___qtreewidgetitem80->setText(5, QCoreApplication::translate("MainWindow", "6F", nullptr));
+        ___qtreewidgetitem80->setText(1, QCoreApplication::translate("MainWindow", "M <- 00", nullptr));
+        ___qtreewidgetitem80->setText(0, QCoreApplication::translate("MainWindow", "CLR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem81 = treeWidget->topLevelItem(80);
+        ___qtreewidgetitem81->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem81->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem81->setText(8, QCoreApplication::translate("MainWindow", "-0----", nullptr));
+        ___qtreewidgetitem81->setText(2, QCoreApplication::translate("MainWindow", "0E", nullptr));
+        ___qtreewidgetitem81->setText(1, QCoreApplication::translate("MainWindow", "I <- 0", nullptr));
+        ___qtreewidgetitem81->setText(0, QCoreApplication::translate("MainWindow", "CLI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem82 = treeWidget->topLevelItem(81);
+        ___qtreewidgetitem82->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem82->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem82->setText(8, QCoreApplication::translate("MainWindow", "-----0", nullptr));
+        ___qtreewidgetitem82->setText(2, QCoreApplication::translate("MainWindow", "0C", nullptr));
+        ___qtreewidgetitem82->setText(1, QCoreApplication::translate("MainWindow", "C <- 0", nullptr));
+        ___qtreewidgetitem82->setText(0, QCoreApplication::translate("MainWindow", "CLC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem83 = treeWidget->topLevelItem(82);
+        ___qtreewidgetitem83->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem83->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem83->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem83->setText(2, QCoreApplication::translate("MainWindow", "11", nullptr));
+        ___qtreewidgetitem83->setText(1, QCoreApplication::translate("MainWindow", "ACCA-ACCB", nullptr));
+        ___qtreewidgetitem83->setText(0, QCoreApplication::translate("MainWindow", "CBA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem84 = treeWidget->topLevelItem(83);
+        ___qtreewidgetitem84->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem84->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem84->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem84->setText(7, QCoreApplication::translate("MainWindow", "29", nullptr));
+        ___qtreewidgetitem84->setText(1, QCoreApplication::translate("MainWindow", "branch if overflow set - V=1", nullptr));
+        ___qtreewidgetitem84->setText(0, QCoreApplication::translate("MainWindow", "BVS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem85 = treeWidget->topLevelItem(84);
+        ___qtreewidgetitem85->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem85->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem85->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem85->setText(7, QCoreApplication::translate("MainWindow", "28", nullptr));
+        ___qtreewidgetitem85->setText(1, QCoreApplication::translate("MainWindow", "branch if overflow clear - V=0", nullptr));
+        ___qtreewidgetitem85->setText(0, QCoreApplication::translate("MainWindow", "BVC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem86 = treeWidget->topLevelItem(85);
+        ___qtreewidgetitem86->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem86->setText(9, QCoreApplication::translate("MainWindow", "6", nullptr));
+        ___qtreewidgetitem86->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem86->setText(7, QCoreApplication::translate("MainWindow", "8D", nullptr));
+        ___qtreewidgetitem86->setText(1, QCoreApplication::translate("MainWindow", "branch to subroutine", nullptr));
+        ___qtreewidgetitem86->setText(0, QCoreApplication::translate("MainWindow", "BSR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem87 = treeWidget->topLevelItem(86);
+        ___qtreewidgetitem87->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem87->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem87->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem87->setText(7, QCoreApplication::translate("MainWindow", "21", nullptr));
+        ___qtreewidgetitem87->setText(1, QCoreApplication::translate("MainWindow", "branch never", nullptr));
+        ___qtreewidgetitem87->setText(0, QCoreApplication::translate("MainWindow", "BRN", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem88 = treeWidget->topLevelItem(87);
+        ___qtreewidgetitem88->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem88->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem88->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem88->setText(7, QCoreApplication::translate("MainWindow", "20", nullptr));
+        ___qtreewidgetitem88->setText(1, QCoreApplication::translate("MainWindow", "branch always", nullptr));
+        ___qtreewidgetitem88->setText(0, QCoreApplication::translate("MainWindow", "BRA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem89 = treeWidget->topLevelItem(88);
+        ___qtreewidgetitem89->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem89->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem89->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem89->setText(7, QCoreApplication::translate("MainWindow", "2A", nullptr));
+        ___qtreewidgetitem89->setText(1, QCoreApplication::translate("MainWindow", "branch if plus - N=0", nullptr));
+        ___qtreewidgetitem89->setText(0, QCoreApplication::translate("MainWindow", "BPL", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem90 = treeWidget->topLevelItem(89);
+        ___qtreewidgetitem90->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem90->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem90->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem90->setText(7, QCoreApplication::translate("MainWindow", "26", nullptr));
+        ___qtreewidgetitem90->setText(1, QCoreApplication::translate("MainWindow", "branch if not equal - Z=0", nullptr));
+        ___qtreewidgetitem90->setText(0, QCoreApplication::translate("MainWindow", "BNE", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem91 = treeWidget->topLevelItem(90);
+        ___qtreewidgetitem91->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem91->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem91->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem91->setText(7, QCoreApplication::translate("MainWindow", "2B", nullptr));
+        ___qtreewidgetitem91->setText(1, QCoreApplication::translate("MainWindow", "branch if minus - N=1", nullptr));
+        ___qtreewidgetitem91->setText(0, QCoreApplication::translate("MainWindow", "BMI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem92 = treeWidget->topLevelItem(91);
+        ___qtreewidgetitem92->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem92->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem92->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem92->setText(7, QCoreApplication::translate("MainWindow", "2D", nullptr));
+        ___qtreewidgetitem92->setText(1, QCoreApplication::translate("MainWindow", "bramch if less than zero - N!=V", nullptr));
+        ___qtreewidgetitem92->setText(0, QCoreApplication::translate("MainWindow", "BLT", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem93 = treeWidget->topLevelItem(92);
+        ___qtreewidgetitem93->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem93->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem93->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem93->setText(7, QCoreApplication::translate("MainWindow", "23", nullptr));
+        ___qtreewidgetitem93->setText(1, QCoreApplication::translate("MainWindow", "branch if lower or same - C=1 or Z=1", nullptr));
+        ___qtreewidgetitem93->setText(0, QCoreApplication::translate("MainWindow", "BLS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem94 = treeWidget->topLevelItem(93);
+        ___qtreewidgetitem94->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem94->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem94->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem94->setText(7, QCoreApplication::translate("MainWindow", "2F", nullptr));
+        ___qtreewidgetitem94->setText(1, QCoreApplication::translate("MainWindow", "branch if less than or equal to zero - Z=1 or N!=V", nullptr));
+        ___qtreewidgetitem94->setText(0, QCoreApplication::translate("MainWindow", "BLE", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem95 = treeWidget->topLevelItem(94);
+        ___qtreewidgetitem95->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem95->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem95->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem95->setText(6, QCoreApplication::translate("MainWindow", "F5", nullptr));
+        ___qtreewidgetitem95->setText(5, QCoreApplication::translate("MainWindow", "E5", nullptr));
+        ___qtreewidgetitem95->setText(4, QCoreApplication::translate("MainWindow", "D5", nullptr));
+        ___qtreewidgetitem95->setText(3, QCoreApplication::translate("MainWindow", "C5", nullptr));
+        ___qtreewidgetitem95->setText(1, QCoreApplication::translate("MainWindow", "ACCB\302\267M", nullptr));
+        ___qtreewidgetitem95->setText(0, QCoreApplication::translate("MainWindow", "BITB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem96 = treeWidget->topLevelItem(95);
+        ___qtreewidgetitem96->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem96->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem96->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem96->setText(6, QCoreApplication::translate("MainWindow", "B5", nullptr));
+        ___qtreewidgetitem96->setText(5, QCoreApplication::translate("MainWindow", "A5", nullptr));
+        ___qtreewidgetitem96->setText(4, QCoreApplication::translate("MainWindow", "95", nullptr));
+        ___qtreewidgetitem96->setText(3, QCoreApplication::translate("MainWindow", "85", nullptr));
+        ___qtreewidgetitem96->setText(1, QCoreApplication::translate("MainWindow", "ACCA\302\267M", nullptr));
+        ___qtreewidgetitem96->setText(0, QCoreApplication::translate("MainWindow", "BITA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem97 = treeWidget->topLevelItem(96);
+        ___qtreewidgetitem97->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem97->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem97->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem97->setText(7, QCoreApplication::translate("MainWindow", "22", nullptr));
+        ___qtreewidgetitem97->setText(1, QCoreApplication::translate("MainWindow", "branch if higher - C=0 and Z=0", nullptr));
+        ___qtreewidgetitem97->setText(0, QCoreApplication::translate("MainWindow", "BHI", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem98 = treeWidget->topLevelItem(97);
+        ___qtreewidgetitem98->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem98->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem98->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem98->setText(7, QCoreApplication::translate("MainWindow", "2E", nullptr));
+        ___qtreewidgetitem98->setText(1, QCoreApplication::translate("MainWindow", "branch if greater than zero - Z=1 and N=V", nullptr));
+        ___qtreewidgetitem98->setText(0, QCoreApplication::translate("MainWindow", "BGT", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem99 = treeWidget->topLevelItem(98);
+        ___qtreewidgetitem99->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem99->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem99->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem99->setText(7, QCoreApplication::translate("MainWindow", "2C", nullptr));
+        ___qtreewidgetitem99->setText(1, QCoreApplication::translate("MainWindow", "branch if greater than or equal to zero - N=V", nullptr));
+        ___qtreewidgetitem99->setText(0, QCoreApplication::translate("MainWindow", "BGE", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem100 = treeWidget->topLevelItem(99);
+        ___qtreewidgetitem100->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem100->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem100->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem100->setText(7, QCoreApplication::translate("MainWindow", "27", nullptr));
+        ___qtreewidgetitem100->setText(1, QCoreApplication::translate("MainWindow", "branch if equal - Z=1", nullptr));
+        ___qtreewidgetitem100->setText(0, QCoreApplication::translate("MainWindow", "BEQ", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem101 = treeWidget->topLevelItem(100);
+        ___qtreewidgetitem101->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem101->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem101->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem101->setText(7, QCoreApplication::translate("MainWindow", "25", nullptr));
+        ___qtreewidgetitem101->setText(1, QCoreApplication::translate("MainWindow", "branch if carry set - C=1", nullptr));
+        ___qtreewidgetitem101->setText(0, QCoreApplication::translate("MainWindow", "BCS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem102 = ___qtreewidgetitem101->child(0);
+        ___qtreewidgetitem102->setText(1, QCoreApplication::translate("MainWindow", "Alias for BCS", nullptr));
+        ___qtreewidgetitem102->setText(0, QCoreApplication::translate("MainWindow", "BLO", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem103 = treeWidget->topLevelItem(101);
+        ___qtreewidgetitem103->setText(10, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem103->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem103->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem103->setText(7, QCoreApplication::translate("MainWindow", "24", nullptr));
+        ___qtreewidgetitem103->setText(1, QCoreApplication::translate("MainWindow", "branch if carry clear- C=0", nullptr));
+        ___qtreewidgetitem103->setText(0, QCoreApplication::translate("MainWindow", "BCC", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem104 = ___qtreewidgetitem103->child(0);
+        ___qtreewidgetitem104->setText(1, QCoreApplication::translate("MainWindow", "Alias for BCC, branch if higher or same ", nullptr));
+        ___qtreewidgetitem104->setText(0, QCoreApplication::translate("MainWindow", "BHS", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem105 = treeWidget->topLevelItem(102);
+        ___qtreewidgetitem105->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem105->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem105->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem105->setText(2, QCoreApplication::translate("MainWindow", "57", nullptr));
+        ___qtreewidgetitem105->setText(1, QCoreApplication::translate("MainWindow", "ACCB arithmetic shift right", nullptr));
+        ___qtreewidgetitem105->setText(0, QCoreApplication::translate("MainWindow", "ASRB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem106 = treeWidget->topLevelItem(103);
+        ___qtreewidgetitem106->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem106->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem106->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem106->setText(2, QCoreApplication::translate("MainWindow", "47", nullptr));
+        ___qtreewidgetitem106->setText(1, QCoreApplication::translate("MainWindow", "ACCA arithmetic shift right", nullptr));
+        ___qtreewidgetitem106->setText(0, QCoreApplication::translate("MainWindow", "ASRA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem107 = treeWidget->topLevelItem(104);
+        ___qtreewidgetitem107->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem107->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem107->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem107->setText(6, QCoreApplication::translate("MainWindow", "77", nullptr));
+        ___qtreewidgetitem107->setText(5, QCoreApplication::translate("MainWindow", "67", nullptr));
+        ___qtreewidgetitem107->setText(1, QCoreApplication::translate("MainWindow", "M arithmetic shift right", nullptr));
+        ___qtreewidgetitem107->setText(0, QCoreApplication::translate("MainWindow", "ASR", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem108 = treeWidget->topLevelItem(105);
+        ___qtreewidgetitem108->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem108->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem108->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem108->setText(2, QCoreApplication::translate("MainWindow", "05", nullptr));
+        ___qtreewidgetitem108->setText(1, QCoreApplication::translate("MainWindow", "ACCA:ACCB arithemtic/logical shift left", nullptr));
+        ___qtreewidgetitem108->setText(0, QCoreApplication::translate("MainWindow", "ASLD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem109 = ___qtreewidgetitem108->child(0);
+        ___qtreewidgetitem109->setText(1, QCoreApplication::translate("MainWindow", "Alias for ASLD", nullptr));
+        ___qtreewidgetitem109->setText(0, QCoreApplication::translate("MainWindow", "LSLD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem110 = treeWidget->topLevelItem(106);
+        ___qtreewidgetitem110->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem110->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem110->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem110->setText(2, QCoreApplication::translate("MainWindow", "58", nullptr));
+        ___qtreewidgetitem110->setText(1, QCoreApplication::translate("MainWindow", "ACCB arithemtic/logical shift left", nullptr));
+        ___qtreewidgetitem110->setText(0, QCoreApplication::translate("MainWindow", "ASLB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem111 = ___qtreewidgetitem110->child(0);
+        ___qtreewidgetitem111->setText(1, QCoreApplication::translate("MainWindow", "Alias for ASLB", nullptr));
+        ___qtreewidgetitem111->setText(0, QCoreApplication::translate("MainWindow", "LSLB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem112 = treeWidget->topLevelItem(107);
+        ___qtreewidgetitem112->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem112->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem112->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem112->setText(2, QCoreApplication::translate("MainWindow", "48", nullptr));
+        ___qtreewidgetitem112->setText(1, QCoreApplication::translate("MainWindow", "ACCA arithemtic/logical shift left", nullptr));
+        ___qtreewidgetitem112->setText(0, QCoreApplication::translate("MainWindow", "ASLA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem113 = ___qtreewidgetitem112->child(0);
+        ___qtreewidgetitem113->setText(1, QCoreApplication::translate("MainWindow", "Alias for ASLA", nullptr));
+        ___qtreewidgetitem113->setText(0, QCoreApplication::translate("MainWindow", "LSLA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem114 = treeWidget->topLevelItem(108);
+        ___qtreewidgetitem114->setText(10, QCoreApplication::translate("MainWindow", "2,3", nullptr));
+        ___qtreewidgetitem114->setText(9, QCoreApplication::translate("MainWindow", "6,6", nullptr));
+        ___qtreewidgetitem114->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem114->setText(6, QCoreApplication::translate("MainWindow", "78", nullptr));
+        ___qtreewidgetitem114->setText(5, QCoreApplication::translate("MainWindow", "68", nullptr));
+        ___qtreewidgetitem114->setText(1, QCoreApplication::translate("MainWindow", "M arithemtic/logical shift left", nullptr));
+        ___qtreewidgetitem114->setText(0, QCoreApplication::translate("MainWindow", "ASL", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem115 = ___qtreewidgetitem114->child(0);
+        ___qtreewidgetitem115->setText(1, QCoreApplication::translate("MainWindow", "Alias for ASL", nullptr));
+        ___qtreewidgetitem115->setText(0, QCoreApplication::translate("MainWindow", "LSL", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem116 = treeWidget->topLevelItem(109);
+        ___qtreewidgetitem116->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem116->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem116->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem116->setText(6, QCoreApplication::translate("MainWindow", "F4", nullptr));
+        ___qtreewidgetitem116->setText(5, QCoreApplication::translate("MainWindow", "E4", nullptr));
+        ___qtreewidgetitem116->setText(4, QCoreApplication::translate("MainWindow", "D4", nullptr));
+        ___qtreewidgetitem116->setText(3, QCoreApplication::translate("MainWindow", "C4", nullptr));
+        ___qtreewidgetitem116->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB \302\267 M", nullptr));
+        ___qtreewidgetitem116->setText(0, QCoreApplication::translate("MainWindow", "ANDB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem117 = treeWidget->topLevelItem(110);
+        ___qtreewidgetitem117->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem117->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem117->setText(8, QCoreApplication::translate("MainWindow", "--**0-", nullptr));
+        ___qtreewidgetitem117->setText(6, QCoreApplication::translate("MainWindow", "B4", nullptr));
+        ___qtreewidgetitem117->setText(5, QCoreApplication::translate("MainWindow", "A4", nullptr));
+        ___qtreewidgetitem117->setText(4, QCoreApplication::translate("MainWindow", "94", nullptr));
+        ___qtreewidgetitem117->setText(3, QCoreApplication::translate("MainWindow", "84", nullptr));
+        ___qtreewidgetitem117->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA \302\267 M", nullptr));
+        ___qtreewidgetitem117->setText(0, QCoreApplication::translate("MainWindow", "ANDA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem118 = treeWidget->topLevelItem(111);
+        ___qtreewidgetitem118->setText(10, QCoreApplication::translate("MainWindow", "3,2,2,3", nullptr));
+        ___qtreewidgetitem118->setText(9, QCoreApplication::translate("MainWindow", "4,5,6,6", nullptr));
+        ___qtreewidgetitem118->setText(8, QCoreApplication::translate("MainWindow", "--****", nullptr));
+        ___qtreewidgetitem118->setText(6, QCoreApplication::translate("MainWindow", "F3", nullptr));
+        ___qtreewidgetitem118->setText(5, QCoreApplication::translate("MainWindow", "E3", nullptr));
+        ___qtreewidgetitem118->setText(4, QCoreApplication::translate("MainWindow", "D3", nullptr));
+        ___qtreewidgetitem118->setText(3, QCoreApplication::translate("MainWindow", "C3", nullptr));
+        ___qtreewidgetitem118->setText(1, QCoreApplication::translate("MainWindow", "ACCA:ACCB <- ACCA:ACCB + M:(M+1)", nullptr));
+        ___qtreewidgetitem118->setText(0, QCoreApplication::translate("MainWindow", "ADDD", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem119 = treeWidget->topLevelItem(112);
+        ___qtreewidgetitem119->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem119->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem119->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
+        ___qtreewidgetitem119->setText(6, QCoreApplication::translate("MainWindow", "FB", nullptr));
+        ___qtreewidgetitem119->setText(5, QCoreApplication::translate("MainWindow", "EB", nullptr));
+        ___qtreewidgetitem119->setText(4, QCoreApplication::translate("MainWindow", "DB", nullptr));
+        ___qtreewidgetitem119->setText(3, QCoreApplication::translate("MainWindow", "CB", nullptr));
+        ___qtreewidgetitem119->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB + M", nullptr));
+        ___qtreewidgetitem119->setText(0, QCoreApplication::translate("MainWindow", "ADDB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem120 = treeWidget->topLevelItem(113);
+        ___qtreewidgetitem120->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem120->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem120->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
+        ___qtreewidgetitem120->setText(6, QCoreApplication::translate("MainWindow", "BB", nullptr));
+        ___qtreewidgetitem120->setText(5, QCoreApplication::translate("MainWindow", "AB", nullptr));
+        ___qtreewidgetitem120->setText(4, QCoreApplication::translate("MainWindow", "9B", nullptr));
+        ___qtreewidgetitem120->setText(3, QCoreApplication::translate("MainWindow", "8B", nullptr));
+        ___qtreewidgetitem120->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA + M", nullptr));
+        ___qtreewidgetitem120->setText(0, QCoreApplication::translate("MainWindow", "ADDA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem121 = treeWidget->topLevelItem(114);
+        ___qtreewidgetitem121->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem121->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem121->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
+        ___qtreewidgetitem121->setText(6, QCoreApplication::translate("MainWindow", "F9", nullptr));
+        ___qtreewidgetitem121->setText(5, QCoreApplication::translate("MainWindow", "E9", nullptr));
+        ___qtreewidgetitem121->setText(4, QCoreApplication::translate("MainWindow", "D9", nullptr));
+        ___qtreewidgetitem121->setText(3, QCoreApplication::translate("MainWindow", "C9", nullptr));
+        ___qtreewidgetitem121->setText(1, QCoreApplication::translate("MainWindow", "ACCB <- ACCB + M + C", nullptr));
+        ___qtreewidgetitem121->setText(0, QCoreApplication::translate("MainWindow", "ADCB", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem122 = treeWidget->topLevelItem(115);
+        ___qtreewidgetitem122->setText(10, QCoreApplication::translate("MainWindow", "2,2,2,3", nullptr));
+        ___qtreewidgetitem122->setText(9, QCoreApplication::translate("MainWindow", "2,3,4,4", nullptr));
+        ___qtreewidgetitem122->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
+        ___qtreewidgetitem122->setText(6, QCoreApplication::translate("MainWindow", "B9", nullptr));
+        ___qtreewidgetitem122->setText(5, QCoreApplication::translate("MainWindow", "A9", nullptr));
+        ___qtreewidgetitem122->setText(4, QCoreApplication::translate("MainWindow", "99", nullptr));
+        ___qtreewidgetitem122->setText(3, QCoreApplication::translate("MainWindow", "89", nullptr));
+        ___qtreewidgetitem122->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA + M + C", nullptr));
+        ___qtreewidgetitem122->setText(0, QCoreApplication::translate("MainWindow", "ADCA", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem123 = treeWidget->topLevelItem(116);
+        ___qtreewidgetitem123->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem123->setText(9, QCoreApplication::translate("MainWindow", "3", nullptr));
+        ___qtreewidgetitem123->setText(8, QCoreApplication::translate("MainWindow", "------", nullptr));
+        ___qtreewidgetitem123->setText(2, QCoreApplication::translate("MainWindow", "3A", nullptr));
+        ___qtreewidgetitem123->setText(1, QCoreApplication::translate("MainWindow", "X <- X + 00:B", nullptr));
+        ___qtreewidgetitem123->setText(0, QCoreApplication::translate("MainWindow", "ABX", nullptr));
+        QTreeWidgetItem *___qtreewidgetitem124 = treeWidget->topLevelItem(117);
+        ___qtreewidgetitem124->setText(10, QCoreApplication::translate("MainWindow", "1", nullptr));
+        ___qtreewidgetitem124->setText(9, QCoreApplication::translate("MainWindow", "2", nullptr));
+        ___qtreewidgetitem124->setText(8, QCoreApplication::translate("MainWindow", "*-****", nullptr));
+        ___qtreewidgetitem124->setText(2, QCoreApplication::translate("MainWindow", "1B", nullptr));
+        ___qtreewidgetitem124->setText(1, QCoreApplication::translate("MainWindow", "ACCA <- ACCA + ACCB", nullptr));
+        ___qtreewidgetitem124->setText(0, QCoreApplication::translate("MainWindow", "ABA", nullptr));
         treeWidget->setSortingEnabled(__sortingEnabled);
 
         tabWidget->setTabText(tabWidget->indexOf(opCodes), QCoreApplication::translate("MainWindow", "OPC", nullptr));
