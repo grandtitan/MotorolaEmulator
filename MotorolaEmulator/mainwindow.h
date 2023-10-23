@@ -56,7 +56,7 @@ private:
     Ui::MainWindow *ui;
 private:
     int cycleNum = 1;
-    bool useCyclesPerSecond = true;
+    bool useCyclesPerSecond = false;
     int waitCycles = 0;
     void resetEmulator(bool failedCompile);
     void updateMemoryTab();

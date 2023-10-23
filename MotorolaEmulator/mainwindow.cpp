@@ -127,15 +127,19 @@ void MainWindow::stopExecution(){
     ui->labelRunningCycleNum->setVisible(false);
 }
 void MainWindow::startExecution(){
-        running = true;
-        ui->labelRunningIndicatior->setVisible(true);
-        if(useCyclesPerSecond){
+    running = true;
+    ui->labelRunningIndicatior->setVisible(true);
+    if(useCyclesPerSecond){
         ui->labelRunningCycleNum->setVisible(true);
-        }
-        executeLoop();
-        if(running == true){
+    }
+    executeLoop();
+    if(running == true){
+        if(executionSpeed != -1){
             executionTimer->start(executionSpeed);
+        }else{
+            executionTimer->start(0);
         }
+    }
 }
 
 QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
@@ -664,8 +668,7 @@ void MainWindow::resetEmulator(bool failedCompile){
         }
     }else{
 
-	}
-	
+    }
 }
 void MainWindow::breakCompile(){
     compiled = 0;
@@ -849,6 +852,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             } else if (mouseEvent->button() == Qt::MiddleButton) {
                 Memory[0xFFF1] = 3;
                 updateMemoryCell(0xFFF1);
+
             }
             return true;
         } else if (event->type() == QEvent::MouseButtonRelease) {
@@ -967,30 +971,71 @@ bool MainWindow::on_buttonCompile_clicked()
 }
 void MainWindow::on_buttonLoad_clicked()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt);;All Files (*)"));
+    if(!writeToMemory){
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt);;All Files (*)"));
 
-    if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream in(&file);
-            ui->plainTextCode->setPlainText(in.readAll());
-            file.close();
-        } else {
-            PrintConsole("Error loading script",0);
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(&file);
+                ui->plainTextCode->setPlainText(in.readAll());
+                file.close();
+            } else {
+              PrintConsole("Error loading script",0);
+            }
+        }
+    }else{
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Binary Files (*.bin);;All Files (*)"));
+
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::ReadOnly)) {
+              QByteArray byteArray = file.readAll();
+              if (byteArray.size() == sizeof(Memory)) {
+                    stopExecution();
+                    if(compiled){
+                        breakCompile();
+                    }
+                    std::memcpy(Memory, byteArray.constData(), sizeof(Memory));
+                    std::memcpy(backupMemory, Memory, sizeof(Memory));
+                    updateMemoryTab();
+                    resetEmulator(false);
+              } else {
+                    PrintConsole("Error: File size doesn't match Memory size", 0);
+              }
+              file.close();
+            } else {
+              PrintConsole("Error loading memory", 0);
+            }
         }
     }
 }
 void MainWindow::on_buttonSave_clicked()
 {
-    QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text Files (*.txt);;All Files (*)"));
-    if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << ui->plainTextCode->toPlainText();
-            file.close();
-        } else {
-            PrintConsole("Error saving script",0);
+    if(!writeToMemory){
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text Files (*.txt);;All Files (*)"));
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QTextStream out(&file);
+                out << ui->plainTextCode->toPlainText();
+                file.close();
+            } else {
+                PrintConsole("Error saving script",0);
+            }
+        }
+    }else{
+        QByteArray byteArray(reinterpret_cast<char*>(Memory), sizeof(Memory));
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Binary Files (*.bin);;All Files (*)"));
+
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(byteArray);
+                file.close();
+            } else {
+                PrintConsole("Error saving memory", 0);
+            }
         }
     }
 }
@@ -1003,6 +1048,7 @@ void MainWindow::on_buttonStep_clicked()
     bool ok = true;;
     if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
     if(ok){
+
         executeInstruction();
     }
     if (running){
@@ -1028,12 +1074,18 @@ void MainWindow::on_buttonRunStop_clicked()
 }
 void MainWindow::on_comboBoxSpeedSelector_activated(int index)
 {
-    executionSpeed = std::pow(2, index);
-    executionSpeed = std::ceil(1000.0 / executionSpeed);
-    if (running){
-        stopExecution();
+    if(index != 11){
+        executionSpeed = std::pow(2, index);
+        executionSpeed = std::ceil(1000.0 / executionSpeed);
+        if (running){
+            stopExecution();
+        }
+        ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(std::pow(2, index)));
+    } else{
+        executionSpeed = -1;
+        ui->labelRunningIndicatior->setText("Operation/second: full speed");
     }
-    ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(std::pow(2, index)));
+
 }
 
 void MainWindow::on_checkBoxHexRegs_clicked(bool checked)
@@ -1089,6 +1141,8 @@ void MainWindow::on_checkBoxWriteMemory_clicked(bool checked)
         compileOnRun = true;
         ui->labelWritingMode->setText("Code");
         clearSelection(3);
+        ui->buttonLoad->setText("Load Code");
+        ui->buttonSave->setText("Save Code");
     }
 }
 void MainWindow::on_buttonSwitchWrite_clicked()
@@ -1101,6 +1155,8 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         compileOnRun = true;
         ui->labelWritingMode->setText("Code");
         clearSelection(3);
+        ui->buttonLoad->setText("Load Code");
+        ui->buttonSave->setText("Save Code");
     }else{
         writeToMemory = true;
         ui->plainTextCode->setReadOnly(true);
@@ -1109,6 +1165,8 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         compileOnRun = false;
         ui->labelWritingMode->setText("Memory");
         updateSelectionsMemoryEdit(currentAddressSelection);
+        ui->buttonLoad->setText("Load Memory");
+        ui->buttonSave->setText("Save Memory");
 
     }
 }
