@@ -29,23 +29,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void updateFlags(FlagToUpdate flag, bool value);
-    void updateElement(elementToUpdate element);
-    int executeInstruction();
-    void executeLoop();
-    bool compileMix(int ver);
     QString softwareVersion = "1.4";
-    uint8_t Memory[0x10000] = {};
-    uint8_t backupMemory[0x10000] = {};
-    uint8_t aReg = 0,bReg = 0;
-    uint16_t PC = 0, SP = 0xF000;
-    uint16_t xRegister = 0;
-    uint16_t yRegister = 0;
-    uint8_t flags = 0;
-    bool writeToMemory = false;
-    bool breakEnabled = false;
-    bool simpleMemory = false;
-    int currentVersionIndex = 0;
 public slots:
     void handleVerticalScrollBarValueChanged(int value);
     void handleLinesScroll();
@@ -55,42 +39,68 @@ public slots:
 private:
     Ui::MainWindow *ui;
 private:
-    int cycleNum = 1;
-    bool useCyclesPerSecond = false;
-    int waitCycles = 0;
-    void resetEmulator(bool failedCompile);
+    void updateFlags(FlagToUpdate flag, bool value);
+    void updateElement(elementToUpdate element);
     void updateMemoryTab();
     void updateLinesBox();
-    void PrintConsole(const QString& text, int type);
-    void Err(const QString& text);
-    QTimer *executionTimer;
-    bool running = false;
-    int executionSpeed = 125;
-    bool indexRegister;
     void updateMemoryCell(int address);
-    bool hexReg = true;
-    void breakCompile();
     void updateSelectionsRunTime(int address);
     void updateSelectionsLines(int line);
     void updateSelectionsMemoryEdit(int address);
-    void clearSelection(int clearWhat);
     void updateSelectionCompileError(int charNum);
+    void clearSelection(int clearWhat);
+    void PrintConsole(const QString& text, int type);
+    void Err(const QString& text);
+
+    QTimer *executionTimer;
+    bool running = false;
+    int executionSpeed = 125;
+    void executeLoop();
     void stopExecution();
     void startExecution();
+    int executeInstruction();
 
+    void resetEmulator(bool failedCompile);
+    void breakCompile();
+
+    int currentVersionIndex = 0; //compiler version rename
+    int currentLine; //current compiler line
+    int currentAddress; //current compiler address
+    std::unordered_map<QString, int> labelValMap;
+    std::unordered_map<int, QString> callLabelMap;
+    std::unordered_map<int, QString> callLabelRelMap;
+    std::unordered_map<int, QString> callLabelRazMap;
+    bool compileMix(int ver);
+    bool compiled = false;
     QString uncompiledButton = "QPushButton {"
                                "    border: 2px solid red;"
                                "}";
     QString compiledButton = "QPushButton {"
                              "    border: 2px solid green;"
                              "}";
-    std::unordered_map<QString, int> labelValMap;
-    std::unordered_map<int, QString> callLabelMap;
-    std::unordered_map<int, QString> callLabelRelMap;
-    std::unordered_map<int, QString> callLabelRazMap;
 
-    int currentLine;
-    int currentAddress;
+    uint8_t Memory[0x10000] = {};
+    uint8_t backupMemory[0x10000] = {};
+    uint8_t aReg = 0,bReg = 0;
+    uint16_t PC = 0, SP = 0xF000;
+    uint16_t xRegister = 0;
+    uint16_t yRegister = 0; //not implemented
+    bool indexRegister == true; //true x false y not implemented properly
+    uint8_t flags = 0;
+    int waitCycles = 0;
+    int cycleNum = 1;
+    int interruptLocations = 0xFFFF;
+    int lastInput = -1;
+
+
+    bool simpleMemory = false;
+    int currentSMScroll = 0;
+    bool writeToMemory = false;
+    bool breakEnabled = false;
+    bool useCyclesPerSecond = false;
+    bool hexReg = true;
+    bool compileOnRun = true;
+    bool displayActive = false;
 
     QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG" };
     QStringList allInstructionsM6800 = { "ABA", "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BITA", "BITB", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "LSRA", "LSRB", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PULA", "PULB", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
@@ -102,7 +112,6 @@ private:
     QStringList indInstructionsM6800 = { "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "TST" };
     QStringList relInstructionsM6800 = { "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS" };
 
-
     QStringList allInstructionsM6803 = { "ABA", "ABX", "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASLD", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BHS", "BITA", "BITB", "BLE", "BLO", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BRN", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSLA", "LSLB", "LSLD", "LSR", "LSRA", "LSRB", "LSRD", "MUL", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PSHX", "PULA", "PULB", "PULX", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList vseInstructionsM6803 = { "ABA", "ABX", "ASLA", "ASLB", "ASLD", "ASRA", "ASRB", "CBA", "CLC", "CLI", "CLRA", "CLRB", "CLV", "COMA", "COMB", "DAA", "DECA", "DECB", "DES", "DEX", "INCA", "INCB", "INS", "INX", "LSLA", "LSLB", "LSLD", "LSRA", "LSRB", "LSRD", "MUL", "NEGA", "NEGB", "NOP", "PSHA", "PSHB", "PSHX", "PULA", "PULB", "PULX", "ROLA", "ROLB", "RORA", "RORB", "RTI", "RTS", "SBA", "SEC", "SEI", "SEV", "SWI", "TAB", "TAP", "TBA", "TPA", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList takInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB",  "ANDA", "ANDB", "BITA", "BITB", "CMPA", "CMPB", "EORA", "EORB", "LDAA", "LDAB", "ORAA", "ORAB", "SBCA", "SBCB", "SUBA", "SUBB" };
@@ -111,13 +120,6 @@ private:
     QStringList razInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "TST" };
     QStringList indInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "TST" };
     QStringList relInstructionsM6803 = { "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BHS", "BLE", "BLO", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BRN", "BSR", "BVC", "BVS" };
-
-    bool compiled = false;
-    bool compileOnRun = true;
-    bool displayActive = false;
-    int lastInput = -1;
-    int interruptLocations = 0xFFFF;
-    int currentSMScroll = 0;
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *ev) override;
