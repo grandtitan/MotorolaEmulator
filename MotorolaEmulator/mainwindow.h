@@ -63,9 +63,9 @@ private:
     void resetEmulator(bool failedCompile);
     void breakCompile();
 
-    int currentVersionIndex = 0; //compiler version rename
-    int currentLine; //current compiler line
-    int currentAddress; //current compiler address
+    int compilerVersionIndex = 0;
+    int currentCompilerLine = 0;
+    int currentCompilerAddress = 0;
     std::unordered_map<QString, int> labelValMap;
     std::unordered_map<int, QString> callLabelMap;
     std::unordered_map<int, QString> callLabelRelMap;
@@ -84,8 +84,8 @@ private:
     uint8_t aReg = 0,bReg = 0;
     uint16_t PC = 0, SP = 0xF000;
     uint16_t xRegister = 0;
-    uint16_t yRegister = 0; //not implemented
-    bool indexRegister == true; //true x false y not implemented properly
+    //uint16_t yRegister = 0; //not implemented
+    //bool indexRegister = true; //true x false y not implemented properly
     uint8_t flags = 0;
     int waitCycles = 0;
     int cycleNum = 1;
@@ -100,7 +100,6 @@ private:
     bool useCyclesPerSecond = false;
     bool hexReg = true;
     bool compileOnRun = true;
-    bool displayActive = false;
 
     QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG" };
     QStringList allInstructionsM6800 = { "ABA", "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BITA", "BITB", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "LSRA", "LSRB", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PULA", "PULB", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };

@@ -48,8 +48,8 @@ bool MainWindow::compileMix(int ver){
     ui->buttonCompile->setStyleSheet("");
     ui->buttonCompile->setStyleSheet(compiledButton);
     PrintConsole("", 2);
-    currentLine = 0;
-    currentAddress = 0;
+    currentCompilerLine = 0;
+    currentCompilerAddress = 0;
     std::fill(std::begin(Memory), std::end(Memory), static_cast<uint8_t>(0));
     std::fill(std::begin(backupMemory), std::end(backupMemory), static_cast<uint8_t>(0));
     labelValMap.clear();
@@ -61,7 +61,7 @@ bool MainWindow::compileMix(int ver){
     QStringList lines = code.split("\n");
     int charNum = 0;
 	foreach (QString line, lines) {
-        int instructionAddress = currentAddress;
+        int instructionAddress = currentCompilerAddress;
         QString label;
         QString in;
         QString op;
@@ -390,10 +390,10 @@ bool MainWindow::compileMix(int ver){
                             Err("Value out of range: " + QString::number(value));
                             goto end;
                         }
-                        Memory[currentAddress] = value;
+                        Memory[currentCompilerAddress] = value;
                         if(label != ""){
                             if (labelValMap.count(label) == 0) {
-                                labelValMap[label] = currentAddress;
+                                labelValMap[label] = currentCompilerAddress;
                             } else {
                                 Err("Label already declared: '" + label + "'");
                                 goto end;
@@ -401,8 +401,8 @@ bool MainWindow::compileMix(int ver){
                         }
 
 
-                        PrintConsole("Assigned:'" + QString::number(currentAddress) + "' to:'" + label + "'", -1);
-                        currentAddress++;
+                        PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
+                        currentCompilerAddress++;
                         goto skipLine;
                     }
                 }
@@ -473,11 +473,11 @@ bool MainWindow::compileMix(int ver){
                             Err("Value out of range: " + QString::number(value));
                             goto end;
                         }
-                        if (value < currentAddress){
+                        if (value < currentCompilerAddress){
                             Err("Backward reference not permitted: " + QString::number(value));
                             goto end;
                         }
-                        currentAddress = value;
+                        currentCompilerAddress = value;
                         goto skipLine;
                     }
                 }
@@ -654,16 +654,16 @@ bool MainWindow::compileMix(int ver){
                 }
                 if (!label.isEmpty()) {
                     if (labelValMap.count(label) == 0) {
-                        labelValMap[label] = currentAddress;
+                        labelValMap[label] = currentCompilerAddress;
                     }
                     else {
                         Err("Label already declared: '" + label + "'");
                         goto end;
                     }
-                    PrintConsole("Assigned:'" + QString::number(currentAddress) + "' to:'" + label + "'", -1);
+                    PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
                 }
-                Memory[currentAddress] = inCode;
-                currentAddress += 1;
+                Memory[currentCompilerAddress] = inCode;
+                currentCompilerAddress += 1;
                 goto skipLine;
             }
             else {
@@ -673,13 +673,13 @@ bool MainWindow::compileMix(int ver){
                 }
                 if (!label.isEmpty()) {
                     if (labelValMap.count(label) == 0) {
-                        labelValMap[label] = currentAddress;
+                        labelValMap[label] = currentCompilerAddress;
                     }
                     else {
                         Err("Label already declared: '" + label + "'");
                         goto end;
                     }
-                    PrintConsole("Assigned:'" + QString::number(currentAddress) + "' to:'" + label + "'", -1);
+                    PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
                 }
             }
             if (relInstructionsM6800.indexOf(in) != -1) { //REL
@@ -751,7 +751,7 @@ bool MainWindow::compileMix(int ver){
                 }
                 bool ok;
                 if (op[0].isLetter()) {
-                    callLabelRelMap[currentAddress + 1] = op;
+                    callLabelRelMap[currentCompilerAddress + 1] = op;
                     opCode = 0;
                 }
                 else if (op.startsWith('$')) {
@@ -793,9 +793,9 @@ bool MainWindow::compileMix(int ver){
                     qint8 signedValue = static_cast<qint8>(opCode);
                     opCode = signedValue & 0xFF;
                 }
-                Memory[currentAddress] = inCode;
-                Memory[currentAddress + 1] = opCode;
-                currentAddress += 2;
+                Memory[currentCompilerAddress] = inCode;
+                Memory[currentCompilerAddress + 1] = opCode;
+                currentCompilerAddress += 2;
             }
             else if (op.contains(",")) { // IND
                 if (!indInstructionsM6800.contains(in)) {
@@ -806,11 +806,11 @@ bool MainWindow::compileMix(int ver){
                 if (op[0].isLetter()) {
                     if(labelValMap.count(op) == 0){
                         opCode = 0;
-                        callLabelMap[currentAddress + 1] = op;
+                        callLabelMap[currentCompilerAddress + 1] = op;
                     }else{
                         int value = labelValMap[op];
                         if (value > 255){
-                            PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentAddress)+"' is out of instructions range. Entered last byte",1);
+                            PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentCompilerAddress)+"' is out of instructions range. Entered last byte",1);
                             value = value & 0xFF;
                             opCode = value;
                         }else{
@@ -960,9 +960,9 @@ bool MainWindow::compileMix(int ver){
                         goto end;
                     }
                 }
-                Memory[currentAddress] = inCode;
-                Memory[currentAddress + 1] = opCode;
-                currentAddress += 2;
+                Memory[currentCompilerAddress] = inCode;
+                Memory[currentCompilerAddress + 1] = opCode;
+                currentCompilerAddress += 2;
             }
             else if (op.startsWith("#")) {
                 op = op.sliced(1);
@@ -972,7 +972,7 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6800.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
@@ -982,8 +982,8 @@ bool MainWindow::compileMix(int ver){
                                 opCode = value;
                             }
                         }
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
                         if (true) {
                             if (in == "CPX") {
                                 inCode = 0x8C;
@@ -999,17 +999,17 @@ bool MainWindow::compileMix(int ver){
                                 goto end;
                             }
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 3;
                     }
                     else if (takInstructionsM6800.contains(in)) { //tak LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
-                                PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentAddress)+"' is out of instructions range. Entered last byte",1);
+                                PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentCompilerAddress)+"' is out of instructions range. Entered last byte",1);
                                 value = value & 0xFF;
                                 opCode = value;
                             }else{
@@ -1083,9 +1083,9 @@ bool MainWindow::compileMix(int ver){
                                 goto end;
                             }
                         }
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        currentCompilerAddress += 2;
                     }
                     else {
                         Err("Instruction does not take immediate data");
@@ -1105,8 +1105,8 @@ bool MainWindow::compileMix(int ver){
                         if (value < 0x10000) {
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
                             if (true) {
                                 if (in == "CPX") {
                                     inCode = 0x8C;
@@ -1122,8 +1122,8 @@ bool MainWindow::compileMix(int ver){
                                     goto end;
                                 }
                             }
-                            Memory[currentAddress] = inCode;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -1199,9 +1199,9 @@ bool MainWindow::compileMix(int ver){
                                     goto end;
                                 }
                             }
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            currentAddress += 2;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            currentCompilerAddress += 2;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -1313,9 +1313,9 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         opCode = value;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        currentCompilerAddress += 2;
                     }
                     else if (value < 0x10000) {
                         if (true) {
@@ -1446,10 +1446,10 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
+                        currentCompilerAddress += 3;
                     }
                     else {
                         Err("Value out of range: " + QString::number(value));
@@ -1586,10 +1586,10 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
+                        currentCompilerAddress += 3;
                     }
                     else {
                         Err("Value out of range: " + QString::number(value));
@@ -1731,11 +1731,11 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelRazMap[currentAddress + 1] = op;
+                            callLabelRazMap[currentCompilerAddress + 1] = op;
                             opCode = 0;
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 3;
                     }
                     else if (dirInstructionsM6800.contains(in)) {
                         if (true) {
@@ -1826,11 +1826,11 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                             opCode = 0;
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 2;
                     }
                     else {
                         Err("Instruction does not take direct data");
@@ -1928,9 +1928,9 @@ bool MainWindow::compileMix(int ver){
                                 }
                             }
                             opCode = value;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            currentAddress += 2;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            currentCompilerAddress += 2;
                         }
                         else if (value < 0x10000) {
                             if (true) {
@@ -2061,10 +2061,10 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -2201,10 +2201,10 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -2407,16 +2407,16 @@ bool MainWindow::compileMix(int ver){
                 }
                 if (!label.isEmpty()) {
                     if (labelValMap.count(label) == 0) {
-                        labelValMap[label] = currentAddress;
+                        labelValMap[label] = currentCompilerAddress;
                     }
                     else {
                         Err("Label already declared: '" + label + "'");
                         goto end;
                     }
-                    PrintConsole("Assigned:'" + QString::number(currentAddress) + "' to:'" + label + "'", -1);
+                    PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
                 }
-                Memory[currentAddress] = inCode;
-                currentAddress += 1;
+                Memory[currentCompilerAddress] = inCode;
+                currentCompilerAddress += 1;
                 goto skipLine;
             }
             else {
@@ -2426,13 +2426,13 @@ bool MainWindow::compileMix(int ver){
                 }
                 if (!label.isEmpty()) {
                     if (labelValMap.count(label) == 0) {
-                        labelValMap[label] = currentAddress;
+                        labelValMap[label] = currentCompilerAddress;
                     }
                     else {
                         Err("Label already declared: '" + label + "'");
                         goto end;
                     }
-                    PrintConsole("Assigned:'" + QString::number(currentAddress) + "' to:'" + label + "'", -1);
+                    PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
                 }
             }
             if (relInstructionsM6803.indexOf(in) != -1) { //REL
@@ -2507,7 +2507,7 @@ bool MainWindow::compileMix(int ver){
                 }
                 bool ok;
                 if (op[0].isLetter()) {
-                    callLabelRelMap[currentAddress + 1] = op;
+                    callLabelRelMap[currentCompilerAddress + 1] = op;
                     opCode = 0;
                 }
                 else if (op.startsWith('$')) {
@@ -2549,9 +2549,9 @@ bool MainWindow::compileMix(int ver){
                     qint8 signedValue = static_cast<qint8>(opCode);
                     opCode = signedValue & 0xFF;
                 }
-                Memory[currentAddress] = inCode;
-                Memory[currentAddress + 1] = opCode;
-                currentAddress += 2;
+                Memory[currentCompilerAddress] = inCode;
+                Memory[currentCompilerAddress + 1] = opCode;
+                currentCompilerAddress += 2;
             }
             else if (op.contains(",")) { // IND
                 if (!indInstructionsM6803.contains(in)) {
@@ -2562,11 +2562,11 @@ bool MainWindow::compileMix(int ver){
                 if (op[0].isLetter()) {
                     if(labelValMap.count(op) == 0){
                         opCode = 0;
-                        callLabelMap[currentAddress + 1] = op;
+                        callLabelMap[currentCompilerAddress + 1] = op;
                     }else{
                         int value = labelValMap[op];
                         if (value > 255){
-                            PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentAddress)+"' is out of instructions range. Entered last byte",1);
+                            PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentCompilerAddress)+"' is out of instructions range. Entered last byte",1);
                             value = value & 0xFF;
                             opCode = value;
                         }else{
@@ -2728,9 +2728,9 @@ bool MainWindow::compileMix(int ver){
                         goto end;
                     }
                 }
-                Memory[currentAddress] = inCode;
-                Memory[currentAddress + 1] = opCode;
-                currentAddress += 2;
+                Memory[currentCompilerAddress] = inCode;
+                Memory[currentCompilerAddress + 1] = opCode;
+                currentCompilerAddress += 2;
             }
             else if (op.startsWith("#")) {
                 op = op.sliced(1);
@@ -2740,7 +2740,7 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6803.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
@@ -2750,8 +2750,8 @@ bool MainWindow::compileMix(int ver){
                                 opCode = value;
                             }
                         }
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
                         if (true) {
                             if (in == "ADDD") {
                                 inCode = 0xC3;
@@ -2776,17 +2776,17 @@ bool MainWindow::compileMix(int ver){
                                 goto end;
                             }
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 3;
                     }
                     else if (takInstructionsM6803.contains(in)) { //tak LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
-                                PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentAddress)+"' is out of instructions range. Entered last byte",1);
+                                PrintConsole("Value ("+QString::number(value)+") called by '" +op+"'at location: '" + QString::number(currentCompilerAddress)+"' is out of instructions range. Entered last byte",1);
                                 value = value & 0xFF;
                                 opCode = value;
                             }else{
@@ -2860,9 +2860,9 @@ bool MainWindow::compileMix(int ver){
                                 goto end;
                             }
                         }
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        currentCompilerAddress += 2;
                     }
                     else {
                         Err("Instruction does not take immediate data");
@@ -2882,8 +2882,8 @@ bool MainWindow::compileMix(int ver){
                         if (value < 0x10000) {
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
                             if (true) {
                                 if (in == "ADDD") {
                                     inCode = 0xC3;
@@ -2908,8 +2908,8 @@ bool MainWindow::compileMix(int ver){
                                     goto end;
                                 }
                             }
-                            Memory[currentAddress] = inCode;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -2985,9 +2985,9 @@ bool MainWindow::compileMix(int ver){
                                     goto end;
                                 }
                             }
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            currentAddress += 2;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            currentCompilerAddress += 2;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -3114,9 +3114,9 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         opCode = value;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        currentCompilerAddress += 2;
                     }
                     else if (value < 0x10000) {
                         if (true) {
@@ -3259,10 +3259,10 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
+                        currentCompilerAddress += 3;
                     }
                     else {
                         Err("Value out of range: " + QString::number(value));
@@ -3411,10 +3411,10 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
-                        Memory[currentAddress] = inCode;
-                        Memory[currentAddress + 1] = opCode;
-                        Memory[currentAddress + 2] = opCode2;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[currentCompilerAddress + 2] = opCode2;
+                        currentCompilerAddress += 3;
                     }
                     else {
                         Err("Value out of range: " + QString::number(value));
@@ -3568,11 +3568,11 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelRazMap[currentAddress + 1] = op;
+                            callLabelRazMap[currentCompilerAddress + 1] = op;
                             opCode = 0;
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 3;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 3;
                     }
                     else if (dirInstructionsM6803.contains(in)) {
                         if (true) {
@@ -3678,11 +3678,11 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelMap[currentAddress + 1] = op;
+                            callLabelMap[currentCompilerAddress + 1] = op;
                             opCode = 0;
                         }
-                        Memory[currentAddress] = inCode;
-                        currentAddress += 2;
+                        Memory[currentCompilerAddress] = inCode;
+                        currentCompilerAddress += 2;
                     }
                     else {
                         Err("Instruction does not take direct data");
@@ -3795,9 +3795,9 @@ bool MainWindow::compileMix(int ver){
                                 }
                             }
                             opCode = value;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            currentAddress += 2;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            currentCompilerAddress += 2;
                         }
                         else if (value < 0x10000) {
                             if (true) {
@@ -3928,10 +3928,10 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -4080,10 +4080,10 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentAddress] = inCode;
-                            Memory[currentAddress + 1] = opCode;
-                            Memory[currentAddress + 2] = opCode2;
-                            currentAddress += 3;
+                            Memory[currentCompilerAddress] = inCode;
+                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[currentCompilerAddress + 2] = opCode2;
+                            currentCompilerAddress += 3;
                         }
                         else {
                             Err("Value out of range: " + QString::number(value));
@@ -4103,20 +4103,20 @@ bool MainWindow::compileMix(int ver){
             }
 		}
     skipLine:
-        if (currentAddress == instructionAddress) {
+        if (currentCompilerAddress == instructionAddress) {
             addInstruction(-1, in, op, inCode, opCode, opCode2);
         }
         else {
             addInstruction(instructionAddress, in, op, inCode, opCode, opCode2);
         }
-        currentLine++;
+        currentCompilerLine++;
     }
     // naj compiler pokaze na katere lineje je nedifenrane onej
     for (const auto& entry : callLabelMap) {
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = getLineByAddress(location - 1) - 1;
             Err("Use of undeclared label: '" + label + "'"); goto end;
         }else{
             int value = labelValMap[label];
@@ -4134,7 +4134,7 @@ bool MainWindow::compileMix(int ver){
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = getLineByAddress(location - 1) - 1;
             Err("Use of undeclared label: " + label); goto end;
         }else{
             Memory[location] = (labelValMap[label] >> 8) & 0xFF;
@@ -4145,7 +4145,7 @@ bool MainWindow::compileMix(int ver){
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = getLineByAddress(location - 1) - 1;
             Err("Use of undeclared label: " + label); goto end;
         }else{
             int location2 = labelValMap[label];
@@ -4153,7 +4153,7 @@ bool MainWindow::compileMix(int ver){
             value = location2 - location -1;
                 if (value > 127 || value < -128) {
                     Err("Relative address out of range[-128,127]: " + QString::number(value));
-                    currentLine = getLineByAddress(location - 1) - 1;
+                    currentCompilerLine = getLineByAddress(location - 1) - 1;
                     goto end;
                 }
             qint8 signedValue = static_cast<qint8>(value);
@@ -4167,7 +4167,7 @@ bool MainWindow::compileMix(int ver){
     updateMemoryTab();
     compiled = 1;
 end:
-    if (lines.size() != currentLine) {
+    if (lines.size() != currentCompilerLine) {
         updateSelectionCompileError(charNum);
         return false;
     }else{

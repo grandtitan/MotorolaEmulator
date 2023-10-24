@@ -152,7 +152,7 @@ int autoScrollDownLimit = 5;
 int lastLinesSelection = -1;
 int lastLinesAddress = -1;
 int lastMemoryAddressSelection = -1;
-int currentAddressSelection = 0;
+int currentCompilerAddressSelection = 0;
 void MainWindow::updateMemoryTab(){
     if(simpleMemory){
         for (int i = 0; i < 20; ++i) {
@@ -369,7 +369,7 @@ void MainWindow::updateElement(elementToUpdate element){
 void MainWindow::PrintConsole(const QString& text, int type){
     QString consoleText;
     if (type == -1) { // DEBUG
-        consoleText = "DEBUG: " + ("Ln:" + QString::number(currentLine)) + " " + text;
+        consoleText = "DEBUG: " + ("Ln:" + QString::number(currentCompilerLine)) + " " + text;
     }
     else if (type == 0 && ui->checkBoxError->isChecked()) { // ERROR
         consoleText = "ERROR: " + text;
@@ -383,7 +383,7 @@ void MainWindow::PrintConsole(const QString& text, int type){
     ui->plainTextConsole->appendPlainText(consoleText);
 }
 void MainWindow::Err(const QString& text){
-    PrintConsole("Ln:" + QString::number(currentLine) + " " + text, 0);
+    PrintConsole("Ln:" + QString::number(currentCompilerLine) + " " + text, 0);
 }
 
 
@@ -468,7 +468,7 @@ void MainWindow::updateSelectionCompileError(int charNum){
     callLabelMap.clear();
     callLabelRazMap.clear();
     callLabelRelMap.clear();
-    QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentLine);
+    QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentCompilerLine);
     QTextCursor codeCursor(codeBlock);
     codeCursor.select(QTextCursor::LineUnderCursor);
     QTextCursor charCursor(codeBlock);
@@ -491,12 +491,12 @@ void MainWindow::updateSelectionCompileError(int charNum){
     combinedCodeSelections.append(lineSelection);
 
     ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-    if (currentLine > ui->plainTextCode->verticalScrollBar()->value() + autoScrollUpLimit){
-        ui->plainTextLines->verticalScrollBar()->setValue(currentLine - autoScrollUpLimit);
-        ui->plainTextCode->verticalScrollBar()->setValue(currentLine - autoScrollUpLimit);
-    } else if (currentLine < ui->plainTextCode->verticalScrollBar()->value() + autoScrollDownLimit){
-        ui->plainTextLines->verticalScrollBar()->setValue(currentLine - autoScrollDownLimit);
-        ui->plainTextCode->verticalScrollBar()->setValue(currentLine - autoScrollDownLimit);
+    if (currentCompilerLine > ui->plainTextCode->verticalScrollBar()->value() + autoScrollUpLimit){
+        ui->plainTextLines->verticalScrollBar()->setValue(currentCompilerLine - autoScrollUpLimit);
+        ui->plainTextCode->verticalScrollBar()->setValue(currentCompilerLine - autoScrollUpLimit);
+    } else if (currentCompilerLine < ui->plainTextCode->verticalScrollBar()->value() + autoScrollDownLimit){
+        ui->plainTextLines->verticalScrollBar()->setValue(currentCompilerLine - autoScrollDownLimit);
+        ui->plainTextCode->verticalScrollBar()->setValue(currentCompilerLine - autoScrollDownLimit);
     }
 }
 void MainWindow::updateSelectionsRunTime(int address){
@@ -660,7 +660,7 @@ void MainWindow::resetEmulator(bool failedCompile){
             updateSelectionsLines(lastLinesSelection);
         }
         if(writeToMemory){
-            updateSelectionsMemoryEdit(currentAddressSelection);
+            updateSelectionsMemoryEdit(currentCompilerAddressSelection);
         }
     }else{
 
@@ -687,7 +687,6 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     int buttonY = newSize.height() - buttonYoffset;
 
     if (newSize.width() >= 1785) {
-        displayActive = true;
         ui->plainTextDisplay->setGeometry(0, 0, 498, 350);
         ui->plainTextDisplay->setEnabled(true);
         ui->frameDisplay->setGeometry(910, 10, 498, 350);
@@ -700,7 +699,6 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
         }
     }
     else {
-        displayActive = true;
         ui->plainTextDisplay->setGeometry(0, 0, 0, 0);
         ui->plainTextDisplay->setEnabled(false);
         ui->frameDisplay->setGeometry(910, 10, 0, 0);
@@ -904,38 +902,38 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 if ((keyValue >= Qt::Key_0 && keyValue <= Qt::Key_9) ||
                     (keyValue >= Qt::Key_A && keyValue <= Qt::Key_F)) {
                     char newByte = keyEvent->text().toUpper().toLatin1()[0];
-                    uint8_t currentCellValue = Memory[currentAddressSelection];
-                    Memory[currentAddressSelection] = (currentCellValue << 4) | QString(newByte).toInt(nullptr, 16);;
-                    updateMemoryCell(currentAddressSelection);
+                    uint8_t currentCellValue = Memory[currentCompilerAddressSelection];
+                    Memory[currentCompilerAddressSelection] = (currentCellValue << 4) | QString(newByte).toInt(nullptr, 16);;
+                    updateMemoryCell(currentCompilerAddressSelection);
                     if (!running){
                         std::memcpy(backupMemory, Memory, sizeof(Memory));
                     }
                     if(compiled){
                         breakCompile();
                     }
-                    updateSelectionsMemoryEdit(currentAddressSelection);
+                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }
 
                 if (keyEvent->key() == Qt::Key_Up ){
-                    if(currentAddressSelection - 16 >= 0){
-                        currentAddressSelection-=16;
+                    if(currentCompilerAddressSelection - 16 >= 0){
+                        currentCompilerAddressSelection-=16;
                     }
-                    updateSelectionsMemoryEdit(currentAddressSelection);
+                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }else if (keyEvent->key() == Qt::Key_Down){
-                    if(currentAddressSelection + 16 <= 0xFFFF){
-                        currentAddressSelection+=16;
+                    if(currentCompilerAddressSelection + 16 <= 0xFFFF){
+                        currentCompilerAddressSelection+=16;
                     }
-                    updateSelectionsMemoryEdit(currentAddressSelection);
+                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }else if(keyEvent->key() == Qt::Key_Left){
-                    if(currentAddressSelection > 0){
-                        currentAddressSelection--;
+                    if(currentCompilerAddressSelection > 0){
+                        currentCompilerAddressSelection--;
                     }
-                    updateSelectionsMemoryEdit(currentAddressSelection);
+                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }else if (keyEvent->key() == Qt::Key_Right) {
-                    if(currentAddressSelection < 0xFFFF){
-                        currentAddressSelection++;
+                    if(currentCompilerAddressSelection < 0xFFFF){
+                        currentCompilerAddressSelection++;
                     }
-                    updateSelectionsMemoryEdit(currentAddressSelection);
+                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }
                 return true;
             }else{
@@ -949,7 +947,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
 void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 {
-    currentVersionIndex = index;
+    compilerVersionIndex = index;
     breakCompile();
     resetEmulator(true);
     clearSelection(0);
@@ -957,9 +955,9 @@ void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 bool MainWindow::on_buttonCompile_clicked()
 {
     bool ok = false;
-    if(currentVersionIndex ==  0){
+    if(compilerVersionIndex ==  0){
         ok = compileMix(0);
-    } else if(currentVersionIndex ==  1){
+    } else if(compilerVersionIndex ==  1){
         ok = compileMix(1);
     }
     resetEmulator(!ok);
@@ -1160,7 +1158,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         ui->checkBoxCompileOnRun->setEnabled(false);
         compileOnRun = false;
         ui->labelWritingMode->setText("Memory");
-        updateSelectionsMemoryEdit(currentAddressSelection);
+        updateSelectionsMemoryEdit(currentCompilerAddressSelection);
         ui->buttonLoad->setText("Load Memory");
         ui->buttonSave->setText("Save Memory");
 
@@ -1299,9 +1297,9 @@ int MainWindow::executeInstruction(){
         updateMemoryCell(0xFFF2);
         updateMemoryCell(0xFFF3);
     }
-    if (!indexRegister) {
+    //if (!indexRegister) {
         //curIndReg = &yRegister;
-    }
+    //}
     switch(Memory[PC]){
     case 0x00:
         if (running){
@@ -1316,7 +1314,7 @@ int MainWindow::executeInstruction(){
         //NOP
         break;
     case 0x04:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 3;
             uInt8 = bReg & 0x01;
             uInt16 = (aReg << 8) + bReg;
@@ -1337,7 +1335,7 @@ int MainWindow::executeInstruction(){
         }
         break;
     case 0x05:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 3;
             uInt8 = (bit(aReg, 7));
             uInt16 = (aReg << 8) + bReg;
@@ -1513,7 +1511,7 @@ int MainWindow::executeInstruction(){
         break;
     case 0x21:
         cycleCount = 3;
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             PC += 2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -1695,12 +1693,12 @@ int MainWindow::executeInstruction(){
         PC++;
         break;
     case 0x38:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
             SP++;
-            xRegister = (Memory[SP] << 8);
+            (*curIndReg) = (Memory[SP] << 8);
             SP++;
-            xRegister += Memory[SP];
+            (*curIndReg) += Memory[SP];
             updateElement(regSP);
             updateElement(regX);
             PC++;
@@ -1719,9 +1717,9 @@ int MainWindow::executeInstruction(){
         updateElement(regSP);
         break;
     case 0x3A:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 3;
-            xRegister = xRegister + bReg;
+            (*curIndReg) = (*curIndReg) + bReg;
             PC++;
             updateElement(regX);
         } else{
@@ -1742,7 +1740,7 @@ int MainWindow::executeInstruction(){
         aReg = Memory[SP];
 
         SP++;
-        xRegister = (Memory[SP] << 8) + Memory[(SP+ 1) % 0x10000];
+        (*curIndReg) = (Memory[SP] << 8) + Memory[(SP+ 1) % 0x10000];
 
         SP+=2;
         PC = (Memory[SP] << 8) + Memory[(SP+ 1) % 0x10000];
@@ -1754,11 +1752,11 @@ int MainWindow::executeInstruction(){
         updateElement(allFlags);
         break;
     case 0x3C:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 4;
-            Memory[SP] = (xRegister & 0xFF);
+            Memory[SP] = ((*curIndReg) & 0xFF);
             updateMemoryCell(SP);
-            Memory[SP - 1] = ((xRegister >> 8) & 0xFF);
+            Memory[SP - 1] = (((*curIndReg) >> 8) & 0xFF);
             updateMemoryCell(SP-1);
             SP-=2;
             updateElement(regSP);
@@ -1770,7 +1768,7 @@ int MainWindow::executeInstruction(){
 
         break;
     case 0x3D:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 10;
             uInt16 = static_cast<uint16_t>(aReg) * static_cast<uint16_t>(bReg);
             updateFlags(Carry, (uInt16 >> 8) != 0);
@@ -1801,10 +1799,10 @@ int MainWindow::executeInstruction(){
         Memory[SP] = (PC >> 8) & 0xFF;
         updateMemoryCell(SP);
         SP--;
-        Memory[SP] = xRegister & 0xFF;
+        Memory[SP] = (*curIndReg) & 0xFF;
         updateMemoryCell(SP);
         SP--;
-        Memory[SP] = (xRegister >> 8) & 0xFF;
+        Memory[SP] = ((*curIndReg) >> 8) & 0xFF;
         updateMemoryCell(SP);
         SP--;
         Memory[SP] = aReg;
@@ -2334,7 +2332,7 @@ int MainWindow::executeInstruction(){
         updateElement(regA);
         break;
     case 0x83:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 4;
 
             adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
@@ -2489,7 +2487,7 @@ int MainWindow::executeInstruction(){
         updateElement(regA);
         break;
     case 0x93:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
             uInt8 = Memory[(PC+1) % 0x10000];
             adr = (Memory[uInt8] << 8) + Memory[uInt8 + 1];
@@ -2602,7 +2600,7 @@ int MainWindow::executeInstruction(){
         break;
     case 0x9D:
         cycleCount = 5;
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             adr = Memory[(PC+1) % 0x10000];
             PC+=2;
             Memory[SP] = (PC & 0xFF);
@@ -2675,7 +2673,7 @@ int MainWindow::executeInstruction(){
         updateElement(regA);
         break;
     case 0xA3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 6;
             uInt8 = (Memory[(PC+1) % 0x10000] + *curIndReg) % 0x10000;
             adr = (Memory[uInt8] << 8) + Memory[uInt8 + 1];
@@ -2855,7 +2853,7 @@ int MainWindow::executeInstruction(){
         updateElement(regA);
         break;
     case 0xB3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 6;
             adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
             adr = (Memory[adr] << 8) + Memory[adr + 1];
@@ -3035,7 +3033,7 @@ int MainWindow::executeInstruction(){
         updateElement(regB);
         break;
     case 0xC3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 4;
 
             uInt16 = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
@@ -3126,7 +3124,7 @@ int MainWindow::executeInstruction(){
         PC+=2;
         break;
     case 0xCC:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 3;
 
             uInt16 = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
@@ -3187,7 +3185,7 @@ int MainWindow::executeInstruction(){
         updateElement(regB);
         break;
     case 0xD3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
 
             adr = Memory[(PC+1) % 0x10000];
@@ -3289,7 +3287,7 @@ int MainWindow::executeInstruction(){
         PC+=2;
         break;
     case 0xDC:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 4;
 
             adr = Memory[(PC+1) % 0x10000];
@@ -3308,7 +3306,7 @@ int MainWindow::executeInstruction(){
         }
         break;
     case 0xDD:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 4;
             adr = Memory[(PC+1) % 0x10000];
             Memory[adr] = aReg;
@@ -3382,7 +3380,7 @@ int MainWindow::executeInstruction(){
         updateElement(regB);
         break;
     case 0xE3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 6;
             adr = (Memory[(PC+1) % 0x10000] + *curIndReg) % 0x10000;
             uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3484,7 +3482,7 @@ int MainWindow::executeInstruction(){
         PC+=2;
         break;
     case 0xEC:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
 
             adr = (Memory[(PC+1) % 0x10000] + *curIndReg) % 0x10000;
@@ -3503,7 +3501,7 @@ int MainWindow::executeInstruction(){
         }
         break;
     case 0xED:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
             adr = (Memory[(PC+1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = aReg;
@@ -3577,7 +3575,7 @@ int MainWindow::executeInstruction(){
         updateElement(regB);
         break;
     case 0xF3:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 6;
 
             adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
@@ -3679,7 +3677,7 @@ int MainWindow::executeInstruction(){
         PC+=3;
         break;
     case 0xFC:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
             adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
             uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3698,7 +3696,7 @@ int MainWindow::executeInstruction(){
         }
         break;
     case 0xFD:
-        if(currentVersionIndex>=1){
+        if(compilerVersionIndex>=1){
             cycleCount = 5;
             adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
             Memory[adr] = aReg;
@@ -3763,7 +3761,7 @@ int MainWindow::executeInstruction(){
             }
             break;
         case 4:
-            if(xRegister == ui->spinBoxBreakIs->value()){
+            if((*curIndReg) == ui->spinBoxBreakIs->value()){
                 stopExecution();
             }
             break;
