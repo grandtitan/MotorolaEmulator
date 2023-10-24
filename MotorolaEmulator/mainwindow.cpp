@@ -134,11 +134,7 @@ void MainWindow::startExecution(){
     }
     executeLoop();
     if(running == true){
-        if(executionSpeed != -1){
-            executionTimer->start(executionSpeed);
-        }else{
-            executionTimer->start(0);
-        }
+        executionTimer->start(executionSpeed); 
     }
 }
 
@@ -1082,7 +1078,7 @@ void MainWindow::on_comboBoxSpeedSelector_activated(int index)
         }
         ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(std::pow(2, index)));
     } else{
-        executionSpeed = -1;
+        executionSpeed = 0;
         ui->labelRunningIndicatior->setText("Operation/second: full speed");
     }
 
