@@ -17,6 +17,7 @@
 #include <QMouseEvent>
 #include <QTableWidget>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -101,6 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->plainTextDisplay->setTextInteractionFlags(Qt::NoTextInteraction);
     ui->plainTextLines->setTextInteractionFlags(Qt::NoTextInteraction);
+
 }
 
 MainWindow::~MainWindow()
@@ -718,7 +720,8 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     ui->labelWritingMode->setGeometry(ui->labelWritingMode->x(), buttonY, ui->labelWritingMode->width(), ui->labelWritingMode->height());
 
     ui->plainTextCode->setGeometry(ui->plainTextCode->x(), ui->plainTextCode->y(), ui->plainTextCode->width(), newSize.height() - buttonYoffset - 17);
-    ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), ui->plainTextLines->width(), newSize.height() - buttonYoffset - 17);
+    ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), ui->plainTextLines->width(), newSize.height() - buttonYoffset - 33);
+    ui->lineCodeLinesSeperator->setGeometry(ui->lineCodeLinesSeperator->x(), newSize.height() - buttonYoffset - 24, ui->lineCodeLinesSeperator->width(), 16);
     ui->plainTextMemory->setGeometry(ui->plainTextMemory->x(), ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
 
     ui->groupBox->setGeometry(newSize.width() - 370, ui->groupBox->y(), ui->groupBox->width(), 281);
