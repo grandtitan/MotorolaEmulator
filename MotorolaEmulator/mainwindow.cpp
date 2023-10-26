@@ -273,7 +273,6 @@ void MainWindow::updateLinesBox(){
             QString text;
 
             for (int i = 0; i < code.count("\n") + 1; i++) {
-
                 if (instructionList[i].address == -1) {
                     text = text % convertToQString(i, 5) % ":----\n";
                 }
@@ -1067,12 +1066,12 @@ void MainWindow::on_buttonRunStop_clicked()
 }
 void MainWindow::on_comboBoxSpeedSelector_activated(int index)
 {
+    if (running){
+        stopExecution();
+    }
     if(index != 11){
         executionSpeed = std::pow(2, index);
         executionSpeed = std::ceil(1000.0 / executionSpeed);
-        if (running){
-            stopExecution();
-        }
         ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(std::pow(2, index)));
     } else{
         executionSpeed = 0;
