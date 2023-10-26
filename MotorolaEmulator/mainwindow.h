@@ -29,7 +29,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QString softwareVersion = "1.4";
+    QString softwareVersion = "1.4.1";
 public slots:
     void handleVerticalScrollBarValueChanged(int value);
     void handleLinesScroll();
@@ -72,8 +72,8 @@ private:
     std::unordered_map<int, QString> callLabelRazMap;
     bool compileMix(int ver);
     bool compiled = false;
-    QString uncompiledButton = "border: 2px solid red;";
-    QString compiledButton = "border: 2px solid green;";
+    QString uncompiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(255,30,30);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(255, 0, 50);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(255, 0, 50);\n}";
+    QString compiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(0,180,0);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(0, 180, 20);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(0, 180, 20);\n}";
 
     uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};
