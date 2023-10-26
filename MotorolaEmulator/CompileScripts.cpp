@@ -44,8 +44,7 @@ int getNum(const QString& input){
 
 
 bool MainWindow::compileMix(int ver){
-	compiled = 0;
-    ui->buttonCompile->setStyleSheet("");
+    compiled = 0;
     ui->buttonCompile->setStyleSheet(compiledButton);
     PrintConsole("", 2);
     currentCompilerLine = 0;

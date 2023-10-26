@@ -72,12 +72,8 @@ private:
     std::unordered_map<int, QString> callLabelRazMap;
     bool compileMix(int ver);
     bool compiled = false;
-    QString uncompiledButton = "QPushButton {"
-                               "    border: 2px solid red;"
-                               "}";
-    QString compiledButton = "QPushButton {"
-                             "    border: 2px solid green;"
-                             "}";
+    QString uncompiledButton = "border: 2px solid red;";
+    QString compiledButton = "border: 2px solid green;";
 
     uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};

@@ -672,7 +672,6 @@ void MainWindow::breakCompile(){
     updateLinesBox();
     clearSelection(0);
     ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-    ui->buttonCompile->setStyleSheet("");
     ui->buttonCompile->setStyleSheet(uncompiledButton);
 }
 void MainWindow::handleVerticalScrollBarValueChanged(int value){
