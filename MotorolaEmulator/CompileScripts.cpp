@@ -60,6 +60,7 @@ bool MainWindow::compileMix(int ver){
     QStringList lines = code.split("\n");
     int charNum = 0;
 	foreach (QString line, lines) {
+        currentCompilerAddress = currentCompilerAddress % 0xFFFF;
         int instructionAddress = currentCompilerAddress;
         QString label;
         QString in;
@@ -147,6 +148,7 @@ bool MainWindow::compileMix(int ver){
             goto end;
         }
         else if (line[charNum].isLetter() || line[charNum] == '.') {
+            bool spec = line[charNum] == '.';
             charNum++;
             if (line.sliced(charNum).isEmpty()) {
                 Err("Missing instruction");
@@ -175,6 +177,7 @@ bool MainWindow::compileMix(int ver){
                 goto end;
             }
             op = line.sliced(charNum);
+            if(!spec){
             if (line[charNum] == '#') {
                 if (op.contains(",")) {
                     Err("Immediate and indexed data cannot be mixed");
@@ -346,6 +349,7 @@ bool MainWindow::compileMix(int ver){
                 Err("unexpected character: '" % line[charNum] % "'");
                 goto end;
             }
+            }
         }
         else {
             Err("Unexpected character: '" % line[charNum] % "'");
@@ -371,18 +375,18 @@ bool MainWindow::compileMix(int ver){
                     Err("Missing operand");
                     goto end;
                 }
-                else {
-                    if (op[0].isLetter()) {
+                for (int var = 0; var <= op.count(","); ++var) {
+                    QString curOp = op.split(",")[var];
+                    if (curOp[0].isLetter()) {
                         Err("Cannot use label in this directive");
                         goto end;
                     }
-                    else {
                         int value = 0;
                         try {
-                            value = getNum(op);
+                            value = getNum(curOp);
                         }
                         catch (...) {
-                            Err("Invalid number: '" % op % "'");
+                            Err("Invalid number: '" % curOp % "'");
                             goto end;
                         }
                         if (value > 255) {
@@ -397,14 +401,12 @@ bool MainWindow::compileMix(int ver){
                                 Err("Label already declared: '" + label + "'");
                                 goto end;
                             }
+                            PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
                         }
+                        currentCompilerAddress += 1;
 
-
-                        PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
-                        currentCompilerAddress++;
-                        goto skipLine;
-                    }
                 }
+                goto skipLine;
             }
             else if (in == ".EQU") {
                 if (label == "") {
@@ -435,22 +437,27 @@ bool MainWindow::compileMix(int ver){
                         }
                         if (labelValMap.count(label) == 0) {
                             labelValMap[label] = value;
+                            PrintConsole("Assigned:'" + QString::number(value) + "' to:'" + label + "'", -1);
                         }
                         else {
                             Err("Label already declared: '" + label + "'");
                             goto end;
                         }
-                        PrintConsole("Assigned:'" + QString::number(value) + "' to:'" + label + "'", -1);
                         goto skipLine;
                     }
                 }
             }
             else if (in == ".ORG"){
-                if (label != "") {
-                    Err("Cannot label this instruction");
-                    goto end;
+                if(label != ""){
+                    if (labelValMap.count(label) == 0) {
+                        labelValMap[label] = currentCompilerAddress;
+                        PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
+                    } else {
+                        Err("Label already declared: '" + label + "'");
+                        goto end;
+                    }
                 }
-                else if (op == "") {
+                if (op == "") {
                     Err("Missing operand");
                     goto end;
                 }
@@ -480,8 +487,74 @@ bool MainWindow::compileMix(int ver){
                         goto skipLine;
                     }
                 }
+
             }
-            else {
+            else if (in == ".WORD") {
+                if (op == "") {
+                    Err("Missing operand");
+                    goto end;
+                }
+                for (int var = 0; var <= op.count(","); ++var) {
+                    QString curOp = op.split(",")[var];
+                    if (curOp[0].isLetter()) {
+                        Err("Cannot use label in this directive");
+                        goto end;
+                    }
+                        int value = 0;
+                        try {
+                            value = getNum(curOp);
+                        }
+                        catch (...) {
+                            Err("Invalid number: '" % curOp % "'");
+                            goto end;
+                        }
+                        if (value > 0xFFFF) {
+                            Err("Value out of range: " + QString::number(value));
+                            goto end;
+                        }
+                        opCode = (value >> 8) & 0xFF;
+                        opCode2 = value & 0xFF;
+                        Memory[currentCompilerAddress] = opCode;
+                        Memory[currentCompilerAddress+1] = opCode2;
+                        if(label != ""){
+                            if (labelValMap.count(label) == 0) {
+                                labelValMap[label] = currentCompilerAddress;
+                                PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
+                            } else {
+                                Err("Label already declared: '" + label + "'");
+                                goto end;
+                            }
+                        }
+                        currentCompilerAddress += 2;
+                }
+                goto skipLine;
+            }
+            else if(in == ".RMB"){
+                if(label != ""){
+                    if (labelValMap.count(label) == 0) {
+                        labelValMap[label] = currentCompilerAddress;
+                        PrintConsole("Assigned:'" + QString::number(currentCompilerAddress) + "' to:'" + label + "'", -1);
+                    } else {
+                        Err("Label already declared: '" + label + "'");
+                        goto end;
+                    }
+                }
+                int value = 0;
+                try {
+                    value = getNum(op);
+                }
+                catch (...) {
+                    Err("Invalid number: '" % op % "'");
+                    goto end;
+                }
+                if (value > 0xFFFF) {
+                    Err("Value out of range: " + QString::number(value));
+                    goto end;
+                }
+                currentCompilerAddress+=value;
+                goto skipLine;
+            }
+            else{
                 Err("Unknown instruction");
                 goto end;
             }

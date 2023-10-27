@@ -97,7 +97,7 @@ private:
     bool hexReg = true;
     bool compileOnRun = true;
 
-    QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG" };
+    QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG", ".WORD", ".RMB" };
     QStringList allInstructionsM6800 = { "ABA", "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BITA", "BITB", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "LSRA", "LSRB", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PULA", "PULB", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList vseInstructionsM6800 = { "ABA", "ASLA", "ASLB", "ASRA", "ASRB", "CBA", "CLC", "CLI", "CLRA", "CLRB", "CLV", "COMA", "COMB", "DAA", "DECA", "DECB", "DES", "DEX", "INCA", "INCB", "INS", "INX", "LSRA", "LSRB", "NEGA", "NEGB", "NOP", "PSHA", "PSHB", "PULA", "PULB", "ROLA", "ROLB", "RORA", "RORB", "RTI", "RTS", "SBA", "SEC", "SEI", "SEV", "SWI", "TAB", "TAP", "TBA", "TPA", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList takInstructionsM6800 = { "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "BITA", "BITB", "CMPA", "CMPB", "EORA", "EORB", "LDAA", "LDAB", "ORAA", "ORAB", "SBCA", "SBCB", "SUBA", "SUBB" };
