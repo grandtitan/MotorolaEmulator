@@ -69,6 +69,7 @@ bool MainWindow::compileMix(int ver){
         int inCode = 0;
         int opCode = 0;
         int opCode2 = 0;
+        bool spec = false;
         if (line.contains(";")) {
             line = line.split(";")[0];
             for (int var = line.length(); var > 0; --var) {
@@ -148,7 +149,6 @@ bool MainWindow::compileMix(int ver){
             goto end;
         }
         else if (line[charNum].isLetter() || line[charNum] == '.') {
-            bool spec = line[charNum] == '.';
             charNum++;
             if (line.sliced(charNum).isEmpty()) {
                 Err("Missing instruction");
@@ -177,22 +177,97 @@ bool MainWindow::compileMix(int ver){
                 goto end;
             }
             op = line.sliced(charNum);
+            spec = in[0] == '.';
             if(!spec){
-            if (line[charNum] == '#') {
-                if (op.contains(",")) {
-                    Err("Immediate and indexed data cannot be mixed");
-                    goto end;
+                if (line[charNum] == '#') {
+                    if (op.contains(",")) {
+                        Err("Immediate and indexed data cannot be mixed");
+                        goto end;
+                    }
+                    charNum++;
+                    if (line.sliced(charNum).isEmpty()) {
+                        charNum--;
+                        Err("Invalid operand");
+                        goto end;
+                    }
+                    if (line[charNum].isLetter()) {
+                        charNum++;
+                        for (; charNum < line.size(); ++charNum) {
+                            if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
+                            }
+                            else {
+                                Err("Unexpected character: '" % line[charNum] % "'");
+                                goto end;
+                            }
+                        }
+                    }
+                    else if (line[charNum] == '%' || line[charNum].isDigit()) {
+                        charNum++;
+                        for (; charNum < line.size(); ++charNum) {
+                            if (line[charNum].isDigit()) {
+                            }
+                            else {
+                                Err("Unexpected character: '" % line[charNum] % "'");
+                                goto end;
+                            }
+                        }
+                    }
+                    else if (line[charNum] == '$') {
+                        charNum++;
+                        if (line.sliced(charNum).isEmpty()) {
+                            Err("Missing operand");
+                            goto end;
+                        }
+                        for (; charNum < line.size(); ++charNum) {
+                            if (line[charNum].isLetterOrNumber()) {
+                            }
+                            else {
+                                Err("Unexpected character: '" % line[charNum] % "'");
+                                goto end;
+                            }
+                        }
+                    } else if (line[charNum] == '\''){
+                        charNum++;
+                        if(line.sliced(charNum).isEmpty()){
+                            Err("Missing character");
+                            goto end;
+                        }
+                        if(!op.sliced(3).isEmpty()){
+                            charNum++;
+                            Err("Cannot convert multiple characters");
+                            goto end;
+                        }
+                        ushort unicodeValue = line[charNum].unicode();
+                        if (unicodeValue <= 128) {
+                            op = "#" + QString::number(static_cast<int>(unicodeValue));
+
+                        } else {
+                            Err("Invlaid ASCII character: '" % line[charNum] % "'");
+                            goto end;
+                        }
+                    }
+                    else {
+                        Err("Unexpected character: '" % line[charNum] % "'");
+                        goto end;
+                    }
                 }
-                charNum++;
-                if (line.sliced(charNum).isEmpty()) {
-                    charNum--;
-                    Err("Invalid operand");
-                    goto end;
-                }
-                if (line[charNum].isLetter()) {
+                else if (line[charNum].isLetter()) {
                     charNum++;
                     for (; charNum < line.size(); ++charNum) {
-                        if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
+                        if (line.size() - 2 == charNum) {
+                            if (line[charNum] == ',') {
+                                if (line[charNum + 1].toUpper() == 'X') {
+                                    charNum++;
+                                    break;
+                                }
+                                else {
+                                    Err("Invalid indexing register");
+                                    charNum++;
+                                    goto end;
+                                }
+                            }
+                        }
+                        else if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
                         }
                         else {
                             Err("Unexpected character: '" % line[charNum] % "'");
@@ -200,10 +275,23 @@ bool MainWindow::compileMix(int ver){
                         }
                     }
                 }
-                else if (line[charNum] == '%' || line[charNum].isDigit()) {
+                else if (line[charNum] == '%' || line[charNum] == '-' || line[charNum].isDigit()) {
                     charNum++;
                     for (; charNum < line.size(); ++charNum) {
-                        if (line[charNum].isDigit()) {
+                        if (line.size() - 2 == charNum) {
+                            if (line[charNum] == ',') {
+                                if (line[charNum + 1].toUpper() == 'X') {
+                                    charNum++;
+                                    break;
+                                }
+                                else {
+                                    Err("Invalid indexing register");
+                                    charNum++;
+                                    goto end;
+                                }
+                            }
+                        }
+                        else if (line[charNum].isDigit()) {
                         }
                         else {
                             Err("Unexpected character: '" % line[charNum] % "'");
@@ -218,7 +306,20 @@ bool MainWindow::compileMix(int ver){
                         goto end;
                     }
                     for (; charNum < line.size(); ++charNum) {
-                        if (line[charNum].isLetterOrNumber()) {
+                        if (line.size() - 2 == charNum) {
+                            if (line[charNum] == ',') {
+                                if (line[charNum + 1].toUpper() == 'X') {
+                                    charNum++;
+                                    break;
+                                }
+                                else {
+                                    Err("Invalid indexing register");
+                                    charNum++;
+                                    goto end;
+                                }
+                            }
+                        }
+                        else if (line[charNum].isLetterOrNumber()) {
                         }
                         else {
                             Err("Unexpected character: '" % line[charNum] % "'");
@@ -231,124 +332,24 @@ bool MainWindow::compileMix(int ver){
                         Err("Missing character");
                         goto end;
                     }
-                    if(!op.sliced(3).isEmpty()){
+                    if(!op.sliced(2).isEmpty()){
                         charNum++;
                         Err("Cannot convert multiple characters");
                         goto end;
                     }
                     ushort unicodeValue = line[charNum].unicode();
                     if (unicodeValue <= 128) {
-                        op = "#" + QString::number(static_cast<int>(unicodeValue));
-
+                        op = QString::number(static_cast<int>(unicodeValue));
                     } else {
-                        Err("Invlaid ASCII character: '" % line[charNum] % "'");
+                        Err("Invlaid ASCII character");
                         goto end;
                     }
+
                 }
                 else {
-                    Err("Unexpected character: '" % line[charNum] % "'");
+                    Err("unexpected character: '" % line[charNum] % "'");
                     goto end;
                 }
-            }
-            else if (line[charNum].isLetter()) {
-                charNum++;
-                for (; charNum < line.size(); ++charNum) {
-                    if (line.size() - 2 == charNum) {
-                        if (line[charNum] == ',') {
-                            if (line[charNum + 1].toUpper() == 'X') {
-                                charNum++;
-                                break;
-                            }
-                            else {
-                                Err("Invalid indexing register");
-                                charNum++;
-                                goto end;
-                            }
-                        }
-                    }
-                    else if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
-                    }
-                    else {
-                        Err("Unexpected character: '" % line[charNum] % "'");
-                        goto end;
-                    }
-                }
-            }
-            else if (line[charNum] == '%' || line[charNum] == '-' || line[charNum].isDigit()) {
-                charNum++;
-                for (; charNum < line.size(); ++charNum) {
-                    if (line.size() - 2 == charNum) {
-                        if (line[charNum] == ',') {
-                            if (line[charNum + 1].toUpper() == 'X') {
-                                charNum++;
-                                break;
-                            }
-                            else {
-                                Err("Invalid indexing register");
-                                charNum++;
-                                goto end;
-                            }
-                        }
-                    }
-                    else if (line[charNum].isDigit()) {
-                    }
-                    else {
-                        Err("Unexpected character: '" % line[charNum] % "'");
-                        goto end;
-                    }
-                }
-            }
-            else if (line[charNum] == '$') {
-                charNum++;
-                if (line.sliced(charNum).isEmpty()) {
-                    Err("Missing operand");
-                    goto end;
-                }
-                for (; charNum < line.size(); ++charNum) {
-                    if (line.size() - 2 == charNum) {
-                        if (line[charNum] == ',') {
-                            if (line[charNum + 1].toUpper() == 'X') {
-                                charNum++;
-                                break;
-                            }
-                            else {
-                                Err("Invalid indexing register");
-                                charNum++;
-                                goto end;
-                            }
-                        }
-                    }
-                    else if (line[charNum].isLetterOrNumber()) {
-                    }
-                    else {
-                        Err("Unexpected character: '" % line[charNum] % "'");
-                        goto end;
-                    }
-                }
-            } else if (line[charNum] == '\''){
-                charNum++;
-                if(line.sliced(charNum).isEmpty()){
-                    Err("Missing character");
-                    goto end;
-                }
-                if(!op.sliced(2).isEmpty()){
-                    charNum++;
-                    Err("Cannot convert multiple characters");
-                    goto end;
-                }
-                ushort unicodeValue = line[charNum].unicode();
-                if (unicodeValue <= 128) {
-                    op = QString::number(static_cast<int>(unicodeValue));
-                } else {
-                    Err("Invlaid ASCII character");
-                    goto end;
-                }
-
-            }
-            else {
-                Err("unexpected character: '" % line[charNum] % "'");
-                goto end;
-            }
             }
         }
         else {
@@ -356,7 +357,9 @@ bool MainWindow::compileMix(int ver){
             goto end;
         }
 	operationIdentification:
-        op = op.toUpper();
+        if(!spec){
+            op = op.toUpper();
+        }
         charNum = 1000;
 		if(ver == 0){
             if (allInstructionsM6800.indexOf(in) == -1 && specialInstructions.indexOf(in) == -1) {
@@ -369,7 +372,7 @@ bool MainWindow::compileMix(int ver){
 				goto end;
 			}
 		}
-		if (in[0] == '.') {
+        if (in[0] == '.') {
             if (in == ".BYTE") {
                 if (op == "") {
                     Err("Missing operand");
@@ -377,11 +380,21 @@ bool MainWindow::compileMix(int ver){
                 }
                 for (int var = 0; var <= op.count(","); ++var) {
                     QString curOp = op.split(",")[var];
+                    if(curOp.isEmpty()){ Err("Invalid syntax"); goto end;}
+                    int value = 0;
                     if (curOp[0].isLetter()) {
                         Err("Cannot use label in this directive");
                         goto end;
                     }
-                        int value = 0;
+                    else if(curOp.length() == 2 && curOp[0] == '\''){
+                        ushort unicodeValue = curOp[1].unicode();
+                        if (unicodeValue <= 128) {
+                            curOp = QString::number(static_cast<int>(unicodeValue));
+                        } else {
+                            Err("Invlaid ASCII character");
+                            goto end;
+                        }
+                    }
                         try {
                             value = getNum(curOp);
                         }
@@ -393,6 +406,7 @@ bool MainWindow::compileMix(int ver){
                             Err("Value out of range: " + QString::number(value));
                             goto end;
                         }
+
                         Memory[currentCompilerAddress] = value;
                         if(label != ""){
                             if (labelValMap.count(label) == 0) {
@@ -496,9 +510,19 @@ bool MainWindow::compileMix(int ver){
                 }
                 for (int var = 0; var <= op.count(","); ++var) {
                     QString curOp = op.split(",")[var];
+                    if(curOp.isEmpty()){ Err("Invalid syntax"); goto end;}
                     if (curOp[0].isLetter()) {
                         Err("Cannot use label in this directive");
                         goto end;
+                    }
+                    else if(curOp.length() == 2 && curOp[0] == '\''){
+                        ushort unicodeValue = curOp[1].unicode();
+                        if (unicodeValue <= 128) {
+                            curOp = QString::number(static_cast<int>(unicodeValue));
+                        } else {
+                            Err("Invlaid ASCII character");
+                            goto end;
+                        }
                     }
                         int value = 0;
                         try {
@@ -539,6 +563,11 @@ bool MainWindow::compileMix(int ver){
                         goto end;
                     }
                 }
+                if(op.isEmpty()){ Err("Invalid syntax"); goto end;}
+                if (op[0].isLetter()) {
+                    Err("Cannot use label in this directive");
+                    goto end;
+                }
                 int value = 0;
                 try {
                     value = getNum(op);
@@ -552,6 +581,150 @@ bool MainWindow::compileMix(int ver){
                     goto end;
                 }
                 currentCompilerAddress+=value;
+                goto skipLine;
+            } else if(in == ".SETW"){
+                if (op.count(",") != 1){
+                    Err("Invalid syntax");
+                    goto end;
+                }
+                QString adrOp = op.split(",")[0];
+                if(adrOp.isEmpty()){ Err("Invalid syntax"); goto end;}
+                if (adrOp[0].isLetter()) {
+                    Err("Cannot use label in this directive");
+                    goto end;
+                }
+                int adr = 0;
+                try {
+                    adr = getNum(adrOp);
+                }
+                catch (...) {
+                    Err("Invalid number: '" % adrOp % "'");
+                    goto end;
+                }
+                if (adr > 0xFFFF) {
+                    Err("Value out of range: " + QString::number(adr));
+                    goto end;
+                }
+                QString curOp = op.split(",")[1];
+                if(curOp.isEmpty()){ Err("Invalid syntax"); goto end;}
+                if (curOp[0].isLetter()) {
+                    Err("Cannot use label in this directive");
+                    goto end;
+                }
+                else if(curOp.length() == 2 && curOp[0] == '\''){
+                    ushort unicodeValue = curOp[1].unicode();
+                    if (unicodeValue <= 128) {
+                        curOp = QString::number(static_cast<int>(unicodeValue));
+                    } else {
+                        Err("Invlaid ASCII character");
+                        goto end;
+                    }
+                }
+                int value = 0;
+                try {
+                    value = getNum(curOp);
+                }
+                catch (...) {
+                    Err("Invalid number: '" % curOp % "'");
+                    goto end;
+                }
+                if (value > 0xFFFF) {
+                    Err("Value out of range: " + QString::number(value));
+                    goto end;
+                }
+                opCode = (value >> 8) & 0xFF;
+                opCode2 = value & 0xFF;
+                Memory[adr] = opCode;
+                Memory[adr+1] = opCode2;
+                if(label != ""){
+                    if (labelValMap.count(label) == 0) {
+                        labelValMap[label] = adr;
+                        PrintConsole("Assigned:'" + QString::number(adr) + "' to:'" + label + "'", -1);
+                    } else {
+                        Err("Label already declared: '" + label + "'");
+                        goto end;
+                    }
+                }
+                goto skipLine;
+            }
+            else if(in == ".SETB"){
+                if (op.count(",") != 1){
+                    Err("Invalid syntax");
+                    goto end;
+                }
+                QString adrOp = op.split(",")[0];
+                if(adrOp.isEmpty()){ Err("Invalid syntax"); goto end;}
+                if (adrOp[0].isLetter()) {
+                    Err("Cannot use label in this directive");
+                    goto end;
+                }
+                int adr = 0;
+                try {
+                    adr = getNum(adrOp);
+                }
+                catch (...) {
+                    Err("Invalid number: '" % adrOp % "'");
+                    goto end;
+                }
+                if (adr > 0xFFFF) {
+                    Err("Value out of range: " + QString::number(adr));
+                    goto end;
+                }
+                QString curOp = op.split(",")[1];
+                if(curOp.isEmpty()){ Err("Invalid syntax"); goto end;}
+                if (curOp[0].isLetter()) {
+                    Err("Cannot use label in this directive");
+                    goto end;
+                }
+                else if(curOp.length() == 2 && curOp[0] == '\''){
+                    ushort unicodeValue = curOp[1].unicode();
+                    if (unicodeValue <= 128) {
+                        curOp = QString::number(static_cast<int>(unicodeValue));
+                    } else {
+                        Err("Invlaid ASCII character");
+                        goto end;
+                    }
+                }
+                int value = 0;
+                try {
+                    value = getNum(curOp);
+                }
+                catch (...) {
+                    Err("Invalid number: '" % curOp % "'");
+                    goto end;
+                }
+                if (value > 0xFF) {
+                    Err("Value out of range: " + QString::number(value));
+                    goto end;
+                }
+                Memory[adr] = value;
+                if(label != ""){
+                    if (labelValMap.count(label) == 0) {
+                        labelValMap[label] = adr;
+                        PrintConsole("Assigned:'" + QString::number(adr) + "' to:'" + label + "'", -1);
+                    } else {
+                        Err("Label already declared: '" + label + "'");
+                        goto end;
+                    }
+                }
+                goto skipLine;
+            }
+            else if(in == ".STR"){
+                    if(op.isEmpty()){ Err("Invalid syntax"); goto end;}
+                    if (op[0] != '"' || op.length() < 3){
+                        Err("Invalid syntax");
+                        goto end;
+                    }
+                    if(op.at(op.length() - 1) != '"'){
+                            Err("Invalid syntax");
+                            goto end;
+                    }
+                    op = op.mid(1, op.length() - 2);
+                    for (int i = 0; i < op.length(); i++) {
+                        Memory[currentCompilerAddress] = static_cast<int>(op.at(i).unicode());
+                        currentCompilerAddress++;
+                    }
+
                 goto skipLine;
             }
             else{
