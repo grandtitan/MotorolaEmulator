@@ -3478,7 +3478,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -6291,7 +6291,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>9D</string>
        </property>
        <property name="text">
-        <string>AF</string>
+        <string>AD</string>
        </property>
        <property name="text">
         <string>BD</string>

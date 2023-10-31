@@ -72,8 +72,11 @@ private:
     std::unordered_map<int, QString> callLabelRazMap;
     bool compileMix(int ver);
     bool compiled = false;
+    void setCompileStatus(bool isCompile);
     QString uncompiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(255,30,30);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(255, 0, 50);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(255, 0, 50);\n}";
     QString compiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(0,180,0);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(0, 180, 20);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(0, 180, 20);\n}";
+    bool reverseCompile(int ver, int begLoc);
+    int inputNextAddress(int curAdr, QString err);
 
     uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};

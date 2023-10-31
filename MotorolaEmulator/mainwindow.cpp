@@ -16,6 +16,7 @@
 #include <QTextStream>
 #include <QMouseEvent>
 #include <QTableWidget>
+#include <QInputDialog>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -120,6 +121,35 @@ QString convertToQString(int number, int width){
     return QString::fromStdString(str);
 }
 
+void MainWindow::setCompileStatus(bool isCompiled){
+    if(isCompiled){
+        ui->buttonCompile->setStyleSheet(compiledButton);
+        updateLinesBox();
+        updateMemoryTab();
+        compiled = 1;
+    }else{
+        compiled = 0;
+        ui->buttonCompile->setStyleSheet(uncompiledButton);
+        PrintConsole("", 2);
+        clearInstructions();
+        updateLinesBox();
+        clearSelection(0);
+        ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
+        labelValMap.clear();
+        callLabelMap.clear();
+        callLabelRazMap.clear();
+        callLabelRelMap.clear();
+    }
+}
+
+void MainWindow::breakCompile(){
+    compiled = 0;
+    clearInstructions();
+    updateLinesBox();
+    clearSelection(0);
+    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
+    ui->buttonCompile->setStyleSheet(uncompiledButton);
+}
 void MainWindow::stopExecution(){
     running = false;
     waitCycles = 0;
@@ -464,11 +494,6 @@ void MainWindow::updateSelectionsMemoryEdit(int address){
     lastMemoryAddressSelection = address;
 }
 void MainWindow::updateSelectionCompileError(int charNum){
-    breakCompile();
-    labelValMap.clear();
-    callLabelMap.clear();
-    callLabelRazMap.clear();
-    callLabelRelMap.clear();
     QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentCompilerLine);
     QTextCursor codeCursor(codeBlock);
     codeCursor.select(QTextCursor::LineUnderCursor);
@@ -667,14 +692,7 @@ void MainWindow::resetEmulator(bool failedCompile){
 
     }
 }
-void MainWindow::breakCompile(){
-    compiled = 0;
-    clearInstructions();
-    updateLinesBox();
-    clearSelection(0);
-    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-    ui->buttonCompile->setStyleSheet(uncompiledButton);
-}
+
 void MainWindow::handleVerticalScrollBarValueChanged(int value){
     ui->plainTextLines->verticalScrollBar()->setValue(value);
 }
@@ -740,7 +758,7 @@ void MainWindow::on_plainTextCode_textChanged(){
         text = lines.join('\n');
         ui->plainTextCode->setPlainText(text);
     }
-    breakCompile();
+    setCompileStatus(false);
 }
 void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
     if(ui->lineEditBin->text() != "X"){
@@ -907,11 +925,12 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                     Memory[currentCompilerAddressSelection] = (currentCellValue << 4) | QString(newByte).toInt(nullptr, 16);;
                     updateMemoryCell(currentCompilerAddressSelection);
                     if (!running){
+                        if(compiled){
+                            setCompileStatus(false);
+                        }
                         std::memcpy(backupMemory, Memory, sizeof(Memory));
                     }
-                    if(compiled){
-                        breakCompile();
-                    }
+
                     updateSelectionsMemoryEdit(currentCompilerAddressSelection);
                 }
 
@@ -949,20 +968,37 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 {
     compilerVersionIndex = index;
-    breakCompile();
+    setCompileStatus(false);
     resetEmulator(true);
     clearSelection(0);
 }
 bool MainWindow::on_buttonCompile_clicked()
 {
-    bool ok = false;
-    if(compilerVersionIndex ==  0){
-        ok = compileMix(0);
-    } else if(compilerVersionIndex ==  1){
-        ok = compileMix(1);
+    if(!writeToMemory){
+        bool ok = false;
+        ok = compileMix(compilerVersionIndex);
+        resetEmulator(!ok);
+        return ok;
+    }else{
+        bool ok;
+        QString text = QInputDialog::getText(this, "Input Dialog", "Enter the decimal address where the program beggins. Data before that will be written with .BYTE.", QLineEdit::Normal, QString(), &ok);
+        if (ok) {
+            bool iok;
+            int number = text.toInt(&iok);
+            if(iok && number >= 0 && number <= 0xFFFF){
+                bool cok = reverseCompile(compilerVersionIndex, number);
+                resetEmulator(!cok);
+                return cok;
+            }else{
+                Err("Invalid address");
+                return false;
+            }
+        } else {
+            PrintConsole("Decompile canceled",1);
+            return false;
+        }
     }
-    resetEmulator(!ok);
-    return ok;
+
 }
 void MainWindow::on_buttonLoad_clicked()
 {
@@ -989,7 +1025,7 @@ void MainWindow::on_buttonLoad_clicked()
               if (byteArray.size() == sizeof(Memory)) {
                     stopExecution();
                     if(compiled){
-                        breakCompile();
+                        setCompileStatus(false);
                     }
                     std::memcpy(Memory, byteArray.constData(), sizeof(Memory));
                     std::memcpy(backupMemory, Memory, sizeof(Memory));
@@ -1131,7 +1167,7 @@ void MainWindow::on_checkBoxWriteMemory_clicked(bool checked)
         ui->labelWritingMode->setEnabled(false);
         writeToMemory = false;
         ui->plainTextCode->setReadOnly(false);
-        ui->buttonCompile->setEnabled(true);
+        //ui->buttonCompile->setEnabled(true);
         ui->checkBoxCompileOnRun->setEnabled(true);
         compileOnRun = true;
         ui->labelWritingMode->setText("Code");
@@ -1145,7 +1181,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
     if(writeToMemory){
         writeToMemory = false;
         ui->plainTextCode->setReadOnly(false);
-        ui->buttonCompile->setEnabled(true);
+        //ui->buttonCompile->setEnabled(true);
         ui->checkBoxCompileOnRun->setEnabled(true);
         compileOnRun = true;
         ui->labelWritingMode->setText("Code");
@@ -1155,7 +1191,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
     }else{
         writeToMemory = true;
         ui->plainTextCode->setReadOnly(true);
-        ui->buttonCompile->setEnabled(false);
+        //ui->buttonCompile->setEnabled(false);
         ui->checkBoxCompileOnRun->setEnabled(false);
         compileOnRun = false;
         ui->labelWritingMode->setText("Memory");

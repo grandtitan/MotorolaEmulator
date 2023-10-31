@@ -16,6 +16,9 @@
 #include <QTextStream>
 #include <QMouseEvent>
 #include <QTableWidget>
+#include <QInputDialog>
+
+
 int getNum(const QString& input){
     bool ok;
     int number;
@@ -44,9 +47,6 @@ int getNum(const QString& input){
 
 
 bool MainWindow::compileMix(int ver){
-    compiled = 0;
-    ui->buttonCompile->setStyleSheet(compiledButton);
-    PrintConsole("", 2);
     currentCompilerLine = 0;
     currentCompilerAddress = 0;
     std::fill(std::begin(Memory), std::end(Memory), static_cast<uint8_t>(0));
@@ -55,7 +55,6 @@ bool MainWindow::compileMix(int ver){
     callLabelMap.clear();
     callLabelRazMap.clear();
     callLabelRelMap.clear();
-    clearInstructions();
     QString code = ui->plainTextCode->toPlainText();
     QStringList lines = code.split("\n");
     int charNum = 0;
@@ -4408,14 +4407,1089 @@ bool MainWindow::compileMix(int ver){
         }
     }
     std::memcpy(backupMemory, Memory, sizeof(Memory));
-    updateLinesBox();
-    updateMemoryTab();
-    compiled = 1;
+
 end:
     if (lines.size() != currentCompilerLine) {
+        setCompileStatus(false);
         updateSelectionCompileError(charNum);
         return false;
     }else{
+        setCompileStatus(true);
         return true;
+    }
+}
+
+int MainWindow::inputNextAddress(int curAdr, QString err){
+    bool ok;
+    QString text = QInputDialog::getText(this, "Input Dialog", err + ". Missing data will be written with .BYTE. Enter decimal address of next instruction. Current address: " + QString::number(curAdr,10) + ".", QLineEdit::Normal, QString(), &ok);
+
+    if (ok) {
+        bool iok;
+        int number = text.toInt(&iok);
+        if(iok){
+            if (number < curAdr){
+                    Err("Next instruction cannot be located before the previous one");
+                    return -1;
+            }
+            return number;
+        }else{
+            Err("Invalid address");
+            return -1;
+        }
+    } else {
+        PrintConsole("Decompile canceled",1);
+        return -1;
+    }
+}
+
+bool MainWindow::reverseCompile(int ver, int begLoc){
+    QString code;
+    int index = 0;
+    compiled = 0;
+    ui->buttonCompile->setStyleSheet(compiledButton);
+    PrintConsole("", 2);
+    clearInstructions();
+    for (; index < 0xFFFF; ) {
+        if (index < begLoc){
+            code.append("\t.BYTE " + QString::number(Memory[index]));
+            addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+            index++;
+        }else{
+            int inSize = 1;
+            int inType = -1;
+            QString in;
+            int ok = 1;
+            switch (Memory[index]){
+            case 0x00:
+                    //qDebug("code break");
+                    break;
+            case 0x01:
+                    in = "NOP";
+                    inType = 0;
+                    break;
+            case 0x04:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "LSRD";
+                    inType = 0;
+                    break;
+            case 0x05:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ASLD";
+                    inType = 0;
+                    break;
+            case 0x06:
+                    in = "TAP";
+                    inType = 0;
+                    break;
+            case 0x07:
+                    in = "TPA";
+                    inType = 0;
+                    break;
+            case 0x08:
+                    in = "INX";
+                    inType = 0;
+                    break;
+            case 0x09:
+                    in = "DEX";
+                    inType = 0;
+                    break;
+            case 0x0A:
+                    in = "CLV";
+                    inType = 0;
+                    break;
+            case 0x0B:
+                    in = "SEV";
+                    inType = 0;
+                    break;
+            case 0x0C:
+                    in = "CLC";
+                    inType = 0;
+                    break;
+            case 0x0D:
+                    in = "SEC";
+                    inType = 0;
+                    break;
+            case 0x0E:
+                    in = "CLI";
+                    inType = 0;
+                    break;
+            case 0x0F:
+                    in = "SEI";
+                    inType = 0;
+                    break;
+            case 0x10:
+                    in = "SBA";
+                    inType = 0;
+                    break;
+            case 0x11:
+                    in = "CBA";
+                    inType = 0;
+                    break;
+            case 0x16:
+                    in = "TAB";
+                    inType = 0;
+                    break;
+            case 0x17:
+                    in = "TBA";
+                    inType = 0;
+                    break;
+            case 0x19:
+                    in = "DAA";
+                    inType = 0;
+                    break;
+            case 0x1B:
+                    in = "ABA";
+                    inType = 0;
+                    break;
+            case 0x20:
+                    in = "BRA";
+                    inType = 5;
+                    break;
+            case 0x21:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "BRN";
+                    inType = 5;
+                    break;
+            case 0x22:
+                    in = "BHI";
+                    inType = 5;
+                    break;
+            case 0x23:
+                    in = "BLS";
+                    inType = 5;
+                    break;
+            case 0x24:
+                    in = "BCC";
+                    inType = 5;
+                    break;
+            case 0x25:
+                    in = "BCS";
+                    inType = 5;
+                    break;
+            case 0x26:
+                    in = "BNE";
+                    inType = 5;
+                    break;
+            case 0x27:
+                    in = "BEQ";
+                    inType = 5;
+                    break;
+            case 0x28:
+                    in = "BVC";
+                    inType = 5;
+                    break;
+            case 0x29:
+                    in = "BVS";
+                    inType = 5;
+                    break;
+            case 0x2A:
+                    in = "BPL";
+                    inType = 5;
+                    break;
+            case 0x2B:
+                    in = "BMI";
+                    inType = 5;
+                    break;
+            case 0x2C:
+                    in = "BGE";
+                    inType = 5;
+                    break;
+            case 0x2D:
+                    in = "BLT";
+                    inType = 5;
+                    break;
+            case 0x2E:
+                    in = "BGT";
+                    inType = 5;
+                    break;
+            case 0x2F:
+                    in = "BLE";
+                    inType = 5;
+                    break;
+            case 0x30:
+                    in = "TSX";
+                    inType = 0;
+                    break;
+            case 0x31:
+                    in = "INS";
+                    inType = 0;
+                    break;
+            case 0x32:
+                    in = "PULA";
+                    inType = 0;
+                    break;
+            case 0x33:
+                    in = "PULB";
+                    inType = 0;
+                    break;
+            case 0x34:
+                    in = "DES";
+                    inType = 0;
+                    break;
+            case 0x35:
+                    in = "TXS";
+                    inType = 0;
+                    break;
+            case 0x36:
+                    in = "PSHA";
+                    inType = 0;
+                    break;
+            case 0x37:
+                    in = "PSHB";
+                    inType = 0;
+                    break;
+            case 0x38:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "PULX";
+                    inType = 0;
+                    break;
+            case 0x39:
+                    in = "RTS";
+                    inType = 0;
+                    break;
+            case 0x3A:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ABX";
+                    inType = 0;
+                    break;
+            case 0x3B:
+                    in = "RTI";
+                    inType = 0;
+                    break;
+            case 0x3C:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "PSHX";
+                    inType = 0;
+                    break;
+            case 0x3D:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "MUL";
+                    inType = 0;
+                    break;
+            case 0x3E:
+                    in = "WAI";
+                    inType = 0;
+                    break;
+            case 0x3F:
+                    in = "SWI";
+                    inType = 0;
+                    break;
+            case 0x40:
+                    in = "NEGA";
+                    inType = 0;
+                    break;
+            case 0x43:
+                    in = "COMA";
+                    inType = 0;
+                    break;
+            case 0x44:
+                    in = "LSRA";
+                    inType = 0;
+                    break;
+            case 0x46:
+                    in = "RORA";
+                    inType = 0;
+                    break;
+            case 0x47:
+                    in = "ASRA";
+                    inType = 0;
+                    break;
+            case 0x48:
+                    in = "ASLA";
+                    inType = 0;
+                    break;
+            case 0x49:
+                    in = "ROLA";
+                    inType = 0;
+                    break;
+            case 0x4A:
+                    in = "DECA";
+                    inType = 0;
+                    break;
+            case 0x4C:
+                    in = "INCA";
+                    inType = 0;
+                    break;
+            case 0x4D:
+                    in = "TSTA";
+                    inType = 0;
+                    break;
+            case 0x4F:
+                    in = "CLRA";
+                    inType = 0;
+                    break;
+            case 0x50:
+                    in = "NEGB";
+                    inType = 0;
+                    break;
+            case 0x53:
+                    in = "COMB";
+                    inType = 0;
+                    break;
+            case 0x54:
+                    in = "LSRB";
+                    inType = 0;
+                    break;
+            case 0x56:
+                    in = "RORB";
+                    inType = 0;
+                    break;
+            case 0x57:
+                    in = "ASRB";
+                    inType = 0;
+                    break;
+            case 0x58:
+                    in = "ASLB";
+                    inType = 0;
+                    break;
+            case 0x59:
+                    in = "ROLB";
+                    inType = 0;
+                    break;
+            case 0x5A:
+                    in = "DECB";
+                    inType = 0;
+                    break;
+            case 0x5C:
+                    in = "INCB";
+                    inType = 0;
+                    break;
+            case 0x5D:
+                    in = "TSTB";
+                    inType = 0;
+                    break;
+            case 0x5F:
+                    in = "CLRB";
+                    inType = 0;
+                    break;
+            case 0x60:
+                    in = "NEG";
+                    inType = 3;
+                    break;
+            case 0x63:
+                    in = "COM";
+                    inType = 3;
+                    break;
+            case 0x64:
+                    in = "LSR";
+                    inType = 3;
+                    break;
+            case 0x66:
+                    in = "ROR";
+                    inType = 3;
+                    break;
+            case 0x67:
+                    in = "ASR";
+                    inType = 3;
+                    break;
+            case 0x68:
+                    in = "ASL";
+                    inType = 3;
+                    break;
+            case 0x69:
+                    in = "ROL";
+                    inType = 3;
+                    break;
+            case 0x6A:
+                    in = "DEC";
+                    inType = 3;
+                    break;
+            case 0x6C:
+                    in = "INC";
+                    inType = 3;
+                    break;
+            case 0x6D:
+                    in = "TST";
+                    inType = 3;
+                    break;
+            case 0x6E:
+                    in = "JMP";
+                    inType = 3;
+                    break;
+            case 0x6F:
+                    in = "CLR";
+                    inType = 3;
+                    break;
+            case 0x70:
+                    in = "NEG";
+                    inType = 4;
+                    break;
+            case 0x73:
+                    in = "COM";
+                    inType = 4;
+                    break;
+            case 0x74:
+                    in = "LSR";
+                    inType = 4;
+                    break;
+            case 0x76:
+                    in = "ROR";
+                    inType = 4;
+                    break;
+            case 0x77:
+                    in = "ASR";
+                    inType = 4;
+                    break;
+            case 0x78:
+                    in = "ASL";
+                    inType = 4;
+                    break;
+            case 0x79:
+                    in = "ROL";
+                    inType = 4;
+                    break;
+            case 0x7A:
+                    in = "DEC";
+                    inType = 4;
+                    break;
+            case 0x7C:
+                    in = "INC";
+                    inType = 4;
+                    break;
+            case 0x7D:
+                    in = "TST";
+                    inType = 4;
+                    break;
+            case 0x7E:
+                    in = "JMP";
+                    inType = 4;
+                    break;
+            case 0x7F:
+                    in = "CLR";
+                    inType = 4;
+                    break;
+            case 0x80:
+                    in = "SUBA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x81:
+                    in = "CMPA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x82:
+                    in = "SBCA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x83:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "SUBD";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0x84:
+                    in = "ANDA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x85:
+                    in = "BITA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x86:
+                    in = "LDAA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x88:
+                    in = "EORA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x89:
+                    in = "ADCA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x8A:
+                    in = "ORAA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x8B:
+                    in = "ADDA";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0x8C:
+                    in = "CPX";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0x8D:
+                    in = "BSR";
+                    inType = 5;
+                    break;
+            case 0x8E:
+                    in = "LDS";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0x90:
+                    in = "SUBA";
+                    inType = 2;
+                    break;
+            case 0x91:
+                    in = "CMPA";
+                    inType = 2;
+                    break;
+            case 0x92:
+                    in = "SBCA";
+                    inType = 2;
+                    break;
+            case 0x93:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "SUBD";
+                    inType = 2;
+                    break;
+            case 0x94:
+                    in = "ANDA";
+                    inType = 2;
+                    break;
+            case 0x95:
+                    in = "BITA";
+                    inType = 2;
+                    break;
+            case 0x96:
+                    in = "LDAA";
+                    inType = 2;
+                    break;
+            case 0x97:
+                    in = "STAA";
+                    inType = 2;
+                    break;
+            case 0x98:
+                    in = "EORA";
+                    inType = 2;
+                    break;
+            case 0x99:
+                    in = "ADCA";
+                    inType = 2;
+                    break;
+            case 0x9A:
+                    in = "ORAA";
+                    inType = 2;
+                    break;
+            case 0x9B:
+                    in = "ADDA";
+                    inType = 2;
+                    break;
+            case 0x9C:
+                    in = "CPX";
+                    inType = 2;
+                    break;
+            case 0x9D:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "JSR";
+                    inType = 2;
+                    break;
+            case 0x9E:
+                    in = "LDS";
+                    inType = 2;
+                    break;
+            case 0x9F:
+                    in = "STS";
+                    inType = 2;
+                    break;
+            case 0xA0:
+                    in = "SUBA";
+                    inType = 3;
+                    break;
+            case 0xA1:
+                    in = "CMPA";
+                    inType = 3;
+                    break;
+            case 0xA2:
+                    in = "SBCA";
+                    inType = 3;
+                    break;
+            case 0xA3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "SUBD";
+                    inType = 3;
+                    break;
+            case 0xA4:
+                    in = "ANDA";
+                    inType = 3;
+                    break;
+            case 0xA5:
+                    in = "BITA";
+                    inType = 3;
+                    break;
+            case 0xA6:
+                    in = "LDAA";
+                    inType = 3;
+                    break;
+            case 0xA7:
+                    in = "STAA";
+                    inType = 3;
+                    break;
+            case 0xA8:
+                    in = "EORA";
+                    inType = 3;
+                    break;
+            case 0xA9:
+                    in = "ADCA";
+                    inType = 3;
+                    break;
+            case 0xAA:
+                    in = "ORAA";
+                    inType = 3;
+                    break;
+            case 0xAB:
+                    in = "ADDA";
+                    inType = 3;
+                    break;
+            case 0xAC:
+                    in = "CPX";
+                    inType = 3;
+                    break;
+            case 0xAD:
+                    in = "JSR";
+                    inType = 3;
+                    break;
+            case 0xAE:
+                    in = "LDS";
+                    inType = 3;
+                    break;
+            case 0xAF:
+                    in = "STS";
+                    inType = 3;
+                    break;
+            case 0xB0:
+                    in = "SUBA";
+                    inType = 4;
+                    break;
+            case 0xB1:
+                    in = "CMPA";
+                    inType = 4;
+                    break;
+            case 0xB2:
+                    in = "SBCA";
+                    inType = 4;
+                    break;
+            case 0xB3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "SUBD";
+                    inType = 4;
+                    break;
+            case 0xB4:
+                    in = "ANDA";
+                    inType = 4;
+                    break;
+            case 0xB5:
+                    in = "BITA";
+                    inType = 4;
+                    break;
+            case 0xB6:
+                    in = "LDAA";
+                    inType = 4;
+                    break;
+            case 0xB7:
+                    in = "STAA";
+                    inType = 4;
+                    break;
+            case 0xB8:
+                    in = "EORA";
+                    inType = 4;
+                    break;
+            case 0xB9:
+                    in = "ADCA";
+                    inType = 4;
+                    break;
+            case 0xBA:
+                    in = "ORAA";
+                    inType = 4;
+                    break;
+            case 0xBB:
+                    in = "ADDA";
+                    inType = 4;
+                    break;
+            case 0xBC:
+                    in = "CPX";
+                    inType = 4;
+                    break;
+            case 0xBD:
+                    in = "JSR";
+                    inType = 4;
+                    break;
+            case 0xBE:
+                    in = "LDS";
+                    inType = 4;
+                    break;
+            case 0xBF:
+                    in = "STS";
+                    inType = 4;
+                    break;
+            case 0xC0:
+                    in = "SUBB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC1:
+                    in = "CMPB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC2:
+                    in = "SBCB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ADDD";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0xC4:
+                    in = "ANDB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC5:
+                    in = "BITB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC6:
+                    in = "LDAB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC8:
+                    in = "EORB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xC9:
+                    in = "ADCB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xCA:
+                    in = "ORAB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xCB:
+                    in = "ADDB";
+                    inType = 1;
+                    inSize = 2;
+                    break;
+            case 0xCC:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "LDD";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0xCE:
+                    in = "LDX";
+                    inType = 1;
+                    inSize = 3;
+                    break;
+            case 0xD0:
+                    in = "SUBB";
+                    inType = 2;
+                    break;
+            case 0xD1:
+                    in = "CMPB";
+                    inType = 2;
+                    break;
+            case 0xD2:
+                    in = "SBCB";
+                    inType = 2;
+                    break;
+            case 0xD3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ADDD";
+                    inType = 2;
+                    break;
+            case 0xD4:
+                    in = "ANDB";
+                    inType = 2;
+                    break;
+            case 0xD5:
+                    in = "BITB";
+                    inType = 2;
+                    break;
+            case 0xD6:
+                    in = "LDAB";
+                    inType = 2;
+                    break;
+            case 0xD7:
+                    in = "STAB";
+                    inType = 2;
+                    break;
+            case 0xD8:
+                    in = "EORB";
+                    inType = 2;
+                    break;
+            case 0xD9:
+                    in = "ADCB";
+                    inType = 2;
+                    break;
+            case 0xDA:
+                    in = "ORAB";
+                    inType = 2;
+                    break;
+            case 0xDB:
+                    in = "ADDB";
+                    inType = 2;
+                    break;
+            case 0xDC:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "LDD";
+                    inType = 2;
+                    break;
+            case 0xDD:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "STD";
+                    inType = 2;
+                    break;
+            case 0xDE:
+                    in = "LDX";
+                    inType = 2;
+                    break;
+            case 0xDF:
+                    in = "STX";
+                    inType = 2;
+                    break;
+            case 0xE0:
+                    in = "SUBB";
+                    inType = 3;
+                    break;
+            case 0xE1:
+                    in = "CMPB";
+                    inType = 3;
+                    break;
+            case 0xE2:
+                    in = "SBCB";
+                    inType = 3;
+                    break;
+            case 0xE3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ADDD";
+                    inType = 3;
+                    break;
+            case 0xE4:
+                    in = "ANDB";
+                    inType = 3;
+                    break;
+            case 0xE5:
+                    in = "BITB";
+                    inType = 3;
+                    break;
+            case 0xE6:
+                    in = "LDAB";
+                    inType = 3;
+                    break;
+            case 0xE7:
+                    in = "STAB";
+                    inType = 3;
+                    break;
+            case 0xE8:
+                    in = "EORB";
+                    inType = 3;
+                    break;
+            case 0xE9:
+                    in = "ADCB";
+                    inType = 3;
+                    break;
+            case 0xEA:
+                    in = "ORAB";
+                    inType = 3;
+                    break;
+            case 0xEB:
+                    in = "ADDB";
+                    inType = 3;
+                    break;
+            case 0xEC:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "LDD";
+                    inType = 3;
+                    break;
+            case 0xED:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "STD";
+                    inType = 3;
+                    break;
+            case 0xEE:
+                    in = "LDX";
+                    inType = 3;
+                    break;
+            case 0xEF:
+                    in = "STX";
+                    inType = 3;
+                    break;
+            case 0xF0:
+                    in = "SUBB";
+                    inType = 4;
+                    break;
+            case 0xF1:
+                    in = "CMPB";
+                    inType = 4;
+                    break;
+            case 0xF2:
+                    in = "SBCB";
+                    inType = 4;
+                    break;
+            case 0xF3:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "ADDD";
+                    inType = 4;
+                    break;
+            case 0xF4:
+                    in = "ANDB";
+                    inType = 4;
+                    break;
+            case 0xF5:
+                    in = "BITB";
+                    inType = 4;
+                    break;
+            case 0xF6:
+                    in = "LDAB";
+                    inType = 4;
+                    break;
+            case 0xF7:
+                    in = "STAB";
+                    inType = 4;
+                    break;
+            case 0xF8:
+                    in = "EORB";
+                    inType = 4;
+                    break;
+            case 0xF9:
+                    in = "ADCB";
+                    inType = 4;
+                    break;
+            case 0xFA:
+                    in = "ORAB";
+                    inType = 4;
+                    break;
+            case 0xFB:
+                    in = "ADDB";
+                    inType = 4;
+                    break;
+            case 0xFC:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "LDD";
+                    inType = 4;
+                    break;
+            case 0xFD:
+                    if(ver < 1){ ok = 0; break; }
+                    in = "STD";
+                    inType = 4;
+                    break;
+            case 0xFE:
+                    in = "LDX";
+                    inType = 4;
+                    break;
+            case 0xFF:
+                    in = "STX";
+                    inType = 4;
+                    break;
+            default:
+                    ok = -1;
+                    break;
+            }
+            if(ok == 0){
+                PrintConsole("M6803 and higher support instruction at address: " + QString::number(index),1);
+                int nextI = inputNextAddress(index, "M6803 and higher support instruction");
+                if(index == -1){break;}
+                for (; index < nextI; ++index) {
+                    code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
+                    addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+                }
+                continue;
+            } else if(ok == -1){
+                PrintConsole("Unkown instruction at address: " + QString::number(index),1);
+                int nextI = inputNextAddress(index, "Unkown instruction");
+                if(nextI == -1){break;}
+                for (; index < nextI; ++index) {
+                    code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
+                    addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+                }
+                continue;
+            }
+            QString op;
+            int opCode = 0,opCode2 = 0;
+            if (inType == 0){
+                    inSize = 1;
+                    code.append("\t" + in + "\n");
+            }
+            else if(inType == 1){
+                    code.append("\t" + in + " ");
+                    if(inSize == 2){
+                    op = "#" + QString::number(Memory[index+1 % 0xFFFF],10);
+                    opCode = Memory[index+1 % 0xFFFF];
+                        code.append("#" + QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
+                    }else{
+                        op = "#" + QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10);
+                        opCode = Memory[index+1 % 0xFFFF];
+                        opCode2 = Memory[index+2 % 0xFFFF];
+                        code.append("#" + QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
+                    }
+            }
+            else if(inType == 2){
+                    inSize = 2;
+                    code.append("\t" + in + " ");
+                    op = QString::number(Memory[index+1 % 0xFFFF]);
+                    opCode = Memory[index+1 % 0xFFFF];
+                    code.append(QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
+            }
+            else if(inType == 3){
+                    inSize = 2;
+                    code.append("\t" + in + " ");
+                    op = QString::number(Memory[index+1 % 0xFFFF]) + ","+ "X";
+                    opCode = Memory[index+1 % 0xFFFF];
+                    code.append(QString::number(Memory[index+1 % 0xFFFF],10) + ","+ "X" + "\n");
+            }
+            else if(inType == 4){
+                    inSize = 3;
+                    code.append("\t" + in + " ");
+                    op = QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10);
+                    opCode = Memory[index+1 % 0xFFFF];
+                    opCode2 = Memory[index+2 % 0xFFFF];
+                    code.append(QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
+            }
+            else if(inType == 5){
+                    inSize = 2;
+                    code.append("\t" + in + " ");
+                    int8_t num = static_cast<int8_t>(Memory[index+1 % 0xFFFF]);
+                    if(num == -1){
+                        code.append("0 ;Relative address FF is out of bounds and cannot be reverse compiled\n");
+                        op = 0;
+                    PrintConsole("Relative address FF is out of bounds and cannot be reverse compiled",1);
+                    }
+                    else if(num < 0){
+                        num+=2;
+                        code.append(QString::number(num,10) + "\n");
+                        op = QString::number(num,10);
+                    } else{
+                        code.append(QString::number(num,10) + "\n");
+                        op = QString::number(num,10);
+                    }
+                    opCode = Memory[index+1 % 0xFFFF];
+            }
+            addInstruction(index, in, op, Memory[index], opCode, opCode2);
+            index += inSize;
+        }
+
+    }
+    qDebug()<< index;
+    if(index == 0xFFFF){
+        ui->plainTextCode->setPlainText(code);
+        std::memcpy(backupMemory, Memory, sizeof(Memory));
+        updateLinesBox();
+        updateMemoryTab();
+        compiled = 1;
+        return true;
+    }else{
+        breakCompile();
+        return false;
     }
 }
