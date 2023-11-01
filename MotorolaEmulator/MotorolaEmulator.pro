@@ -10,17 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     CompileScripts.cpp \
-    instructionblock.cpp \
     instructionlist.cpp \
     main.cpp \
     mainwindow.cpp
-    instructionblock.cpp
 
 HEADERS += \
-    instructionblock.h \
     instructionlist.h \
     mainwindow.h
-    instructionblock.h
 
 FORMS += \
     mainwindow.ui

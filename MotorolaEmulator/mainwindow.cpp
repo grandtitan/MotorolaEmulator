@@ -1,5 +1,4 @@
 ﻿#include "mainwindow.h"
-#include "instructionblock.h"
 #include "ui_mainwindow.h"
 #include <QStringBuilder>
 #include <QScrollBar>
@@ -24,9 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    InstructionList instructionList;
     instructionList.clear();
-    clearInstructions();
 
     QWidget::setWindowTitle("Motorola M68XX Emulator-"+softwareVersion);
     updateMemoryTab();
@@ -91,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plainTextDisplay->installEventFilter(this);
     ui->plainTextLines->installEventFilter(this);
     ui->plainTextMemory->installEventFilter(this);
+    ui->plainTextCode->installEventFilter(this);
 
     ui->buttonSwitchWrite->setVisible(false);
     ui->labelWritingMode->setVisible(false);
@@ -134,7 +132,7 @@ void MainWindow::setCompileStatus(bool isCompiled){
         compiled = 0;
         ui->buttonCompile->setStyleSheet(uncompiledButton);
         PrintConsole("", 2);
-        clearInstructions();
+        instructionList.clear();
         updateLinesBox();
         clearSelection(0);
         ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
@@ -254,7 +252,7 @@ void MainWindow::updateMemoryCell(int address) {
 }
 void MainWindow::updateLinesBox(){
     if (ui->checkBoxAdvancedInfo->isChecked()) {
-        if (instructionList.empty()) {
+        if (instructionList.isEmpty()) {
             QString code = ui->plainTextCode->toPlainText();
             QString text;
             for (int i = 0; i < code.count("\n") + 1; i++) {
@@ -266,15 +264,16 @@ void MainWindow::updateLinesBox(){
             QString code = ui->plainTextCode->toPlainText();
             QString text;
             for (int i = 0; i < code.count("\n") + 1; i++) {
-                if (instructionList[i].address == -1) {
+                const InstructionList::Instruction& instr = instructionList.getObjectByLine(i);
+                if (instr.address == -1) {
                     text = text % convertToQString(i, 5) % ":----\n";
                 }
                 else {
                     text = text % convertToQString(i, 5)
-                           % ":" % QString("%1").arg(instructionList[i].address, 4, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instructionList[i].byte1, 2, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instructionList[i].byte2, 2, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instructionList[i].byte3, 2, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.address, 4, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte1, 2, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte2, 2, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte3, 2, 16, QChar('0'))
                            % "\n";
                 }
             }
@@ -282,7 +281,7 @@ void MainWindow::updateLinesBox(){
         }
     }
     else {
-        if (instructionList.empty()) {
+        if (instructionList.isEmpty()) {
             QString code = ui->plainTextCode->toPlainText();
             QString text;
             for (int i = 0; i < code.count("\n") + 1; i++) {
@@ -295,11 +294,11 @@ void MainWindow::updateLinesBox(){
             QString text;
 
             for (int i = 0; i < code.count("\n") + 1; i++) {
-                if (instructionList[i].address == -1) {
+                if (instructionList.getObjectByLine(i).address == -1) {
                     text = text % convertToQString(i, 5) % ":----\n";
                 }
                 else {
-                    text = text % convertToQString(i, 5) % ":" % QString("%1").arg(instructionList[i].address, 4, 16, QChar('0')) % "\n";
+                    text = text % convertToQString(i, 5) % ":" % QString("%1").arg(instructionList.getObjectByLine(i).address, 4, 16, QChar('0')) % "\n";
                 }
             }
             ui->plainTextLines->setPlainText(text);
@@ -423,10 +422,10 @@ void MainWindow::updateSelectionsLines(int line){
     lineFormat.setBackground(Qt::green);
     QTextEdit::ExtraSelection lineSelection;
     lineSelection.format = lineFormat;
-    int address = getAddressByLine(line+1);
+    int address = instructionList.getObjectByLine(line).address;
     if(address >= 0){
         int lineM = std::floor(address / 16)+1;
-        int position = (getAddressByLine(line+1) % 16) * 3 + 4;
+        int position = (address % 16) * 3 + 4;
         QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(line);
         QTextCursor memoryCursor(memoryBlock);
         memoryCursor.setPosition(lineM*55 + position);
@@ -524,7 +523,7 @@ void MainWindow::updateSelectionsRunTime(int address){
     lineFormat.setBackground(Qt::yellow);
     QTextEdit::ExtraSelection lineSelection;
     lineSelection.format = lineFormat;
-    int lineNum = getLineByAddress(address) - 1;
+    int lineNum = instructionList.getObjectByAddress(address).lineNumber;
     if(lineNum >= 0){
         QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(lineNum);
         QTextBlock linesBlock = ui->plainTextLines->document()->findBlockByLineNumber(lineNum);
@@ -740,7 +739,6 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
 }
 
 void MainWindow::on_plainTextCode_textChanged(){
-
     if (ui->plainTextCode->toPlainText().count('\n') > 65535) {
         QString text = ui->plainTextCode->toPlainText();
         QStringList lines = text.split('\n', Qt::SkipEmptyParts);
@@ -748,7 +746,7 @@ void MainWindow::on_plainTextCode_textChanged(){
         text = lines.join('\n');
         ui->plainTextCode->setPlainText(text);
     }
-    setCompileStatus(false);
+
 }
 void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
     if(ui->lineEditBin->text() != "X"){
@@ -877,7 +875,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             ui->plainTextDisplay->setStyleSheet("");
         }
     }
-    if (obj == ui->plainTextLines){
+    else if (obj == ui->plainTextLines){
         if (event->type() == QEvent::MouseButtonPress) {
             QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
             if (mouseEvent) {
@@ -902,7 +900,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
-    if(writeToMemory){
+    else if(writeToMemory){
         if (obj == ui->plainTextMemory){
             if(event->type() == QEvent::KeyPress){
                 QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
@@ -951,7 +949,11 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
-
+    else if (obj == ui->plainTextCode){
+        if (event->type() == QEvent::KeyPress) {
+            setCompileStatus(false);
+        }
+    }
     return QMainWindow::eventFilter(obj, event);
 }
 
@@ -3774,7 +3776,7 @@ int MainWindow::executeInstruction(){
     if (breakEnabled){
         switch(ui->comboBoxBreakWhen->currentIndex()){
         case 1:
-            if(getLineByAddress(PC) - 1 == ui->spinBoxBreakIs->value()){
+            if(instructionList.getObjectByAddress(PC).lineNumber == ui->spinBoxBreakIs->value()){
                 stopExecution();
             }
             break;
@@ -3841,7 +3843,7 @@ int MainWindow::executeInstruction(){
         }
     }
     updateSelectionsRunTime(PC);
-    int lineNum = getLineByAddress(PC) - 1;
+    int lineNum = instructionList.getObjectByAddress(PC).lineNumber;
     if(lineNum >= 0){
 
         if (lineNum > previousScrollCode + autoScrollUpLimit){

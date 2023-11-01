@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "InstructionList.h"
 enum FlagToUpdate {
     HalfCarry,
     InterruptMask,
@@ -39,6 +40,9 @@ public slots:
 private:
     Ui::MainWindow *ui;
 private:
+
+    InstructionList instructionList;
+
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
     void updateMemoryTab();

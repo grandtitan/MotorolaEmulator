@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "instructionblock.h"
 #include "ui_mainwindow.h"
 #include <QStringBuilder>
 #include <QScrollBar>
@@ -55,7 +54,7 @@ bool MainWindow::compileMix(int ver){
     callLabelMap.clear();
     callLabelRazMap.clear();
     callLabelRelMap.clear();
-    clearInstructions();
+    instructionList.clear();
     QString code = ui->plainTextCode->toPlainText();
     QStringList lines = code.split("\n");
     int charNum = 0;
@@ -81,7 +80,7 @@ bool MainWindow::compileMix(int ver){
                 }
             }
         }
-    labelExtraction:
+    //labelExtraction
         if (line.isEmpty()) {
             PrintConsole("Empty line", -1);
             goto skipLine;
@@ -4349,10 +4348,10 @@ bool MainWindow::compileMix(int ver){
 		}
     skipLine:
         if (currentCompilerAddress == instructionAddress) {
-            addInstruction(-1, in, op, inCode, opCode, opCode2);
+            instructionList.addInstruction(-1, currentCompilerLine, inCode, opCode, opCode2);
         }
         else {
-            addInstruction(instructionAddress, in, op, inCode, opCode, opCode2);
+            instructionList.addInstruction(instructionAddress, currentCompilerLine, inCode, opCode, opCode2);
         }
         currentCompilerLine++;
     }
@@ -4361,7 +4360,8 @@ bool MainWindow::compileMix(int ver){
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentCompilerLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = instructionList.getObjectByAddress(location - 1).lineNumber;
+            charNum = 0xFFFF;
             Err("Use of undeclared label: '" + label + "'"); goto end;
         }else{
             int value = labelValMap[label];
@@ -4379,7 +4379,8 @@ bool MainWindow::compileMix(int ver){
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentCompilerLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = instructionList.getObjectByAddress(location - 1).lineNumber;
+            charNum = 0xFFFF;
             Err("Use of undeclared label: " + label); goto end;
         }else{
             Memory[location] = (labelValMap[label] >> 8) & 0xFF;
@@ -4390,7 +4391,8 @@ bool MainWindow::compileMix(int ver){
         int location = entry.first;
         QString label = entry.second;
         if(labelValMap.count(label) == 0){
-            currentCompilerLine = getLineByAddress(location - 1) - 1;
+            currentCompilerLine = instructionList.getObjectByAddress(location - 1).lineNumber;
+            charNum = 0xFFFF;
             Err("Use of undeclared label: " + label); goto end;
         }else{
             int location2 = labelValMap[label];
@@ -4398,7 +4400,8 @@ bool MainWindow::compileMix(int ver){
             value = location2 - location -1;
                 if (value > 127 || value < -128) {
                     Err("Relative address out of range[-128,127]: " + QString::number(value));
-                    currentCompilerLine = getLineByAddress(location - 1) - 1;
+                    currentCompilerLine = instructionList.getObjectByAddress(location - 1).lineNumber ;
+                    charNum = 0xFFFF;
                     goto end;
                 }
             qint8 signedValue = static_cast<qint8>(value);
@@ -4446,7 +4449,8 @@ int MainWindow::inputNextAddress(int curAdr, QString err){
 bool MainWindow::reverseCompile(int ver, int begLoc){
     QString code;
     int index = 0;
-    clearInstructions();
+    int line = 0;
+    instructionList.clear();
     int zeroCount = 0;
     int lastIndex = 0xFFFF;
     for (int i = 0xFFFF; i >= 0; i--) {
@@ -4456,31 +4460,31 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             break;
         }
     }
-    for (; index < lastIndex; ) {
+    for (; index <= lastIndex; ) {
         if (index < begLoc){
-            code.append("\t.BYTE " + QString::number(Memory[index]));
-            addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+            code.append("\t.BYTE " + QString::number(Memory[index]) + "\n");
+            instructionList.addInstruction(index, line, 0, 0, 0);
             index++;
+            line++;
         }else{
             int inSize = 1;
-            int inType = -1;
+            int inType = -2; //  -3 m6803 -2 unkown -1 zero 0 inh 1 imm 2 dir 3 ind 4 ext 5 rel
             QString in;
-            int ok = 1;
             switch (Memory[index]){
             case 0x00:
-                    ok = -2;
+                    inType = -1;
                     break;
             case 0x01:
                     in = "NOP";
                     inType = 0;
                     break;
             case 0x04:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "LSRD";
                     inType = 0;
                     break;
             case 0x05:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ASLD";
                     inType = 0;
                     break;
@@ -4553,7 +4557,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 5;
                     break;
             case 0x21:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "BRN";
                     inType = 5;
                     break;
@@ -4646,7 +4650,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 0;
                     break;
             case 0x38:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "PULX";
                     inType = 0;
                     break;
@@ -4655,7 +4659,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 0;
                     break;
             case 0x3A:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ABX";
                     inType = 0;
                     break;
@@ -4664,12 +4668,12 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 0;
                     break;
             case 0x3C:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "PSHX";
                     inType = 0;
                     break;
             case 0x3D:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "MUL";
                     inType = 0;
                     break;
@@ -4881,7 +4885,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inSize = 2;
                     break;
             case 0x83:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "SUBD";
                     inType = 1;
                     inSize = 3;
@@ -4948,7 +4952,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 2;
                     break;
             case 0x93:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "SUBD";
                     inType = 2;
                     break;
@@ -4989,7 +4993,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 2;
                     break;
             case 0x9D:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "JSR";
                     inType = 2;
                     break;
@@ -5014,7 +5018,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 3;
                     break;
             case 0xA3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "SUBD";
                     inType = 3;
                     break;
@@ -5079,7 +5083,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 4;
                     break;
             case 0xB3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "SUBD";
                     inType = 4;
                     break;
@@ -5147,7 +5151,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inSize = 2;
                     break;
             case 0xC3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ADDD";
                     inType = 1;
                     inSize = 3;
@@ -5188,7 +5192,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inSize = 2;
                     break;
             case 0xCC:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "LDD";
                     inType = 1;
                     inSize = 3;
@@ -5211,7 +5215,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 2;
                     break;
             case 0xD3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ADDD";
                     inType = 2;
                     break;
@@ -5248,12 +5252,12 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 2;
                     break;
             case 0xDC:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "LDD";
                     inType = 2;
                     break;
             case 0xDD:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "STD";
                     inType = 2;
                     break;
@@ -5278,7 +5282,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 3;
                     break;
             case 0xE3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ADDD";
                     inType = 3;
                     break;
@@ -5315,12 +5319,12 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 3;
                     break;
             case 0xEC:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "LDD";
                     inType = 3;
                     break;
             case 0xED:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "STD";
                     inType = 3;
                     break;
@@ -5345,7 +5349,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 4;
                     break;
             case 0xF3:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "ADDD";
                     inType = 4;
                     break;
@@ -5382,12 +5386,12 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 4;
                     break;
             case 0xFC:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "LDD";
                     inType = 4;
                     break;
             case 0xFD:
-                    if(ver < 1){ ok = 0; break; }
+                    if(ver < 1){ inType = -3; break; }
                     in = "STD";
                     inType = 4;
                     break;
@@ -5399,41 +5403,39 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     in = "STX";
                     inType = 4;
                     break;
-            default:
-                    ok = -1;
-                    break;
             }
-            if(ok == 0){
+            if(zeroCount != 0){
+                    code.append("\t.RMB "+ QString::number(zeroCount) + "\n");
+                    instructionList.addInstruction(index - zeroCount, line, 0, 0, 0);
+                    line++;
+                    zeroCount = 0;
+            }
+            if(inType == -3){
                 PrintConsole("M6803 and higher support instruction at address: " + QString::number(index),1);
                 int nextI = inputNextAddress(index, "M6803 and higher support instruction");
-                if(index == -1){break;}
+                if(nextI == -1){break;}
                 for (; index < nextI; ++index) {
                     code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
-                    addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+                    instructionList.addInstruction(index, line, 0, 0, 0);
+                    line++;
                 }
                 continue;
-            } else if(ok == -1){
+            } else if(inType == -2){
                 PrintConsole("Unkown instruction at address: " + QString::number(index),1);
                 int nextI = inputNextAddress(index, "Unkown instruction");
                 if(nextI == -1){break;}
                 for (; index < nextI; ++index) {
                     code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
-                    addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
+                    instructionList.addInstruction(index, line, 0, 0, 0);
+                    line++;
                 }
                 continue;
-            } else if(ok == -2){
+            } else if(inType == -1){
                 zeroCount++;
                 index++;
                 continue;
-            } else{
-                if(zeroCount != 0){
-                code.append("\t.RMB "+ QString::number(zeroCount) + "\n");
-                addInstruction(-1, ".RMB", QString::number(zeroCount), 0, 0, 0);
-                zeroCount = 0;
-                }
             }
-            QString op;
-            int opCode = 0,opCode2 = 0;
+            int opCode = 0, opCode2 = 0;
             if (inType == 0){
                     inSize = 1;
                     code.append("\t" + in + "\n");
@@ -5441,11 +5443,9 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             else if(inType == 1){
                     code.append("\t" + in + " ");
                     if(inSize == 2){
-                    op = "#" + QString::number(Memory[index+1 % 0xFFFF],10);
-                    opCode = Memory[index+1 % 0xFFFF];
+                        opCode = Memory[index+1 % 0xFFFF];
                         code.append("#" + QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
                     }else{
-                        op = "#" + QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10);
                         opCode = Memory[index+1 % 0xFFFF];
                         opCode2 = Memory[index+2 % 0xFFFF];
                         code.append("#" + QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
@@ -5454,21 +5454,18 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             else if(inType == 2){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    op = QString::number(Memory[index+1 % 0xFFFF]);
                     opCode = Memory[index+1 % 0xFFFF];
                     code.append(QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
             }
             else if(inType == 3){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    op = QString::number(Memory[index+1 % 0xFFFF]) + ","+ "X";
                     opCode = Memory[index+1 % 0xFFFF];
                     code.append(QString::number(Memory[index+1 % 0xFFFF],10) + ","+ "X" + "\n");
             }
             else if(inType == 4){
                     inSize = 3;
                     code.append("\t" + in + " ");
-                    op = QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10);
                     opCode = Memory[index+1 % 0xFFFF];
                     opCode2 = Memory[index+2 % 0xFFFF];
                     code.append(QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
@@ -5479,20 +5476,18 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     int8_t num = static_cast<int8_t>(Memory[index+1 % 0xFFFF]);
                     if(num == -1){
                         code.append("0 ;Relative address FF is out of bounds and cannot be reverse compiled\n");
-                        op = 0;
-                    PrintConsole("Relative address FF is out of bounds and cannot be reverse compiled",1);
+                        PrintConsole("Relative address FF is out of bounds and cannot be reverse compiled",1);
                     }
                     else if(num < 0){
                         num+=2;
                         code.append(QString::number(num,10) + "\n");
-                        op = QString::number(num,10);
                     } else{
                         code.append(QString::number(num,10) + "\n");
-                        op = QString::number(num,10);
                     }
                     opCode = Memory[index+1 % 0xFFFF];
             }
-            addInstruction(index, in, op, Memory[index], opCode, opCode2);
+            instructionList.addInstruction(index, line, Memory[index], opCode, opCode2);
+            line++;
             index += inSize;
         }
 

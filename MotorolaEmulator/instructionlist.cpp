@@ -1,4 +1,6 @@
 #include "InstructionList.h"
+#include <stdexcept>
+#include <QDebug>
 
 void InstructionList::clear() {
     instructions.clear();
@@ -14,32 +16,28 @@ void InstructionList::addInstruction(int address, int lineNumber, int byte1, int
     instructions.push_back(instruction);
 }
 
-int InstructionList::findAddressByLineNum(int lineNumber) const {
+const InstructionList::Instruction& InstructionList::getObjectByAddress(int address) const {
+    for (const Instruction& instruction : instructions) {
+        if (instruction.address == address) {
+            return instruction;
+        }
+    }
+    qDebug() << "not found";
+    static const Instruction defaultInstruction = { address, -1, 0, 0, 0 };
+    return defaultInstruction;
+}
+
+const InstructionList::Instruction& InstructionList::getObjectByLine(int lineNumber) const {
     for (const Instruction& instruction : instructions) {
         if (instruction.lineNumber == lineNumber) {
-            return instruction.address;
+            return instruction;
         }
     }
-    return -1;
+    qDebug() << "not found";
+    static const Instruction defaultInstruction = { -1, lineNumber, 0, 0, 0 };
+    return defaultInstruction;
 }
 
-int InstructionList::findLineNumByAddress(int address) const {
-    for (const Instruction& instruction : instructions) {
-        if (instruction.address == address) {
-            return instruction.lineNumber;
-        }
-    }
-    return -1;
-}
-
-void InstructionList::getBytesByAddress(int address, int& byte1, int& byte2, int& byte3) const {
-    for (const Instruction& instruction : instructions) {
-        if (instruction.address == address) {
-            byte1 = instruction.byte1;
-            byte2 = instruction.byte2;
-            byte3 = instruction.byte3;
-            return;
-        }
-    }
-    byte1 = byte2 = byte3 = -1;
+bool InstructionList::isEmpty() const {
+    return instructions.empty();
 }
