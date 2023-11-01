@@ -17,14 +17,17 @@
 #include <QMouseEvent>
 #include <QTableWidget>
 #include <QInputDialog>
-
+#include "InstructionList.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    InstructionList instructionList;
+    instructionList.clear();
     clearInstructions();
+
     QWidget::setWindowTitle("Motorola M68XX Emulator-"+softwareVersion);
     updateMemoryTab();
     ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
@@ -135,20 +138,7 @@ void MainWindow::setCompileStatus(bool isCompiled){
         updateLinesBox();
         clearSelection(0);
         ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-        labelValMap.clear();
-        callLabelMap.clear();
-        callLabelRazMap.clear();
-        callLabelRelMap.clear();
     }
-}
-
-void MainWindow::breakCompile(){
-    compiled = 0;
-    clearInstructions();
-    updateLinesBox();
-    clearSelection(0);
-    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-    ui->buttonCompile->setStyleSheet(uncompiledButton);
 }
 void MainWindow::stopExecution(){
     running = false;
@@ -974,6 +964,7 @@ void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 }
 bool MainWindow::on_buttonCompile_clicked()
 {
+    ui->plainTextConsole->clear();
     if(!writeToMemory){
         bool ok = false;
         ok = compileMix(compilerVersionIndex);

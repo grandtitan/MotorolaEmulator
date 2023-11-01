@@ -61,7 +61,6 @@ private:
     int executeInstruction();
 
     void resetEmulator(bool failedCompile);
-    void breakCompile();
 
     int compilerVersionIndex = 0;
     int currentCompilerLine = 0;

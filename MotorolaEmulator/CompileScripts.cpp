@@ -55,6 +55,7 @@ bool MainWindow::compileMix(int ver){
     callLabelMap.clear();
     callLabelRazMap.clear();
     callLabelRelMap.clear();
+    clearInstructions();
     QString code = ui->plainTextCode->toPlainText();
     QStringList lines = code.split("\n");
     int charNum = 0;
@@ -4445,11 +4446,17 @@ int MainWindow::inputNextAddress(int curAdr, QString err){
 bool MainWindow::reverseCompile(int ver, int begLoc){
     QString code;
     int index = 0;
-    compiled = 0;
-    ui->buttonCompile->setStyleSheet(compiledButton);
-    PrintConsole("", 2);
     clearInstructions();
-    for (; index < 0xFFFF; ) {
+    int zeroCount = 0;
+    int lastIndex = 0xFFFF;
+    for (int i = 0xFFFF; i >= 0; i--) {
+        if (Memory[i] != 0) {
+            lastIndex = i;
+            qDebug() << i;
+            break;
+        }
+    }
+    for (; index < lastIndex; ) {
         if (index < begLoc){
             code.append("\t.BYTE " + QString::number(Memory[index]));
             addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
@@ -4461,7 +4468,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             int ok = 1;
             switch (Memory[index]){
             case 0x00:
-                    //qDebug("code break");
+                    ok = -2;
                     break;
             case 0x01:
                     in = "NOP";
@@ -5414,6 +5421,16 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     addInstruction(index, ".BYTE", QString::number(Memory[index],10), 0, 0, 0);
                 }
                 continue;
+            } else if(ok == -2){
+                zeroCount++;
+                index++;
+                continue;
+            } else{
+                if(zeroCount != 0){
+                code.append("\t.RMB "+ QString::number(zeroCount) + "\n");
+                addInstruction(-1, ".RMB", QString::number(zeroCount), 0, 0, 0);
+                zeroCount = 0;
+                }
             }
             QString op;
             int opCode = 0,opCode2 = 0;
@@ -5480,16 +5497,13 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
         }
 
     }
-    qDebug()<< index;
-    if(index == 0xFFFF){
+    if(index == lastIndex +1){
         ui->plainTextCode->setPlainText(code);
         std::memcpy(backupMemory, Memory, sizeof(Memory));
-        updateLinesBox();
-        updateMemoryTab();
-        compiled = 1;
+        setCompileStatus(true);
         return true;
     }else{
-        breakCompile();
+        setCompileStatus(false);
         return false;
     }
 }
