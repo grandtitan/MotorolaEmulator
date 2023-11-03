@@ -5404,7 +5404,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     inType = 4;
                     break;
             }
-            if(zeroCount != 0){
+            if(zeroCount != 0 && inType != -1){
                     code.append("\t.RMB "+ QString::number(zeroCount) + "\n");
                     instructionList.addInstruction(index - zeroCount, line, 0, 0, 0);
                     line++;

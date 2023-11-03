@@ -18,7 +18,6 @@ public:
 
     const Instruction& getObjectByAddress(int address) const;
     const Instruction& getObjectByLine(int lineNumber) const;
-
     bool isEmpty() const;
 private:
     std::vector<Instruction> instructions;

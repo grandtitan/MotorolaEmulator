@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "InstructionList.h"
+#include "externaldisplay.h"
+
 enum FlagToUpdate {
     HalfCarry,
     InterruptMask,
@@ -31,23 +33,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QString softwareVersion = "1.4.1";
+
+    uint8_t Memory[0x10000] = {};
+    void updateMemoryCell(int address);
+    int lastInput = -1;
 public slots:
-    void handleVerticalScrollBarValueChanged(int value);
-    void handleLinesScroll();
-    void handleDisplayScrollVertical();
-    void handleDisplayScrollHorizontal();
-    void handleMemoryScrollHorizontal();
+    void onCreateNewWindowClicked();
 private:
     Ui::MainWindow *ui;
+    ExternalDisplay *externalDisplay;
 private:
-
     InstructionList instructionList;
 
+    int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
     void updateMemoryTab();
     void updateLinesBox();
-    void updateMemoryCell(int address);
     void updateSelectionsRunTime(int address);
     void updateSelectionsLines(int line);
     void updateSelectionsMemoryEdit(int address);
@@ -81,7 +83,6 @@ private:
     bool reverseCompile(int ver, int begLoc);
     int inputNextAddress(int curAdr, QString err);
 
-    uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};
     uint8_t aReg = 0,bReg = 0;
     uint16_t PC = 0, SP = 0xF000;
@@ -92,7 +93,6 @@ private:
     int waitCycles = 0;
     int cycleNum = 1;
     int interruptLocations = 0xFFFF;
-    int lastInput = -1;
 
 
     bool simpleMemory = false;
@@ -127,6 +127,12 @@ protected:
 signals:
     void resized(const QSize& newSize);
 private slots:
+    void handleVerticalScrollBarValueChanged(int value);
+    void handleLinesScroll();
+    void handleDisplayScrollVertical();
+    void handleDisplayScrollHorizontal();
+    void handleMemoryScrollHorizontal();
+
     void handleMainWindowSizeChanged(const QSize& newSize);
     bool on_buttonCompile_clicked();
     void on_plainTextCode_textChanged();
@@ -145,7 +151,6 @@ private slots:
     void on_lineEditOct_textChanged(const QString &arg1);
     void on_lineEditHex_textChanged(const QString &arg1);
     void on_lineEditDec_textChanged(const QString &arg1);
-    void on_buttonFSDisplay_clicked();
     void on_checkBoxWriteMemory_clicked(bool checked);
     void on_buttonSwitchWrite_clicked();
     void on_comboBoxBreakWhen_currentIndexChanged(int index);
@@ -153,5 +158,6 @@ private slots:
     void on_spinBox_valueChanged(int arg1);
     void on_comboBoxVersionSelector_currentIndexChanged(int index);
     void on_checkBoxAutoReset_2_clicked(bool checked);
+    void on_comboBoxDisplayStatus_currentIndexChanged(int index);
 };
 #endif // MAINWINDOW_H

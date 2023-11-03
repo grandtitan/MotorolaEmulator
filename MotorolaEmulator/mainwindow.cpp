@@ -76,8 +76,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelRunningCycleNum->setText("Instruction cycle: ");
     connect(ui->plainTextCode->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleVerticalScrollBarValueChanged);
     connect(ui->plainTextLines->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleLinesScroll);
+
     connect(ui->plainTextDisplay->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollVertical);
     connect(ui->plainTextDisplay->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollHorizontal);
+
+
     connect(ui->plainTextMemory->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleMemoryScrollHorizontal);
     connect(this, &MainWindow::resized, this, &MainWindow::handleMainWindowSizeChanged);
 
@@ -88,22 +91,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plainTextDisplay->installEventFilter(this);
     ui->plainTextLines->installEventFilter(this);
     ui->plainTextMemory->installEventFilter(this);
-    ui->plainTextCode->installEventFilter(this);
+    //ui->plainTextCode->installEventFilter(this);
 
     ui->buttonSwitchWrite->setVisible(false);
     ui->labelWritingMode->setVisible(false);
     ui->buttonSwitchWrite->setEnabled(false);
     ui->labelWritingMode->setEnabled(false);
-    ui->buttonFSDisplay->setVisible(false);
 
     ui->labelAt->setVisible(false);
     ui->spinBoxBreakAt->setVisible(false);
 
     executionTimer = new QTimer(this);
     connect(executionTimer, &QTimer::timeout, this, &MainWindow::executeLoop);
-
-    ui->plainTextDisplay->setTextInteractionFlags(Qt::NoTextInteraction);
-    ui->plainTextLines->setTextInteractionFlags(Qt::NoTextInteraction);
 
 }
 
@@ -229,17 +228,22 @@ void MainWindow::updateMemoryCell(int address) {
             int relativeAddress = address-0xFB00;
             int line = std::floor(relativeAddress / 54);
             int position = (relativeAddress % 54);
-            QTextCursor cursor(ui->plainTextDisplay->document());
-            cursor.setPosition(line * 55 + position);
-            cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-            cursor.removeSelectedText();
+            QTextCursor cursord;
+            if(ui->comboBoxDisplayStatus->currentIndex() == 0){
+                QTextCursor cursord(ui->plainTextDisplay->document());
+            }else {
+                QTextCursor cursord(externalDisplay->getPlainTextEdit()->document());
+            }
+            cursord.setPosition(line * 55 + position);
+            cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
+            cursord.removeSelectedText();
             ushort charValue = Memory[address];
             if (charValue < 32 || charValue == 127) {
-                cursor.removeSelectedText();
-                cursor.insertText(" "); // Replace with a space
+                cursord.removeSelectedText();
+                cursord.insertText(" "); // Replace with a space
             } else {
-                cursor.removeSelectedText();
-                cursor.insertText(QChar(static_cast<ushort>(charValue)));
+                cursord.removeSelectedText();
+                cursord.insertText(QChar(static_cast<ushort>(charValue)));
             }
         }
         if(address == lastLinesAddress){
@@ -256,7 +260,7 @@ void MainWindow::updateLinesBox(){
             QString code = ui->plainTextCode->toPlainText();
             QString text;
             for (int i = 0; i < code.count("\n") + 1; i++) {
-                text = text % convertToQString(i, 5) % "\n";
+                text = text + convertToQString(i, 5) + "\n";
             }
             ui->plainTextLines->setPlainText(text);
         }
@@ -668,7 +672,11 @@ void MainWindow::resetEmulator(bool failedCompile){
     ui->lineEditZValue->setText(QString::number(flags & 0x04));
     ui->lineEditVValue->setText(QString::number(flags & 0x02));
     ui->lineEditCValue->setText(QString::number(flags & 0x01));
-    ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    if(ui->comboBoxDisplayStatus->currentIndex() == 0){
+        ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    }else {
+        externalDisplay->getPlainTextEdit()->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    }
     if(!failedCompile){
         updateSelectionsRunTime(PC);
         if(lastLinesSelection != -1){
@@ -694,28 +702,32 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     int buttonY = newSize.height() - buttonYoffset;
 
     if (newSize.width() >= 1785) {
-        ui->plainTextDisplay->setGeometry(0, 0, 498, 350);
         ui->plainTextDisplay->setEnabled(true);
-        ui->frameDisplay->setGeometry(910, 10, 498, 350);
+        ui->plainTextDisplay->setVisible(true);
+        ui->frameDisplay->setGeometry(newSize.width() - 875, 10, 498, 350);
         ui->frameDisplay->setEnabled(true);
+        ui->frameDisplay->setVisible(true);
+        ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? (newSize.width() - 1589) : (newSize.width() - 1509), newSize.height() - buttonYoffset - 17);
+        ui->plainTextMemory->setGeometry(newSize.width() - 1390, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
         if (newSize.height() >= 800) {
-            ui->tabWidget->setGeometry(910, 370, newSize.width() - 915, newSize.height() - 359 - buttonYoffset - 17);
+            ui->tabWidget->setGeometry(newSize.width() - 875, 370, 868, newSize.height() - 359 - buttonYoffset - 17);
         }
         else {
-            ui->tabWidget->setGeometry(newSize.width() - 370, 300, 361, newSize.height() - 289 - buttonYoffset - 17);
+            ui->tabWidget->setGeometry(newSize.width() - 370, 300, 363, newSize.height() - 289 - buttonYoffset - 17);
         }
     }
     else {
-        ui->plainTextDisplay->setGeometry(0, 0, 0, 0);
         ui->plainTextDisplay->setEnabled(false);
-        ui->frameDisplay->setGeometry(910, 10, 0, 0);
+        ui->plainTextDisplay->setVisible(false);
         ui->frameDisplay->setEnabled(false);
+        ui->frameDisplay->setVisible(false);
 
         ui->tabWidget->setGeometry(910, 300, newSize.width() - 917, newSize.height() - 289 - buttonYoffset - 17);
+        ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? 201 : 281, newSize.height() - buttonYoffset - 17);
+        ui->plainTextMemory->setGeometry(400, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
     }
 
     ui->buttonCompile->setGeometry(ui->buttonCompile->x(), buttonY, ui->buttonCompile->width(), ui->buttonCompile->height());
-    ui->buttonFSDisplay->setGeometry(newSize.width() - 170, buttonY, ui->buttonFSDisplay->width(), ui->buttonFSDisplay->height());
     ui->comboBoxVersionSelector->setGeometry(ui->comboBoxVersionSelector->x(), buttonY, ui->comboBoxVersionSelector->width(), ui->comboBoxVersionSelector->height());
     ui->buttonLoad->setGeometry(ui->buttonLoad->x(), buttonY, ui->buttonLoad->width(), ui->buttonLoad->height());
     ui->buttonSave->setGeometry(ui->buttonSave->x(), buttonY, ui->buttonSave->width(), ui->buttonSave->height());
@@ -726,10 +738,8 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     ui->buttonSwitchWrite->setGeometry(ui->buttonSwitchWrite->x(), buttonY, ui->buttonSwitchWrite->width(), ui->buttonSwitchWrite->height());
     ui->labelWritingMode->setGeometry(ui->labelWritingMode->x(), buttonY, ui->labelWritingMode->width(), ui->labelWritingMode->height());
 
-    ui->plainTextCode->setGeometry(ui->plainTextCode->x(), ui->plainTextCode->y(), ui->plainTextCode->width(), newSize.height() - buttonYoffset - 17);
     ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), ui->plainTextLines->width(), newSize.height() - buttonYoffset - 33);
     ui->lineCodeLinesSeperator->setGeometry(ui->lineCodeLinesSeperator->x(), newSize.height() - buttonYoffset - 24, ui->lineCodeLinesSeperator->width(), 16);
-    ui->plainTextMemory->setGeometry(ui->plainTextMemory->x(), ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
 
     ui->groupBox->setGeometry(newSize.width() - 370, ui->groupBox->y(), ui->groupBox->width(), 281);
 
@@ -746,7 +756,9 @@ void MainWindow::on_plainTextCode_textChanged(){
         text = lines.join('\n');
         ui->plainTextCode->setPlainText(text);
     }
-
+    if(!writeToMemory){
+        setCompileStatus(false);
+    }
 }
 void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
     if(ui->lineEditBin->text() != "X"){
@@ -896,8 +908,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         clearSelection(1);
                     }
                 }
-                return true;
             }
+        }else if (event->type() == QEvent::Wheel || event->type() == QEvent::Scroll || event->type() == QEvent::User || event->type() == QEvent::KeyPress){
+            return true;
         }
     }
     else if(writeToMemory){
@@ -948,15 +961,50 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 
             }
         }
-    }
+    }/*/ PAZI KER JE ATTACH FILTER COMMENT OUTANE
     else if (obj == ui->plainTextCode){
         if (event->type() == QEvent::KeyPress) {
-            setCompileStatus(false);
+            QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+
+            if (keyEvent->modifiers() == Qt::ControlModifier)
+            {
+                if (keyEvent->key() == Qt::Key_Plus)
+                {
+                    qDebug() << obj->objectName();
+                    changeFontSize(1);
+                    return true;
+                }
+                else if (keyEvent->key() == Qt::Key_Minus)
+                {
+                    qDebug() << obj->objectName();
+                    changeFontSize(-1);
+                    return true;
+                }
+            }
+        }else if (event->type() == QEvent::Wheel)
+        {
+            QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+            if (wheelEvent->modifiers() == Qt::ControlModifier)
+            {
+                int delta = wheelEvent->angleDelta().y();
+                int size = changeFontSize(delta > 0 ? 1 : -1);
+                return true;
+            }
         }
-    }
+    }/*/
     return QMainWindow::eventFilter(obj, event);
 }
-
+int MainWindow::changeFontSize(int delta)
+{
+    QFont font = ui->plainTextCode->font();
+    int newSize = font.pointSize() + delta;
+    if (newSize > 5 && newSize < 50)
+    {
+        font.setPointSize(newSize);
+        ui->plainTextCode->setFont(font);
+    }
+    return newSize;
+}
 void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 {
     compilerVersionIndex = index;
@@ -1125,14 +1173,16 @@ void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
 {
     if (checked) {
         ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 181, ui->plainTextLines->height());
-        ui->plainTextCode->setGeometry(190, ui->plainTextCode->y(), 201, ui->plainTextCode->height());
+        ui->lineCodeLinesSeperator->setGeometry(190, ui->lineCodeLinesSeperator->y(), 1, 16);
         updateLinesBox();
     }
     else {
         ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 101, ui->plainTextLines->height());
-        ui->plainTextCode->setGeometry(110, ui->plainTextCode->y(), 281, ui->plainTextCode->height());
+        ui->lineCodeLinesSeperator->setGeometry(110, ui->lineCodeLinesSeperator->y(), 1, 16);
         updateLinesBox();
     }
+    handleMainWindowSizeChanged(MainWindow::size());
+
 }
 void MainWindow::on_checkBoxCompileOnRun_clicked(bool checked)
 {
@@ -1167,6 +1217,7 @@ void MainWindow::on_checkBoxWriteMemory_clicked(bool checked)
         clearSelection(3);
         ui->buttonLoad->setText("Load Code");
         ui->buttonSave->setText("Save Code");
+        ui->buttonCompile->setText("Assemble");
     }
 }
 void MainWindow::on_buttonSwitchWrite_clicked()
@@ -1181,6 +1232,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         clearSelection(3);
         ui->buttonLoad->setText("Load Code");
         ui->buttonSave->setText("Save Code");
+        ui->buttonCompile->setText("Assemble");
     }else{
         writeToMemory = true;
         ui->plainTextCode->setReadOnly(true);
@@ -1191,6 +1243,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         updateSelectionsMemoryEdit(currentCompilerAddressSelection);
         ui->buttonLoad->setText("Load Memory");
         ui->buttonSave->setText("Save Memory");
+        ui->buttonCompile->setText("Disassemble");
 
     }
 }
@@ -1313,20 +1366,23 @@ int MainWindow::executeInstruction(){
     uint16_t uInt162 = 0;
     uint16_t adr = 0;
     uint16_t* curIndReg = &xRegister;
-    if(ui->plainTextDisplay->hasFocus()){
-        QPoint position = QCursor::pos();
-        position.setX(position.x() - 4);
-        QPoint localMousePos = ui->plainTextDisplay->mapFromGlobal(position);
-        QTextCursor cursor = ui->plainTextDisplay->cursorForPosition(localMousePos);
-        int x = cursor.position() % 55;
-        if(x > 53) x = 53;
-        int y = cursor.position() / 55;
-        if(y > 19) y = 19;
-        Memory[0xFFF2] = x;
-        Memory[0xFFF3] = y;
-        updateMemoryCell(0xFFF2);
-        updateMemoryCell(0xFFF3);
+    if(ui->comboBoxDisplayStatus->currentIndex() == 0){
+        if(ui->plainTextDisplay->hasFocus()){
+            QPoint position = QCursor::pos();
+            position.setX(position.x() - 4);
+            QPoint localMousePos = ui->plainTextDisplay->mapFromGlobal(position);
+            QTextCursor cursor = ui->plainTextDisplay->cursorForPosition(localMousePos);
+            int x = cursor.position() % 55;
+            if(x > 53) x = 53;
+            int y = cursor.position() / 55;
+            if(y > 19) y = 19;
+            Memory[0xFFF2] = x;
+            Memory[0xFFF3] = y;
+            updateMemoryCell(0xFFF2);
+            updateMemoryCell(0xFFF3);
+        }
     }
+
     //if (!indexRegister) {
         //curIndReg = &yRegister;
     //}
@@ -3859,16 +3915,11 @@ int MainWindow::executeInstruction(){
     return cycleCount;
 }
 
-bool displayFS;
-void MainWindow::on_buttonFSDisplay_clicked()
+void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
 {
-    if(displayFS){
-        displayFS = false;
-
-    }else{
-        displayFS = true;
-
+    if(index == 1){
+        externalDisplay = new ExternalDisplay(this);
+        externalDisplay->show();
     }
 }
-
 

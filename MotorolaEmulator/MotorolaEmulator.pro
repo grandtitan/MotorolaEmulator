@@ -10,15 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     CompileScripts.cpp \
+    externaldisplay.cpp \
     instructionlist.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    externaldisplay.h \
     instructionlist.h \
     mainwindow.h
 
 FORMS += \
+    externaldisplay.ui \
     mainwindow.ui
 
 # Default rules for deployment.
