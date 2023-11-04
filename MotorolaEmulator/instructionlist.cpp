@@ -1,6 +1,5 @@
 #include "InstructionList.h"
 #include <stdexcept>
-#include <QDebug>
 
 void InstructionList::clear() {
     instructions.clear();
@@ -22,7 +21,6 @@ const InstructionList::Instruction& InstructionList::getObjectByAddress(int addr
             return instruction;
         }
     }
-    qDebug() << "not found";
     static const Instruction defaultInstruction = { address, -1, 0, 0, 0 };
     return defaultInstruction;
 }
@@ -33,7 +31,6 @@ const InstructionList::Instruction& InstructionList::getObjectByLine(int lineNum
             return instruction;
         }
     }
-    qDebug() << "not found";
     static const Instruction defaultInstruction = { -1, lineNumber, 0, 0, 0 };
     return defaultInstruction;
 }

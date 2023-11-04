@@ -8,7 +8,6 @@
 namespace Ui {
 class ExternalDisplay;
 }
-
 class ExternalDisplay : public QDialog
 {
     Q_OBJECT
@@ -16,7 +15,7 @@ class ExternalDisplay : public QDialog
 public:
     explicit ExternalDisplay(QWidget *parent = nullptr);
     ~ExternalDisplay();
-    bool eventFilter(QObject* obj, QEvent* event);
+    //bool eventFilter(QObject* obj, QEvent* event);
     QPlainTextEdit* getPlainTextEdit() {
         return ui->plainTextDisplay;
     }

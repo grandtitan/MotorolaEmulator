@@ -32,22 +32,23 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QString softwareVersion = "1.4.1";
+    QString softwareVersion = "1.5";
 
     uint8_t Memory[0x10000] = {};
     void updateMemoryCell(int address);
     int lastInput = -1;
 public slots:
-    void onCreateNewWindowClicked();
+
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
-private:
     InstructionList instructionList;
+    QPlainTextEdit *plainTextDisplay;
 
     int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
+    void updatePending();
     void updateMemoryTab();
     void updateLinesBox();
     void updateSelectionsRunTime(int address);
@@ -127,6 +128,7 @@ protected:
 signals:
     void resized(const QSize& newSize);
 private slots:
+
     void handleVerticalScrollBarValueChanged(int value);
     void handleLinesScroll();
     void handleDisplayScrollVertical();

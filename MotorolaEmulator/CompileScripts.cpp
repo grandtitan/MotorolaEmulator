@@ -4456,7 +4456,6 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
     for (int i = 0xFFFF; i >= 0; i--) {
         if (Memory[i] != 0) {
             lastIndex = i;
-            qDebug() << i;
             break;
         }
     }

@@ -24,7 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     instructionList.clear();
-
+    externalDisplay = new ExternalDisplay(this);
+    plainTextDisplay = externalDisplay->findChild<QPlainTextEdit*>("plainTextDisplay");
     QWidget::setWindowTitle("Motorola M68XX Emulator-"+softwareVersion);
     updateMemoryTab();
     ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
@@ -80,7 +81,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->plainTextDisplay->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollVertical);
     connect(ui->plainTextDisplay->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollHorizontal);
 
-
     connect(ui->plainTextMemory->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleMemoryScrollHorizontal);
     connect(this, &MainWindow::resized, this, &MainWindow::handleMainWindowSizeChanged);
 
@@ -92,6 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plainTextLines->installEventFilter(this);
     ui->plainTextMemory->installEventFilter(this);
     //ui->plainTextCode->installEventFilter(this);
+    externalDisplay->installEventFilter(this);
 
     ui->buttonSwitchWrite->setVisible(false);
     ui->labelWritingMode->setVisible(false);
@@ -135,25 +136,6 @@ void MainWindow::setCompileStatus(bool isCompiled){
         updateLinesBox();
         clearSelection(0);
         ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-    }
-}
-void MainWindow::stopExecution(){
-    running = false;
-    waitCycles = 0;
-    cycleNum = 0;
-    executionTimer->stop();
-    ui->labelRunningIndicatior->setVisible(false);
-    ui->labelRunningCycleNum->setVisible(false);
-}
-void MainWindow::startExecution(){
-    running = true;
-    ui->labelRunningIndicatior->setVisible(true);
-    if(useCyclesPerSecond){
-        ui->labelRunningCycleNum->setVisible(true);
-    }
-    executeLoop();
-    if(running == true){
-        executionTimer->start(executionSpeed); 
     }
 }
 
@@ -228,22 +210,32 @@ void MainWindow::updateMemoryCell(int address) {
             int relativeAddress = address-0xFB00;
             int line = std::floor(relativeAddress / 54);
             int position = (relativeAddress % 54);
-            QTextCursor cursord;
-            if(ui->comboBoxDisplayStatus->currentIndex() == 0){
+            if(ui->comboBoxDisplayStatus->currentIndex() == 1){
+                QTextCursor cursord2(plainTextDisplay->document());
+                cursord2.setPosition(line * 55 + position);
+                cursord2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
+                cursord2.removeSelectedText();
+                ushort charValue = Memory[address];
+                if (charValue < 32 || charValue == 127) {
+                    cursord2.removeSelectedText();
+                    cursord2.insertText(" ");
+                } else {
+                    cursord2.removeSelectedText();
+                    cursord2.insertText(QChar(static_cast<ushort>(charValue)));
+                }
+            } else{
                 QTextCursor cursord(ui->plainTextDisplay->document());
-            }else {
-                QTextCursor cursord(externalDisplay->getPlainTextEdit()->document());
-            }
-            cursord.setPosition(line * 55 + position);
-            cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-            cursord.removeSelectedText();
-            ushort charValue = Memory[address];
-            if (charValue < 32 || charValue == 127) {
+                cursord.setPosition(line * 55 + position);
+                cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
                 cursord.removeSelectedText();
-                cursord.insertText(" "); // Replace with a space
-            } else {
-                cursord.removeSelectedText();
-                cursord.insertText(QChar(static_cast<ushort>(charValue)));
+                ushort charValue = Memory[address];
+                if (charValue < 32 || charValue == 127) {
+                    cursord.removeSelectedText();
+                    cursord.insertText(" ");
+                } else {
+                    cursord.removeSelectedText();
+                    cursord.insertText(QChar(static_cast<ushort>(charValue)));
+                }
             }
         }
         if(address == lastLinesAddress){
@@ -310,31 +302,33 @@ void MainWindow::updateLinesBox(){
     }
     ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
 }
+
+std::map<QPointer<QLineEdit>, QString> pendingUpdateMap;
 void MainWindow::updateFlags(FlagToUpdate flag, bool value){
     switch (flag) {
     case HalfCarry:
         flags = (flags & ~(1 << 5)) | (value << 5);
-        ui->lineEditHValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditHValue, QString::number(value));
         break;
     case InterruptMask:
         flags = (flags & ~(1 << 4)) | (value << 4);
-        ui->lineEditIValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditIValue, QString::number(value));
         break;
     case Negative:
         flags = (flags & ~(1 << 3)) | (value << 3);
-        ui->lineEditNValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditNValue, QString::number(value));
         break;
     case Zero:
         flags = (flags & ~(1 << 2)) | (value << 2);
-        ui->lineEditZValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditZValue, QString::number(value));
         break;
     case Overflow:
         flags = (flags & ~(1 << 1)) | (value << 1);
-        ui->lineEditVValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditVValue, QString::number(value));
         break;
     case Carry:
         flags = (flags & ~(1)) | (value);
-        ui->lineEditCValue->setText(QString::number(value));
+        pendingUpdateMap.emplace(ui->lineEditCValue, QString::number(value));
         break;
     default:
         throw;
@@ -344,46 +338,46 @@ void MainWindow::updateElement(elementToUpdate element){
     switch (element) {
     case regPC:
         if(hexReg){
-            ui->lineEditPCValue->setText(QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateMap.emplace(ui->lineEditPCValue, QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            ui->lineEditPCValue->setText(QString::number(PC));
+            pendingUpdateMap.emplace(ui->lineEditPCValue, QString::number(PC));
         }
         break;
     case regSP:
         if(hexReg){
-            ui->lineEditSPValue->setText(QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateMap.emplace(ui->lineEditSPValue, QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            ui->lineEditSPValue->setText(QString::number(SP));
+            pendingUpdateMap.emplace(ui->lineEditSPValue, QString::number(SP));
         }
         break;
     case regA:
         if(hexReg){
-            ui->lineEditAValue->setText(QString("%1").arg(aReg, 2, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            ui->lineEditAValue->setText(QString::number(aReg));
+            pendingUpdateMap.emplace(ui->lineEditAValue, QString::number(aReg));
         }
         break;
     case regB:
         if(hexReg){
-            ui->lineEditBValue->setText(QString("%1").arg(bReg, 2, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            ui->lineEditBValue->setText(QString::number(bReg));
+            pendingUpdateMap.emplace(ui->lineEditBValue, QString::number(bReg));
         }
         break;
     case regX:
         if(hexReg){
-            ui->lineEditXValue->setText(QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateMap.emplace(ui->lineEditXValue, QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            ui->lineEditXValue->setText(QString::number(xRegister));
+            pendingUpdateMap.emplace(ui->lineEditXValue, QString::number(xRegister));
         }
         break;
     case allFlags:
-        ui->lineEditHValue->setText(QString::number(bit(flags,5)));
-        ui->lineEditIValue->setText(QString::number(bit(flags,4)));
-        ui->lineEditNValue->setText(QString::number(bit(flags,3)));
-        ui->lineEditZValue->setText(QString::number(bit(flags,2)));
-        ui->lineEditVValue->setText(QString::number(bit(flags,1)));
-        ui->lineEditCValue->setText(QString::number(bit(flags,0)));
+        pendingUpdateMap.emplace(ui->lineEditHValue, QString::number(bit(flags,5)));
+        pendingUpdateMap.emplace(ui->lineEditIValue, QString::number(bit(flags,4)));
+        pendingUpdateMap.emplace(ui->lineEditNValue, QString::number(bit(flags,3)));
+        pendingUpdateMap.emplace(ui->lineEditZValue, QString::number(bit(flags,2)));
+        pendingUpdateMap.emplace(ui->lineEditVValue, QString::number(bit(flags,1)));
+        pendingUpdateMap.emplace(ui->lineEditCValue, QString::number(bit(flags,0)));
         break;
     default:
         throw;
@@ -652,6 +646,9 @@ void MainWindow::resetEmulator(bool failedCompile){
     if (running){
         stopExecution();
     }
+    waitCycles = 0;
+    cycleNum = 1;
+    pendingUpdateMap.clear();
     aReg = 0;
     bReg = 0;
     xRegister = 0;
@@ -672,11 +669,9 @@ void MainWindow::resetEmulator(bool failedCompile){
     ui->lineEditZValue->setText(QString::number(flags & 0x04));
     ui->lineEditVValue->setText(QString::number(flags & 0x02));
     ui->lineEditCValue->setText(QString::number(flags & 0x01));
-    if(ui->comboBoxDisplayStatus->currentIndex() == 0){
-        ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
-    }else {
-        externalDisplay->getPlainTextEdit()->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
-    }
+    updatePending();
+    ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
     if(!failedCompile){
         updateSelectionsRunTime(PC);
         if(lastLinesSelection != -1){
@@ -685,8 +680,6 @@ void MainWindow::resetEmulator(bool failedCompile){
         if(writeToMemory){
             updateSelectionsMemoryEdit(currentCompilerAddressSelection);
         }
-    }else{
-
     }
 }
 
@@ -702,11 +695,13 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     int buttonY = newSize.height() - buttonYoffset;
 
     if (newSize.width() >= 1785) {
-        ui->plainTextDisplay->setEnabled(true);
-        ui->plainTextDisplay->setVisible(true);
-        ui->frameDisplay->setGeometry(newSize.width() - 875, 10, 498, 350);
-        ui->frameDisplay->setEnabled(true);
-        ui->frameDisplay->setVisible(true);
+        if(ui->comboBoxDisplayStatus->currentIndex() == 0){
+            ui->plainTextDisplay->setEnabled(true);
+            ui->plainTextDisplay->setVisible(true);
+            ui->frameDisplay->setGeometry(newSize.width() - 875, 10, 498, 350);
+            ui->frameDisplay->setEnabled(true);
+            ui->frameDisplay->setVisible(true);
+        }
         ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? (newSize.width() - 1589) : (newSize.width() - 1509), newSize.height() - buttonYoffset - 17);
         ui->plainTextMemory->setGeometry(newSize.width() - 1390, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
         if (newSize.height() >= 800) {
@@ -843,19 +838,18 @@ void MainWindow::handleMemoryScrollHorizontal(){
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->plainTextDisplay) {
+        if(ui->comboBoxDisplayStatus->currentIndex() == 0){
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() <= Qt::Key_AsciiTilde) {
-                char asciiChar = static_cast<char>(keyEvent->key());
-                uint8_t asciiValue = static_cast<uint8_t>(asciiChar);
+                char asciiValue = static_cast<uint8_t>(keyEvent->key());
                 Memory[0xFFF0] = asciiValue;
                 lastInput = asciiValue;
                 updateMemoryCell(0xFFF0);
             }
             return true;
-        } else if (event->type() == QEvent::MouseButtonPress) {
+        } else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick) {
             QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-
             if (mouseEvent->button() == Qt::LeftButton) {
                 Memory[0xFFF1] = 1;
                 updateMemoryCell(0xFFF1);
@@ -865,10 +859,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             } else if (mouseEvent->button() == Qt::MiddleButton) {
                 Memory[0xFFF1] = 3;
                 updateMemoryCell(0xFFF1);
-
             }
             return true;
-        } else if (event->type() == QEvent::MouseButtonRelease) {
+        } else if (event->type() == QMouseEvent::MouseButtonRelease) {
             QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
             if (mouseEvent->button() == Qt::LeftButton) {
                 Memory[0xFFF1] = 4;
@@ -885,6 +878,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             ui->plainTextDisplay->setStyleSheet("QPlainTextEdit:focus { border: 2px solid blue; }");
         } else if(event->type() == QEvent::FocusOut){
             ui->plainTextDisplay->setStyleSheet("");
+        }
         }
     }
     else if (obj == ui->plainTextLines){
@@ -911,6 +905,58 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             }
         }else if (event->type() == QEvent::Wheel || event->type() == QEvent::Scroll || event->type() == QEvent::User || event->type() == QEvent::KeyPress){
             return true;
+        }
+    } else if (obj == externalDisplay){
+        if (event->type() == QEvent::Show) {
+            plainTextDisplay->setPlainText(ui->plainTextDisplay->toPlainText());
+            ui->plainTextDisplay->setEnabled(false);
+            ui->plainTextDisplay->setVisible(false);
+            ui->frameDisplay->setEnabled(false);
+            ui->frameDisplay->setVisible(false);
+        } else if (event->type() == QEvent::Hide) {
+            ui->plainTextDisplay->setPlainText(plainTextDisplay->toPlainText());
+            ui->comboBoxDisplayStatus->setCurrentIndex(0);
+            handleMainWindowSizeChanged(MainWindow::size());
+        } else if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() <= Qt::Key_AsciiTilde) {
+                char asciiValue = static_cast<uint8_t>(keyEvent->key());
+                Memory[0xFFF0] = asciiValue;
+                lastInput = asciiValue;
+                updateMemoryCell(0xFFF0);
+            }
+            return true;
+        } else if (event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+
+            if (mouseEvent->button() == Qt::LeftButton) {
+                Memory[0xFFF1] = 1;
+                updateMemoryCell(0xFFF1);
+            } else if (mouseEvent->button() == Qt::RightButton) {
+                Memory[0xFFF1] = 2;
+                updateMemoryCell(0xFFF1);
+            } else if (mouseEvent->button() == Qt::MiddleButton) {
+                Memory[0xFFF1] = 3;
+                updateMemoryCell(0xFFF1);
+            }
+            return true;
+        } else if (event->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                Memory[0xFFF1] = 4;
+                updateMemoryCell(0xFFF1);
+            } else if (mouseEvent->button() == Qt::RightButton) {
+                Memory[0xFFF1] = 5;
+                updateMemoryCell(0xFFF1);
+            } else if (mouseEvent->button() == Qt::MiddleButton) {
+                Memory[0xFFF1] = 6;
+                updateMemoryCell(0xFFF1);
+            }
+            return true;
+        } else if(event->type() == QEvent::FocusIn){
+            plainTextDisplay->setStyleSheet("QPlainTextEdit:focus { border: 2px solid blue; }");
+        } else if(event->type() == QEvent::FocusOut){
+            plainTextDisplay->setStyleSheet("");
         }
     }
     else if(writeToMemory){
@@ -1117,22 +1163,23 @@ void MainWindow::on_buttonReset_clicked()
 }
 void MainWindow::on_buttonStep_clicked()
 {
+    if (running){
+        stopExecution();
+    }
     bool ok = true;;
     if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
     if(ok){
-
         executeInstruction();
-    }
-    if (running){
-        stopExecution();
+        updatePending();
+        updateSelectionsRunTime(PC);
     }
 }
 void MainWindow::on_buttonRunStop_clicked()
 {
-    bool ok = true;
     if (running){
         stopExecution();
     }else {
+        bool ok = true;
         if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
         if(ok){
             if(ui->checkBoxAutoReset->isChecked()){
@@ -1340,23 +1387,203 @@ void MainWindow::on_checkBoxAutoReset_2_clicked(bool checked)
     waitCycles = 0;
     cycleNum = 0;
 }
+void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
+{
+    if(index == 1){
+        externalDisplay->show();
+    } else{
+        externalDisplay->hide();
+    }
+}
 
 
+void MainWindow::updatePending(){
+    for (auto it = pendingUpdateMap.begin(); it != pendingUpdateMap.end(); ) {
+        it->first->setText(it->second);
+        it = pendingUpdateMap.erase(it);
+    }
+}
+void MainWindow::stopExecution(){
+    running = false;
+    waitCycles = 0;
+    cycleNum = 1;
+    executionTimer->stop();
+    ui->labelRunningIndicatior->setVisible(false);
+    ui->labelRunningCycleNum->setVisible(false);
+    updatePending();
+    updateSelectionsRunTime(PC);
+}
+void MainWindow::startExecution(){
+    running = true;
+    ui->labelRunningIndicatior->setVisible(true);
+    if(useCyclesPerSecond){
+        ui->labelRunningCycleNum->setVisible(true);
+    }
+    executeLoop();
+    if(running == true){
+        executionTimer->start(executionSpeed);
+    }
+}
 void MainWindow::executeLoop(){
     if(useCyclesPerSecond){
         if(waitCycles > 0){
             cycleNum++;
             waitCycles--;
         }else{
+            updatePending();
+            updateSelectionsRunTime(PC);
             waitCycles = executeInstruction();
             cycleNum = 1;
+            waitCycles--;
+            if (breakEnabled){
+                switch(ui->comboBoxBreakWhen->currentIndex()){
+                case 1:
+                    if(instructionList.getObjectByAddress(PC).lineNumber == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 2:
+                    if(PC == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 3:
+                    if(SP == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 4:
+                    if(xRegister == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 5:
+                    if(aReg == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 6:
+                    if(bReg == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 7:
+                    if(bit(flags,5) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 8:
+                    if(bit(flags,4) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 9:
+                    if(bit(flags,3) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 10:
+                    if(bit(flags,2) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 11:
+                    if(bit(flags,1) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 12:
+                    if(bit(flags,0) == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                case 13:
+                    if(Memory[ui->spinBoxBreakAt->value()] == ui->spinBoxBreakIs->value()){
+                        stopExecution();
+                    }
+                    break;
+                }
+            }
         }
         ui->labelRunningCycleNum->setText("Instruction cycle: "+ QString::number(cycleNum));
     }else{
         executeInstruction();
+        updatePending();
+        updateSelectionsRunTime(PC);
+        if (breakEnabled){
+            switch(ui->comboBoxBreakWhen->currentIndex()){
+            case 1:
+                if(instructionList.getObjectByAddress(PC).lineNumber == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 2:
+                if(PC == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 3:
+                if(SP == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 4:
+                if(xRegister == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 5:
+                if(aReg == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 6:
+                if(bReg == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 7:
+                if(bit(flags,5) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 8:
+                if(bit(flags,4) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 9:
+                if(bit(flags,3) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 10:
+                if(bit(flags,2) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 11:
+                if(bit(flags,1) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 12:
+                if(bit(flags,0) == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            case 13:
+                if(Memory[ui->spinBoxBreakAt->value()] == ui->spinBoxBreakIs->value()){
+                    stopExecution();
+                }
+                break;
+            }
+        }
+
     }
 }
-
+int oldX = 0;
+int oldY = 0;
 int MainWindow::executeInstruction(){
     int cycleCount = 1;
     uint8_t uInt8 = 0;
@@ -1369,17 +1596,48 @@ int MainWindow::executeInstruction(){
     if(ui->comboBoxDisplayStatus->currentIndex() == 0){
         if(ui->plainTextDisplay->hasFocus()){
             QPoint position = QCursor::pos();
-            position.setX(position.x() - 4);
             QPoint localMousePos = ui->plainTextDisplay->mapFromGlobal(position);
-            QTextCursor cursor = ui->plainTextDisplay->cursorForPosition(localMousePos);
-            int x = cursor.position() % 55;
-            if(x > 53) x = 53;
-            int y = cursor.position() / 55;
-            if(y > 19) y = 19;
+            localMousePos.setX(localMousePos.x() - 3);
+            localMousePos.setY(localMousePos.y() - 5);
+            QFontMetrics fontMetrics(ui->plainTextDisplay->font());
+            int charWidth = fontMetrics.averageCharWidth();
+            int charHeight = fontMetrics.height();
+            int x = localMousePos.x() / charWidth;
+            int y = localMousePos.y() / charHeight;
+            if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
+                oldX = x;
+                oldY = y;
+            } else{
+                x = oldX;
+                y = oldY;
+            }
             Memory[0xFFF2] = x;
             Memory[0xFFF3] = y;
             updateMemoryCell(0xFFF2);
             updateMemoryCell(0xFFF3);
+        }
+    }else{
+        if (plainTextDisplay->hasFocus()) {
+        QPoint position = QCursor::pos();
+        QPoint localMousePos = plainTextDisplay->mapFromGlobal(position);
+        localMousePos.setX(localMousePos.x() - 3);
+        localMousePos.setY(localMousePos.y() - 5);
+        QFontMetrics fontMetrics(plainTextDisplay->font());
+        int charWidth = fontMetrics.averageCharWidth();
+        int charHeight = fontMetrics.height();
+        int x = localMousePos.x() / charWidth;
+        int y = localMousePos.y() / charHeight;
+        if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
+                oldX = x;
+                oldY = y;
+        } else{
+                x = oldX;
+                y = oldY;
+        }
+        Memory[0xFFF2] = x;
+        Memory[0xFFF3] = y;
+        updateMemoryCell(0xFFF2);
+        updateMemoryCell(0xFFF3);
         }
     }
 
@@ -3829,76 +4087,7 @@ int MainWindow::executeInstruction(){
     PC = PC % 0x10000;
     updateElement(regPC);
 
-    if (breakEnabled){
-        switch(ui->comboBoxBreakWhen->currentIndex()){
-        case 1:
-            if(instructionList.getObjectByAddress(PC).lineNumber == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 2:
-            if(PC == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 3:
-            if(SP == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 4:
-            if((*curIndReg) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 5:
-            if(aReg == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 6:
-            if(bReg == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 7:
-            if(bit(flags,5) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 8:
-            if(bit(flags,4) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 9:
-            if(bit(flags,3) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 10:
-            if(bit(flags,2) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 11:
-            if(bit(flags,1) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 12:
-            if(bit(flags,0) == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        case 13:
-            if(Memory[ui->spinBoxBreakAt->value()] == ui->spinBoxBreakIs->value()){
-                stopExecution();
-            }
-            break;
-        }
-    }
-    updateSelectionsRunTime(PC);
+
     int lineNum = instructionList.getObjectByAddress(PC).lineNumber;
     if(lineNum >= 0){
 
@@ -3915,11 +4104,4 @@ int MainWindow::executeInstruction(){
     return cycleCount;
 }
 
-void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
-{
-    if(index == 1){
-        externalDisplay = new ExternalDisplay(this);
-        externalDisplay->show();
-    }
-}
 
