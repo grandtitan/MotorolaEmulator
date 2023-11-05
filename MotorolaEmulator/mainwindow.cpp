@@ -103,6 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->spinBoxBreakAt->setVisible(false);
 
     executionTimer = new QTimer(this);
+    executionTimer->setTimerType(Qt::PreciseTimer);
     connect(executionTimer, &QTimer::timeout, this, &MainWindow::executeLoop);
 
 }
@@ -640,12 +641,15 @@ void MainWindow::clearSelection(int clearWhat) {
 
 }
 
-
+int skipUpdateNum;
+int skipUpdateCount;
 
 void MainWindow::resetEmulator(bool failedCompile){
     if (running){
         stopExecution();
     }
+
+    skipUpdateCount = 0;
     waitCycles = 0;
     cycleNum = 1;
     pendingUpdateMap.clear();
@@ -834,6 +838,8 @@ void MainWindow::handleDisplayScrollHorizontal(){
 void MainWindow::handleMemoryScrollHorizontal(){
     ui->plainTextMemory->horizontalScrollBar()->setValue(0);
 }
+
+
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
@@ -1198,8 +1204,14 @@ void MainWindow::on_comboBoxSpeedSelector_activated(int index)
     }
     if(index != 11){
         executionSpeed = std::pow(2, index);
+        ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(executionSpeed));
+        if(executionSpeed > 288){
+            skipUpdateNum = std::floor(executionSpeed / 144);
+        } else{
+            skipUpdateNum = 0;
+        }
         executionSpeed = std::ceil(1000.0 / executionSpeed);
-        ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(std::pow(2, index)));
+        qDebug() << skipUpdateNum << " " << executionSpeed;
     } else{
         executionSpeed = 0;
         ui->labelRunningIndicatior->setText("Operation/second: full speed");
@@ -1412,6 +1424,7 @@ void MainWindow::stopExecution(){
     ui->labelRunningCycleNum->setVisible(false);
     updatePending();
     updateSelectionsRunTime(PC);
+    skipUpdateCount = 0;
 }
 void MainWindow::startExecution(){
     running = true;
@@ -1424,6 +1437,7 @@ void MainWindow::startExecution(){
         executionTimer->start(executionSpeed);
     }
 }
+
 void MainWindow::executeLoop(){
     if(useCyclesPerSecond){
         if(waitCycles > 0){
@@ -1508,8 +1522,19 @@ void MainWindow::executeLoop(){
         ui->labelRunningCycleNum->setText("Instruction cycle: "+ QString::number(cycleNum));
     }else{
         executeInstruction();
-        updatePending();
-        updateSelectionsRunTime(PC);
+        if(skipUpdateNum > 0){
+            if(skipUpdateCount > 0){
+                skipUpdateCount--;
+                pendingUpdateMap.clear();
+            }else{
+                skipUpdateCount = skipUpdateNum;
+                updatePending();
+                updateSelectionsRunTime(PC);
+            }
+        }else{
+            updatePending();
+            updateSelectionsRunTime(PC);
+        }
         if (breakEnabled){
             switch(ui->comboBoxBreakWhen->currentIndex()){
             case 1:
