@@ -17,7 +17,8 @@
 #include <QTableWidget>
 #include <QInputDialog>
 #include "InstructionList.h"
-
+#include <QPointer>
+#include <unordered_map>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -107,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(executionTimer, &QTimer::timeout, this, &MainWindow::executeLoop);
 
 }
-
+std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -140,21 +141,7 @@ void MainWindow::setCompileStatus(bool isCompiled){
     }
 }
 
-QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
-QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
-QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
-QList<QTextEdit::ExtraSelection> linesSelectionsLines;
-QList<QTextEdit::ExtraSelection> codeSelectionsLines;
-QList<QTextEdit::ExtraSelection> memorySelectionsLines;
-QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
-int previousScrollCode = 0;
-int previousScrollMemory = 0;
-int autoScrollUpLimit = 20;
-int autoScrollDownLimit = 5;
-int lastLinesSelection = -1;
-int lastLinesAddress = -1;
-int lastMemoryAddressSelection = -1;
-int currentCompilerAddressSelection = 0;
+
 void MainWindow::updateMemoryTab(){
     if(simpleMemory){
         for (int i = 0; i < 20; ++i) {
@@ -205,7 +192,6 @@ void MainWindow::updateMemoryCell(int address) {
         QTextCursor cursor(ui->plainTextMemory->document());
         cursor.setPosition(line * 55 + position);
         cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
-        cursor.removeSelectedText();
         cursor.insertText(QString("%1").arg(Memory[address], 2, 16, QChar('0')));
         if(address >= 0xFB00 && address <= 0xFF37){
             int relativeAddress = address-0xFB00;
@@ -215,26 +201,20 @@ void MainWindow::updateMemoryCell(int address) {
                 QTextCursor cursord2(plainTextDisplay->document());
                 cursord2.setPosition(line * 55 + position);
                 cursord2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-                cursord2.removeSelectedText();
                 ushort charValue = Memory[address];
                 if (charValue < 32 || charValue == 127) {
-                    cursord2.removeSelectedText();
                     cursord2.insertText(" ");
                 } else {
-                    cursord2.removeSelectedText();
                     cursord2.insertText(QChar(static_cast<ushort>(charValue)));
                 }
             } else{
                 QTextCursor cursord(ui->plainTextDisplay->document());
                 cursord.setPosition(line * 55 + position);
                 cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-                cursord.removeSelectedText();
                 ushort charValue = Memory[address];
                 if (charValue < 32 || charValue == 127) {
-                    cursord.removeSelectedText();
                     cursord.insertText(" ");
                 } else {
-                    cursord.removeSelectedText();
                     cursord.insertText(QChar(static_cast<ushort>(charValue)));
                 }
             }
@@ -304,32 +284,31 @@ void MainWindow::updateLinesBox(){
     ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
 }
 
-std::map<QPointer<QLineEdit>, QString> pendingUpdateMap;
 void MainWindow::updateFlags(FlagToUpdate flag, bool value){
     switch (flag) {
     case HalfCarry:
         flags = (flags & ~(1 << 5)) | (value << 5);
-        pendingUpdateMap.emplace(ui->lineEditHValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditHValue, QString::number(value));
         break;
     case InterruptMask:
         flags = (flags & ~(1 << 4)) | (value << 4);
-        pendingUpdateMap.emplace(ui->lineEditIValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditIValue, QString::number(value));
         break;
     case Negative:
         flags = (flags & ~(1 << 3)) | (value << 3);
-        pendingUpdateMap.emplace(ui->lineEditNValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditNValue, QString::number(value));
         break;
     case Zero:
         flags = (flags & ~(1 << 2)) | (value << 2);
-        pendingUpdateMap.emplace(ui->lineEditZValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditZValue, QString::number(value));
         break;
     case Overflow:
         flags = (flags & ~(1 << 1)) | (value << 1);
-        pendingUpdateMap.emplace(ui->lineEditVValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditVValue, QString::number(value));
         break;
     case Carry:
         flags = (flags & ~(1)) | (value);
-        pendingUpdateMap.emplace(ui->lineEditCValue, QString::number(value));
+        pendingUpdateUMap.emplace(ui->lineEditCValue, QString::number(value));
         break;
     default:
         throw;
@@ -339,46 +318,46 @@ void MainWindow::updateElement(elementToUpdate element){
     switch (element) {
     case regPC:
         if(hexReg){
-            pendingUpdateMap.emplace(ui->lineEditPCValue, QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditPCValue, QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            pendingUpdateMap.emplace(ui->lineEditPCValue, QString::number(PC));
+            pendingUpdateUMap.emplace(ui->lineEditPCValue, QString::number(PC));
         }
         break;
     case regSP:
         if(hexReg){
-            pendingUpdateMap.emplace(ui->lineEditSPValue, QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditSPValue, QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            pendingUpdateMap.emplace(ui->lineEditSPValue, QString::number(SP));
+            pendingUpdateUMap.emplace(ui->lineEditSPValue, QString::number(SP));
         }
         break;
     case regA:
         if(hexReg){
-            pendingUpdateMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            pendingUpdateMap.emplace(ui->lineEditAValue, QString::number(aReg));
+            pendingUpdateUMap.emplace(ui->lineEditAValue, QString::number(aReg));
         }
         break;
     case regB:
         if(hexReg){
-            pendingUpdateMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            pendingUpdateMap.emplace(ui->lineEditBValue, QString::number(bReg));
+            pendingUpdateUMap.emplace(ui->lineEditBValue, QString::number(bReg));
         }
         break;
     case regX:
         if(hexReg){
-            pendingUpdateMap.emplace(ui->lineEditXValue, QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditXValue, QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
         }else{
-            pendingUpdateMap.emplace(ui->lineEditXValue, QString::number(xRegister));
+            pendingUpdateUMap.emplace(ui->lineEditXValue, QString::number(xRegister));
         }
         break;
     case allFlags:
-        pendingUpdateMap.emplace(ui->lineEditHValue, QString::number(bit(flags,5)));
-        pendingUpdateMap.emplace(ui->lineEditIValue, QString::number(bit(flags,4)));
-        pendingUpdateMap.emplace(ui->lineEditNValue, QString::number(bit(flags,3)));
-        pendingUpdateMap.emplace(ui->lineEditZValue, QString::number(bit(flags,2)));
-        pendingUpdateMap.emplace(ui->lineEditVValue, QString::number(bit(flags,1)));
-        pendingUpdateMap.emplace(ui->lineEditCValue, QString::number(bit(flags,0)));
+        pendingUpdateUMap.emplace(ui->lineEditHValue, QString::number(bit(flags,5)));
+        pendingUpdateUMap.emplace(ui->lineEditIValue, QString::number(bit(flags,4)));
+        pendingUpdateUMap.emplace(ui->lineEditNValue, QString::number(bit(flags,3)));
+        pendingUpdateUMap.emplace(ui->lineEditZValue, QString::number(bit(flags,2)));
+        pendingUpdateUMap.emplace(ui->lineEditVValue, QString::number(bit(flags,1)));
+        pendingUpdateUMap.emplace(ui->lineEditCValue, QString::number(bit(flags,0)));
         break;
     default:
         throw;
@@ -408,6 +387,7 @@ void MainWindow::Err(const QString& text){
 
 void MainWindow::updateSelectionsLines(int line){
     lastLinesSelection = line;
+    if(lastLinesSelection != -1){
     linesSelectionsLines.clear();
     codeSelectionsLines.clear();
     memorySelectionsLines.clear();
@@ -457,7 +437,7 @@ void MainWindow::updateSelectionsLines(int line){
     ui->plainTextLines->setExtraSelections(combinedLinesSelections);
     ui->plainTextCode->setExtraSelections(combinedCodeSelections);
     ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
-
+    }
 }
 void MainWindow::updateSelectionsMemoryEdit(int address){
     memorySelectionsMemoryEdit.clear();
@@ -652,7 +632,7 @@ void MainWindow::resetEmulator(bool failedCompile){
     skipUpdateCount = 0;
     waitCycles = 0;
     cycleNum = 1;
-    pendingUpdateMap.clear();
+    pendingUpdateUMap.clear();
     aReg = 0;
     bReg = 0;
     xRegister = 0;
@@ -1062,7 +1042,9 @@ void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
     compilerVersionIndex = index;
     setCompileStatus(false);
     resetEmulator(true);
-    clearSelection(0);
+    if(writeToMemory){
+        updateSelectionsMemoryEdit(lastMemoryAddressSelection);
+    }
 }
 bool MainWindow::on_buttonCompile_clicked()
 {
@@ -1240,6 +1222,8 @@ void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
         ui->lineCodeLinesSeperator->setGeometry(110, ui->lineCodeLinesSeperator->y(), 1, 16);
         updateLinesBox();
     }
+    updateSelectionsLines(lastLinesSelection);
+    updateSelectionsRunTime(PC);
     handleMainWindowSizeChanged(MainWindow::size());
 
 }
@@ -1369,6 +1353,7 @@ void MainWindow::on_comboBoxBreakWhen_currentIndexChanged(int index)
 void MainWindow::on_checkBoxSimpleMemory_clicked(bool checked)
 {
     simpleMemory = checked;
+    updateMemoryTab();
     if(checked){
         ui->groupBoxSimpleMemory->setVisible(true);
         ui->groupBoxSimpleMemory->setEnabled(true);
@@ -1379,8 +1364,10 @@ void MainWindow::on_checkBoxSimpleMemory_clicked(bool checked)
         ui->plainTextMemory->setEnabled(true);
         ui->groupBoxSimpleMemory->setVisible(false);
         ui->groupBoxSimpleMemory->setEnabled(false);
+        if(writeToMemory) updateSelectionsMemoryEdit(lastMemoryAddressSelection);
+        updateSelectionsLines(lastLinesSelection);
+        updateSelectionsRunTime(PC);
     }
-    updateMemoryTab();
 }
 void MainWindow::on_spinBox_valueChanged(int arg1)
 {
@@ -1410,9 +1397,9 @@ void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
 
 
 void MainWindow::updatePending(){
-    for (auto it = pendingUpdateMap.begin(); it != pendingUpdateMap.end(); ) {
+    for (auto it = pendingUpdateUMap.begin(); it != pendingUpdateUMap.end(); ) {
         it->first->setText(it->second);
-        it = pendingUpdateMap.erase(it);
+        it = pendingUpdateUMap.erase(it);
     }
 }
 void MainWindow::stopExecution(){
@@ -1525,7 +1512,7 @@ void MainWindow::executeLoop(){
         if(skipUpdateNum > 0){
             if(skipUpdateCount > 0){
                 skipUpdateCount--;
-                pendingUpdateMap.clear();
+                pendingUpdateUMap.clear();
             }else{
                 skipUpdateCount = skipUpdateNum;
                 updatePending();

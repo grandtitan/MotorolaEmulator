@@ -3466,7 +3466,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4061,7 +4061,7 @@ QPushButton:pressed{
        </rect>
       </property>
       <property name="text">
-       <string>Use cycles per second instead of instructions per second</string>
+       <string>Use cycles/s instead of instructions/s</string>
       </property>
       <property name="checked">
        <bool>false</bool>

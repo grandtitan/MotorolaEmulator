@@ -436,6 +436,15 @@ bool MainWindow::compileMix(int ver){
                         goto end;
                     }
                     else {
+                        if(op.length() == 2 && op[0] == '\''){
+                                ushort unicodeValue = op[1].unicode();
+                                if (unicodeValue <= 128) {
+                                op = QString::number(static_cast<int>(unicodeValue));
+                                } else {
+                                Err("Invlaid ASCII character");
+                                goto end;
+                                }
+                        }
                         int value = 0;
                         try {
                             value = getNum(op);
