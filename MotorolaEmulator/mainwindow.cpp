@@ -123,7 +123,9 @@ QString convertToQString(int number, int width){
     std::string str = stream.str();
     return QString::fromStdString(str);
 }
-
+int linesMarkLine = -1;
+int linesMarkAddress = -1;
+int memoryEditAddress = -1;
 void MainWindow::setCompileStatus(bool isCompiled){
     if(isCompiled){
         ui->buttonCompile->setStyleSheet(compiledButton);
@@ -135,11 +137,27 @@ void MainWindow::setCompileStatus(bool isCompiled){
         ui->buttonCompile->setStyleSheet(uncompiledButton);
         PrintConsole("", 2);
         instructionList.clear();
+        linesMarkLine = -1;
+        linesMarkAddress = -1;
         updateLinesBox();
-        clearSelection(0);
+        updateSelectionsLines();
+        updateSelectionsRunTime();
         ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
     }
 }
+
+QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
+QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
+QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
+QList<QTextEdit::ExtraSelection> linesSelectionsLines;
+QList<QTextEdit::ExtraSelection> codeSelectionsLines;
+QList<QTextEdit::ExtraSelection> memorySelectionsLines;
+QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
+int previousScrollCode = 0;
+int previousScrollMemory = 0;
+int autoScrollUpLimit = 20;
+int autoScrollDownLimit = 5;
+
 
 
 void MainWindow::updateMemoryTab(){
@@ -219,10 +237,10 @@ void MainWindow::updateMemoryCell(int address) {
                 }
             }
         }
-        if(address == lastLinesAddress){
-            updateSelectionsLines(lastLinesSelection);
+        if(address == linesMarkAddress){
+            updateSelectionsLines();
         }
-        if(address == lastMemoryAddressSelection){
+        if(address == memoryEditAddress){
             updateSelectionsMemoryEdit(address);
         }
     }
@@ -332,14 +350,14 @@ void MainWindow::updateElement(elementToUpdate element){
         break;
     case regA:
         if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 2, 16, QLatin1Char('0')).toUpper());
         }else{
             pendingUpdateUMap.emplace(ui->lineEditAValue, QString::number(aReg));
         }
         break;
     case regB:
         if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 4, 16, QLatin1Char('0')).toUpper());
+            pendingUpdateUMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 2, 16, QLatin1Char('0')).toUpper());
         }else{
             pendingUpdateUMap.emplace(ui->lineEditBValue, QString::number(bReg));
         }
@@ -385,81 +403,68 @@ void MainWindow::Err(const QString& text){
 }
 
 
-void MainWindow::updateSelectionsLines(int line){
-    lastLinesSelection = line;
-    if(lastLinesSelection != -1){
+void MainWindow::updateSelectionsLines(int line){ //-1 current
+    if(line != -1) linesMarkLine = line;
     linesSelectionsLines.clear();
     codeSelectionsLines.clear();
     memorySelectionsLines.clear();
-    QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(line);
-    QTextBlock linesBlock = ui->plainTextLines->document()->findBlockByLineNumber(line);
-    QTextCursor codeCursor(codeBlock);
-    codeCursor.select(QTextCursor::LineUnderCursor);
-    QTextCursor linesCursor(linesBlock);
-    linesCursor.select(QTextCursor::LineUnderCursor);
-    QTextCharFormat lineFormat;
-    lineFormat.setBackground(Qt::green);
-    QTextEdit::ExtraSelection lineSelection;
-    lineSelection.format = lineFormat;
-    int address = instructionList.getObjectByLine(line).address;
-    if(address >= 0){
-        int lineM = std::floor(address / 16)+1;
-        int position = (address % 16) * 3 + 4;
-        QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(line);
-        QTextCursor memoryCursor(memoryBlock);
-        memoryCursor.setPosition(lineM*55 + position);
-        memoryCursor.setPosition(lineM*55 + position+2,QTextCursor::KeepAnchor);
-        lineSelection.cursor = memoryCursor;
-        memorySelectionsLines.append(lineSelection);
-        lastLinesAddress = address;
-    }else{
-        lastLinesAddress = -1;
+    if(linesMarkLine != -1){
+        QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(linesMarkLine);
+        QTextBlock linesBlock = ui->plainTextLines->document()->findBlockByLineNumber(linesMarkLine);
+        QTextCursor codeCursor(codeBlock);
+        codeCursor.select(QTextCursor::LineUnderCursor);
+        QTextCursor linesCursor(linesBlock);
+        linesCursor.select(QTextCursor::LineUnderCursor);
+        QTextCharFormat lineFormat;
+        lineFormat.setBackground(Qt::green);
+        QTextEdit::ExtraSelection lineSelection;
+        lineSelection.format = lineFormat;
+        int address = instructionList.getObjectByLine(linesMarkLine).address;
+        linesMarkAddress = address;
+        if(address >= 0){
+            int lineM = std::floor(address / 16)+1;
+            int position = (address % 16) * 3 + 4;
+            QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(linesMarkLine);
+            QTextCursor memoryCursor(memoryBlock);
+            memoryCursor.setPosition(lineM*55 + position);
+            memoryCursor.setPosition(lineM*55 + position+2,QTextCursor::KeepAnchor);
+            lineSelection.cursor = memoryCursor;
+            memorySelectionsLines.append(lineSelection);
+        }
+
+        lineSelection.cursor = linesCursor;
+        linesSelectionsLines.append(lineSelection);
+
+        lineSelection.cursor = codeCursor;
+        codeSelectionsLines.append(lineSelection);
+    } else{
+        linesMarkAddress = -1;
     }
 
 
-    lineSelection.cursor = linesCursor;
-    linesSelectionsLines.append(lineSelection);
+    ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+    ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+    ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
 
-    lineSelection.cursor = codeCursor;
-    codeSelectionsLines.append(lineSelection);
-
-    QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-    QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-    QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-    combinedLinesSelections.append(linesSelectionsRunTime);
-    combinedLinesSelections.append(linesSelectionsLines);
-    combinedCodeSelections.append(codeSelectionsRunTime);
-    combinedCodeSelections.append(codeSelectionsLines);
-    combinedMemorySelections.append(memorySelectionsRunTime);
-    combinedMemorySelections.append(memorySelectionsLines);
-    combinedMemorySelections.append(memorySelectionsMemoryEdit);
-
-    ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-    ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-    ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
-    }
 }
 void MainWindow::updateSelectionsMemoryEdit(int address){
-    memorySelectionsMemoryEdit.clear();
-    clearSelection(3);
-    QTextCharFormat lineFormat;
-    lineFormat.setBackground(Qt::lightGray);
-    QTextEdit::ExtraSelection lineSelection;
-    lineSelection.format = lineFormat;
-    int line = std::floor(address / 16)+1;
-    int position = (address % 16) * 3 + 4;
-    QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(line);
-    QTextCursor memoryCursor(memoryBlock);
-    memoryCursor.setPosition(line*55 + position);
-    memoryCursor.setPosition(line*55 + position+2,QTextCursor::KeepAnchor);
-    lineSelection.cursor = memoryCursor;
-    memorySelectionsMemoryEdit.append(lineSelection);
-    QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-    combinedMemorySelections.append(memorySelectionsRunTime);
-    combinedMemorySelections.append(memorySelectionsLines);
-    combinedMemorySelections.append(memorySelectionsMemoryEdit);
-    ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
-    lastMemoryAddressSelection = address;
+    if(address != -1) memoryEditAddress = address;
+    if(memoryEditAddress != -1 && writeToMemory){
+        memorySelectionsMemoryEdit.clear();
+        QTextCharFormat lineFormat;
+        lineFormat.setBackground(Qt::lightGray);
+        QTextEdit::ExtraSelection lineSelection;
+        lineSelection.format = lineFormat;
+        int line = std::floor(memoryEditAddress / 16)+1;
+        int position = (memoryEditAddress % 16) * 3 + 4;
+        QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(line);
+        QTextCursor memoryCursor(memoryBlock);
+        memoryCursor.setPosition(line*55 + position);
+        memoryCursor.setPosition(line*55 + position+2,QTextCursor::KeepAnchor);
+        lineSelection.cursor = memoryCursor;
+        memorySelectionsMemoryEdit.append(lineSelection);
+    }
+    ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
 }
 void MainWindow::updateSelectionCompileError(int charNum){
     QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentCompilerLine);
@@ -493,7 +498,7 @@ void MainWindow::updateSelectionCompileError(int charNum){
         ui->plainTextCode->verticalScrollBar()->setValue(currentCompilerLine - autoScrollDownLimit);
     }
 }
-void MainWindow::updateSelectionsRunTime(int address){
+void MainWindow::updateSelectionsRunTime(){
     linesSelectionsRunTime.clear();
     codeSelectionsRunTime.clear();
     memorySelectionsRunTime.clear();
@@ -502,7 +507,7 @@ void MainWindow::updateSelectionsRunTime(int address){
     lineFormat.setBackground(Qt::yellow);
     QTextEdit::ExtraSelection lineSelection;
     lineSelection.format = lineFormat;
-    int lineNum = instructionList.getObjectByAddress(address).lineNumber;
+    int lineNum = instructionList.getObjectByAddress(PC).lineNumber;
     if(lineNum >= 0){
         QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(lineNum);
         QTextBlock linesBlock = ui->plainTextLines->document()->findBlockByLineNumber(lineNum);
@@ -518,31 +523,20 @@ void MainWindow::updateSelectionsRunTime(int address){
 
     }
 
-    int line = std::floor(address / 16)+1;
-    int position = (address % 16) * 3 + 4;
+    int line = std::floor(PC / 16)+1;
+    int position = (PC % 16) * 3 + 4;
     QTextBlock memoryBlock = ui->plainTextMemory->document()->findBlockByLineNumber(line);
     QTextCursor memoryCursor(memoryBlock);
     memoryCursor.setPosition(line*55 + position);
     memoryCursor.setPosition(line*55 + position+2,QTextCursor::KeepAnchor);
-
-
-
     lineSelection.cursor = memoryCursor;
     memorySelectionsRunTime.append(lineSelection);
-    QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-    QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-    QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-    combinedLinesSelections.append(linesSelectionsRunTime);
-    combinedLinesSelections.append(linesSelectionsLines);
-    combinedCodeSelections.append(codeSelectionsRunTime);
-    combinedCodeSelections.append(codeSelectionsLines);
-    combinedMemorySelections.append(memorySelectionsRunTime);
-    combinedMemorySelections.append(memorySelectionsLines);
-    combinedMemorySelections.append(memorySelectionsMemoryEdit);
 
-    ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-    ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-    ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
+
+
+    ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+    ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+    ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
 
 
 }
@@ -556,80 +550,39 @@ void MainWindow::clearSelection(int clearWhat) {
         codeSelectionsRunTime.clear();
         memorySelectionsRunTime.clear();
         memorySelectionsMemoryEdit.clear();
-        lastLinesSelection = -1;
-        lastLinesAddress = -1;
-        lastMemoryAddressSelection = -1;
-        QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-        QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-        QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-
-        ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-        ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-        ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
+        ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+        ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+        ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
     }
     else if (clearWhat == 1) {
         linesSelectionsLines.clear();
         codeSelectionsLines.clear();
         memorySelectionsLines.clear();
-        lastLinesSelection = -1;
-        lastLinesAddress = -1;
-        QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-        QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-        QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-        combinedLinesSelections.append(linesSelectionsRunTime);
-        combinedCodeSelections.append(codeSelectionsRunTime);
-        combinedMemorySelections.append(memorySelectionsRunTime);
-        combinedMemorySelections.append(memorySelectionsMemoryEdit);
-
-        ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-        ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-        ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
+        ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+        ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+        ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
     }
     else if (clearWhat == 2) {
         linesSelectionsRunTime.clear();
         codeSelectionsRunTime.clear();
         memorySelectionsRunTime.clear();
-        QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-        QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-        QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-        combinedLinesSelections.append(linesSelectionsLines);
-        combinedCodeSelections.append(codeSelectionsLines);
-        combinedMemorySelections.append(memorySelectionsLines);
-        combinedMemorySelections.append(memorySelectionsMemoryEdit);
-
-        ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-        ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-        ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
+        ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+        ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+        ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
     }
     else if (clearWhat == 3) {
         memorySelectionsMemoryEdit.clear();
-        lastMemoryAddressSelection = -1;
-        QList<QTextEdit::ExtraSelection> combinedLinesSelections;
-        QList<QTextEdit::ExtraSelection> combinedCodeSelections;
-        QList<QTextEdit::ExtraSelection> combinedMemorySelections;
-        combinedLinesSelections.append(linesSelectionsRunTime);
-        combinedLinesSelections.append(linesSelectionsLines);
-        combinedCodeSelections.append(codeSelectionsRunTime);
-        combinedCodeSelections.append(codeSelectionsLines);
-        combinedMemorySelections.append(memorySelectionsRunTime);
-        combinedMemorySelections.append(memorySelectionsLines);
-
-        ui->plainTextLines->setExtraSelections(combinedLinesSelections);
-        ui->plainTextCode->setExtraSelections(combinedCodeSelections);
-        ui->plainTextMemory->setExtraSelections(combinedMemorySelections);
+        ui->plainTextLines->setExtraSelections(linesSelectionsRunTime+linesSelectionsLines);
+        ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+        ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
     }
 
 }
-
-int skipUpdateNum;
-int skipUpdateCount;
 
 void MainWindow::resetEmulator(bool failedCompile){
     if (running){
         stopExecution();
     }
-
-    skipUpdateCount = 0;
     waitCycles = 0;
     cycleNum = 1;
     pendingUpdateUMap.clear();
@@ -657,13 +610,10 @@ void MainWindow::resetEmulator(bool failedCompile){
     ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
     plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
     if(!failedCompile){
-        updateSelectionsRunTime(PC);
-        if(lastLinesSelection != -1){
-            updateSelectionsLines(lastLinesSelection);
-        }
-        if(writeToMemory){
-            updateSelectionsMemoryEdit(currentCompilerAddressSelection);
-        }
+        updateSelectionsRunTime();
+        updateSelectionsLines();
+        updateSelectionsMemoryEdit();
+
     }
 }
 
@@ -688,6 +638,7 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
         }
         ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? (newSize.width() - 1589) : (newSize.width() - 1509), newSize.height() - buttonYoffset - 17);
         ui->plainTextMemory->setGeometry(newSize.width() - 1390, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
+        ui->groupBoxSimpleMemory->setGeometry(newSize.width() - 1390, ui->groupBoxSimpleMemory->y(), ui->groupBoxSimpleMemory->width(), ui->groupBoxSimpleMemory->height());
         if (newSize.height() >= 800) {
             ui->tabWidget->setGeometry(newSize.width() - 875, 370, 868, newSize.height() - 359 - buttonYoffset - 17);
         }
@@ -704,6 +655,7 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
         ui->tabWidget->setGeometry(910, 300, newSize.width() - 917, newSize.height() - 289 - buttonYoffset - 17);
         ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? 201 : 281, newSize.height() - buttonYoffset - 17);
         ui->plainTextMemory->setGeometry(400, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
+        ui->groupBoxSimpleMemory->setGeometry(400, ui->groupBoxSimpleMemory->y(), ui->groupBoxSimpleMemory->width(), ui->groupBoxSimpleMemory->height());
     }
 
     ui->buttonCompile->setGeometry(ui->buttonCompile->x(), buttonY, ui->buttonCompile->width(), ui->buttonCompile->height());
@@ -954,9 +906,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 if ((keyValue >= Qt::Key_0 && keyValue <= Qt::Key_9) ||
                     (keyValue >= Qt::Key_A && keyValue <= Qt::Key_F)) {
                     char newByte = keyEvent->text().toUpper().toLatin1()[0];
-                    uint8_t currentCellValue = Memory[currentCompilerAddressSelection];
-                    Memory[currentCompilerAddressSelection] = (currentCellValue << 4) | QString(newByte).toInt(nullptr, 16);;
-                    updateMemoryCell(currentCompilerAddressSelection);
+                    uint8_t currentCellValue = Memory[memoryEditAddress];
+                    Memory[memoryEditAddress] = (currentCellValue << 4) | QString(newByte).toInt(nullptr, 16);;
+                    updateMemoryCell(memoryEditAddress);
                     if (!running){
                         if(compiled){
                             setCompileStatus(false);
@@ -964,29 +916,29 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                         std::memcpy(backupMemory, Memory, sizeof(Memory));
                     }
 
-                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+                    updateSelectionsMemoryEdit();
                 }
 
                 if (keyEvent->key() == Qt::Key_Up ){
-                    if(currentCompilerAddressSelection - 16 >= 0){
-                        currentCompilerAddressSelection-=16;
+                    if(memoryEditAddress - 16 >= 0){
+                        memoryEditAddress-=16;
                     }
-                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+                    updateSelectionsMemoryEdit(memoryEditAddress);
                 }else if (keyEvent->key() == Qt::Key_Down){
-                    if(currentCompilerAddressSelection + 16 <= 0xFFFF){
-                        currentCompilerAddressSelection+=16;
+                    if(memoryEditAddress + 16 <= 0xFFFF){
+                        memoryEditAddress+=16;
                     }
-                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+                    updateSelectionsMemoryEdit(memoryEditAddress);
                 }else if(keyEvent->key() == Qt::Key_Left){
-                    if(currentCompilerAddressSelection > 0){
-                        currentCompilerAddressSelection--;
+                    if(memoryEditAddress > 0){
+                        memoryEditAddress--;
                     }
-                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+                    updateSelectionsMemoryEdit(memoryEditAddress);
                 }else if (keyEvent->key() == Qt::Key_Right) {
-                    if(currentCompilerAddressSelection < 0xFFFF){
-                        currentCompilerAddressSelection++;
+                    if(memoryEditAddress < 0xFFFF){
+                        memoryEditAddress++;
                     }
-                    updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+                    updateSelectionsMemoryEdit();
                 }
                 return true;
             }else{
@@ -1042,9 +994,7 @@ void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
     compilerVersionIndex = index;
     setCompileStatus(false);
     resetEmulator(true);
-    if(writeToMemory){
-        updateSelectionsMemoryEdit(lastMemoryAddressSelection);
-    }
+    updateSelectionsMemoryEdit();
 }
 bool MainWindow::on_buttonCompile_clicked()
 {
@@ -1159,7 +1109,7 @@ void MainWindow::on_buttonStep_clicked()
     if(ok){
         executeInstruction();
         updatePending();
-        updateSelectionsRunTime(PC);
+        updateSelectionsRunTime();
     }
 }
 void MainWindow::on_buttonRunStop_clicked()
@@ -1187,13 +1137,7 @@ void MainWindow::on_comboBoxSpeedSelector_activated(int index)
     if(index != 11){
         executionSpeed = std::pow(2, index);
         ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(executionSpeed));
-        if(executionSpeed > 288){
-            skipUpdateNum = std::floor(executionSpeed / 144);
-        } else{
-            skipUpdateNum = 0;
-        }
         executionSpeed = std::ceil(1000.0 / executionSpeed);
-        qDebug() << skipUpdateNum << " " << executionSpeed;
     } else{
         executionSpeed = 0;
         ui->labelRunningIndicatior->setText("Operation/second: full speed");
@@ -1222,8 +1166,8 @@ void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
         ui->lineCodeLinesSeperator->setGeometry(110, ui->lineCodeLinesSeperator->y(), 1, 16);
         updateLinesBox();
     }
-    updateSelectionsLines(lastLinesSelection);
-    updateSelectionsRunTime(PC);
+    updateSelectionsLines();
+    updateSelectionsRunTime();
     handleMainWindowSizeChanged(MainWindow::size());
 
 }
@@ -1283,7 +1227,7 @@ void MainWindow::on_buttonSwitchWrite_clicked()
         ui->checkBoxCompileOnRun->setEnabled(false);
         compileOnRun = false;
         ui->labelWritingMode->setText("Memory");
-        updateSelectionsMemoryEdit(currentCompilerAddressSelection);
+        updateSelectionsMemoryEdit();
         ui->buttonLoad->setText("Load Memory");
         ui->buttonSave->setText("Save Memory");
         ui->buttonCompile->setText("Disassemble");
@@ -1364,9 +1308,9 @@ void MainWindow::on_checkBoxSimpleMemory_clicked(bool checked)
         ui->plainTextMemory->setEnabled(true);
         ui->groupBoxSimpleMemory->setVisible(false);
         ui->groupBoxSimpleMemory->setEnabled(false);
-        if(writeToMemory) updateSelectionsMemoryEdit(lastMemoryAddressSelection);
-        updateSelectionsLines(lastLinesSelection);
-        updateSelectionsRunTime(PC);
+        updateSelectionsMemoryEdit();
+        updateSelectionsLines();
+        updateSelectionsRunTime();
     }
 }
 void MainWindow::on_spinBox_valueChanged(int arg1)
@@ -1410,8 +1354,7 @@ void MainWindow::stopExecution(){
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningCycleNum->setVisible(false);
     updatePending();
-    updateSelectionsRunTime(PC);
-    skipUpdateCount = 0;
+    updateSelectionsRunTime();
 }
 void MainWindow::startExecution(){
     running = true;
@@ -1432,7 +1375,7 @@ void MainWindow::executeLoop(){
             waitCycles--;
         }else{
             updatePending();
-            updateSelectionsRunTime(PC);
+            updateSelectionsRunTime();
             waitCycles = executeInstruction();
             cycleNum = 1;
             waitCycles--;
@@ -1509,19 +1452,8 @@ void MainWindow::executeLoop(){
         ui->labelRunningCycleNum->setText("Instruction cycle: "+ QString::number(cycleNum));
     }else{
         executeInstruction();
-        if(skipUpdateNum > 0){
-            if(skipUpdateCount > 0){
-                skipUpdateCount--;
-                pendingUpdateUMap.clear();
-            }else{
-                skipUpdateCount = skipUpdateNum;
-                updatePending();
-                updateSelectionsRunTime(PC);
-            }
-        }else{
-            updatePending();
-            updateSelectionsRunTime(PC);
-        }
+        updatePending();
+        updateSelectionsRunTime();
         if (breakEnabled){
             switch(ui->comboBoxBreakWhen->currentIndex()){
             case 1:

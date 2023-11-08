@@ -46,21 +46,7 @@ private:
     QPlainTextEdit *plainTextDisplay;
 
 
-    QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> linesSelectionsLines;
-    QList<QTextEdit::ExtraSelection> codeSelectionsLines;
-    QList<QTextEdit::ExtraSelection> memorySelectionsLines;
-    QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
-    int previousScrollCode = 0;
-    int previousScrollMemory = 0;
-    int autoScrollUpLimit = 20;
-    int autoScrollDownLimit = 5;
-    int lastLinesSelection = -1;
-    int lastLinesAddress = -1;
-    int lastMemoryAddressSelection = -1;
-    int currentCompilerAddressSelection = 0;
+
 
     int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
@@ -68,9 +54,9 @@ private:
     void updatePending();
     void updateMemoryTab();
     void updateLinesBox();
-    void updateSelectionsRunTime(int address);
-    void updateSelectionsLines(int line);
-    void updateSelectionsMemoryEdit(int address);
+    void updateSelectionsRunTime();
+    void updateSelectionsLines(int line = -1);
+    void updateSelectionsMemoryEdit(int address = -1);
     void updateSelectionCompileError(int charNum);
     void clearSelection(int clearWhat);
     void PrintConsole(const QString& text, int type);
