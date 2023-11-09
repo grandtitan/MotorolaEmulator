@@ -192,6 +192,10 @@ void MainWindow::updateMemoryTab(){
         ui->plainTextMemory->verticalScrollBar()->setValue(scrollPosition);
     }
 }
+QList<int> pendingCells;
+void MainWindow::addCellToPending(int address){
+    pendingCells.append(address);
+}
 void MainWindow::updateMemoryCell(int address) {
     if(simpleMemory){
         for (int i = 0; i < 20; ++i) {
@@ -586,6 +590,7 @@ void MainWindow::resetEmulator(bool failedCompile){
     waitCycles = 0;
     cycleNum = 1;
     pendingUpdateUMap.clear();
+    pendingCells.clear();
     aReg = 0;
     bReg = 0;
     xRegister = 0;
@@ -1345,6 +1350,10 @@ void MainWindow::updatePending(){
         it->first->setText(it->second);
         it = pendingUpdateUMap.erase(it);
     }
+    for (int i = 0; i < pendingCells.length(); ++i) {
+        updateMemoryCell(pendingCells[i]);
+    }
+    pendingCells.clear();
 }
 void MainWindow::stopExecution(){
     running = false;
@@ -1967,7 +1976,7 @@ int MainWindow::executeInstruction(){
     case 0x36:
         cycleCount = 3;
         Memory[SP] = aReg;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         updateElement(regSP);
         PC++;
@@ -1975,7 +1984,7 @@ int MainWindow::executeInstruction(){
     case 0x37:
         cycleCount = 3;
         Memory[SP] = bReg;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         updateElement(regSP);
         PC++;
@@ -2043,9 +2052,9 @@ int MainWindow::executeInstruction(){
         if(compilerVersionIndex>=1){
             cycleCount = 4;
             Memory[SP] = ((*curIndReg) & 0xFF);
-            updateMemoryCell(SP);
+            addCellToPending(SP);
             Memory[SP - 1] = (((*curIndReg) >> 8) & 0xFF);
-            updateMemoryCell(SP-1);
+            addCellToPending(SP-1);
             SP-=2;
             updateElement(regSP);
             PC++;
@@ -2082,25 +2091,25 @@ int MainWindow::executeInstruction(){
         cycleCount = 12;
         PC++;
         Memory[SP] = PC & 0xFF;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = (PC >> 8) & 0xFF;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = (*curIndReg) & 0xFF;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = ((*curIndReg) >> 8) & 0xFF;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = aReg;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = bReg;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         Memory[SP] = flags;
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         SP--;
         updateFlags(InterruptMask, 1);
         PC = (Memory[(interruptLocations - 5)] << 8) + Memory[(interruptLocations - 4)];
@@ -2339,7 +2348,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, Memory[adr] == 0x80);
         updateFlags(Carry, Memory[adr] != 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x63:
@@ -2350,7 +2359,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow,0);
         updateFlags(Carry,1);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x64:
@@ -2362,7 +2371,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow,uInt8);
         updateFlags(Carry,uInt8);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x66:
@@ -2375,7 +2384,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x67:
@@ -2387,7 +2396,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x68:
@@ -2399,7 +2408,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x69:
@@ -2411,7 +2420,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x6A:
@@ -2421,7 +2430,7 @@ int MainWindow::executeInstruction(){
         Memory[adr]--;
         updateFlags(Negative, bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x6C:
@@ -2431,7 +2440,7 @@ int MainWindow::executeInstruction(){
         Memory[adr]++;
         updateFlags(Negative, bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x6D:
@@ -2455,7 +2464,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, 1);
         updateFlags(Overflow,0);
         updateFlags(Carry,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x70:
@@ -2466,7 +2475,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, Memory[adr] == 0x80);
         updateFlags(Carry, Memory[adr] != 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x73:
@@ -2477,7 +2486,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow,0);
         updateFlags(Carry,1);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x74:
@@ -2489,7 +2498,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow,uInt8);
         updateFlags(Carry,uInt8);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x76:
@@ -2502,7 +2511,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x77:
@@ -2514,7 +2523,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x78:
@@ -2526,7 +2535,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x79:
@@ -2538,7 +2547,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
         updateFlags(Overflow, uInt8 ^ bit(Memory[adr], 7));
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x7A:
@@ -2548,7 +2557,7 @@ int MainWindow::executeInstruction(){
         Memory[adr]--;
         updateFlags(Negative, bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x7C:
@@ -2558,7 +2567,7 @@ int MainWindow::executeInstruction(){
         Memory[adr]++;
         updateFlags(Negative, bit(Memory[adr], 7));
         updateFlags(Zero, Memory[adr] == 0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x7D:
@@ -2582,7 +2591,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, 1);
         updateFlags(Overflow,0);
         updateFlags(Carry,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0x80:
@@ -2724,9 +2733,9 @@ int MainWindow::executeInstruction(){
         sInt8 = Memory[(PC+1) % 0x10000];
         PC+=2;
         Memory[SP] = (PC & 0xFF);
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         Memory[SP - 1] = ((PC >> 8) & 0xFF);
-        updateMemoryCell(SP-1);
+        addCellToPending(SP-1);
         SP-=2;
         PC += sInt8;
         updateElement(regSP);
@@ -2829,7 +2838,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0x98:
@@ -2892,9 +2901,9 @@ int MainWindow::executeInstruction(){
             adr = Memory[(PC+1) % 0x10000];
             PC+=2;
             Memory[SP] = (PC & 0xFF);
-            updateMemoryCell(SP);
+            addCellToPending(SP);
             Memory[SP - 1] = ((PC >> 8) & 0xFF);
-            updateMemoryCell(SP-1);
+            addCellToPending(SP-1);
             SP-=2;
             PC = adr;
             updateElement(regSP);
@@ -2922,8 +2931,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(SP,15));
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=2;
         break;
     case 0xA0:
@@ -3015,7 +3024,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0xA8:
@@ -3077,9 +3086,9 @@ int MainWindow::executeInstruction(){
         adr = (Memory[(PC+1) % 0x10000] + *curIndReg) % 0x10000;
         PC+=2;
         Memory[SP] = (PC & 0xFF);
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         Memory[SP - 1] = ((PC >> 8) & 0xFF);
-        updateMemoryCell(SP-1);
+        addCellToPending(SP-1);
         SP-=2;
         PC = adr;
         updateElement(regSP);
@@ -3102,8 +3111,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(SP,15));
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=2;
         break;
     case 0xB0:
@@ -3195,7 +3204,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0xB8:
@@ -3257,9 +3266,9 @@ int MainWindow::executeInstruction(){
         adr = (Memory[(PC+1) % 0x10000] << 8) + Memory[(PC+2) % 0x10000];
         PC+=3;
         Memory[SP] = (PC & 0xFF);
-        updateMemoryCell(SP);
+        addCellToPending(SP);
         Memory[SP - 1] = ((PC >> 8) & 0xFF);
-        updateMemoryCell(SP-1);
+        addCellToPending(SP-1);
         SP-=2;
         PC = adr;
         updateElement(regSP);
@@ -3282,8 +3291,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(SP,15));
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=3;
         break;
     case 0xC0:
@@ -3527,7 +3536,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0xD8:
@@ -3602,8 +3611,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Negative, bit(aReg,7));
             updateFlags(Zero, bReg + aReg == 0);
             updateFlags(Overflow,0);
-            updateMemoryCell(adr);
-            updateMemoryCell(adr+1);
+            addCellToPending(adr);
+            addCellToPending(adr+1);
             PC+=2;
 
         } else{
@@ -3629,8 +3638,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit((*curIndReg),15));
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=2;
         break;
     case 0xE0:
@@ -3722,7 +3731,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=2;
         break;
     case 0xE8:
@@ -3797,8 +3806,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Negative, bit(aReg,7));
             updateFlags(Zero, bReg + aReg == 0);
             updateFlags(Overflow,0);
-            updateMemoryCell(adr);
-            updateMemoryCell(adr+1);
+            addCellToPending(adr);
+            addCellToPending(adr+1);
             PC+=2;
 
         } else{
@@ -3824,8 +3833,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit((*curIndReg),15));
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=2;
         break;
     case 0xF0:
@@ -3917,7 +3926,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
+        addCellToPending(adr);
         PC+=3;
         break;
     case 0xF8:
@@ -3992,8 +4001,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Negative, bit(aReg,7));
             updateFlags(Zero, bReg + aReg == 0);
             updateFlags(Overflow,0);
-            updateMemoryCell(adr);
-            updateMemoryCell(adr+1);
+            addCellToPending(adr);
+            addCellToPending(adr+1);
             PC+=3;
 
         } else{
@@ -4019,8 +4028,8 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit((*curIndReg),15));
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow,0);
-        updateMemoryCell(adr);
-        updateMemoryCell((adr + 1) % 0x10000);
+        addCellToPending(adr);
+        addCellToPending((adr + 1) % 0x10000);
         PC+=3;
         break;
     default:

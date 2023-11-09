@@ -35,7 +35,6 @@ public:
     QString softwareVersion = "1.5";
 
     uint8_t Memory[0x10000] = {};
-    void updateMemoryCell(int address);
     int lastInput = -1;
 public slots:
 
@@ -53,6 +52,8 @@ private:
     void updateElement(elementToUpdate element);
     void updatePending();
     void updateMemoryTab();
+    void updateMemoryCell(int address);
+    void addCellToPending(int address);
     void updateLinesBox();
     void updateSelectionsRunTime();
     void updateSelectionsLines(int line = -1);
