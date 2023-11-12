@@ -901,10 +901,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         } else if(event->type() == QEvent::FocusOut){
             plainTextDisplay->setStyleSheet("");
         }
-    }
-    else if(writeToMemory){
-        if (obj == ui->plainTextMemory){
-            if(event->type() == QEvent::KeyPress){
+    }else if (obj == ui->plainTextMemory){
+         if(event->type() == QEvent::KeyPress){
+            if(writeToMemory){
                 QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
                 int keyValue = keyEvent->key();
@@ -946,41 +945,9 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                     updateSelectionsMemoryEdit();
                 }
                 return true;
-            }else{
-
             }
         }
-    }/*/ PAZI KER JE ATTACH FILTER COMMENT OUTANE
-    else if (obj == ui->plainTextCode){
-        if (event->type() == QEvent::KeyPress) {
-            QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-
-            if (keyEvent->modifiers() == Qt::ControlModifier)
-            {
-                if (keyEvent->key() == Qt::Key_Plus)
-                {
-                    qDebug() << obj->objectName();
-                    changeFontSize(1);
-                    return true;
-                }
-                else if (keyEvent->key() == Qt::Key_Minus)
-                {
-                    qDebug() << obj->objectName();
-                    changeFontSize(-1);
-                    return true;
-                }
-            }
-        }else if (event->type() == QEvent::Wheel)
-        {
-            QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
-            if (wheelEvent->modifiers() == Qt::ControlModifier)
-            {
-                int delta = wheelEvent->angleDelta().y();
-                int size = changeFontSize(delta > 0 ? 1 : -1);
-                return true;
-            }
-        }
-    }/*/
+    }
     return QMainWindow::eventFilter(obj, event);
 }
 int MainWindow::changeFontSize(int delta)
