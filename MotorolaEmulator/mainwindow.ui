@@ -3466,7 +3466,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>4</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4385,6 +4385,205 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>bytes</string>
        </property>
       </column>
+      <item>
+       <property name="text">
+        <string>ZZZ.WORD</string>
+       </property>
+       <property name="text">
+        <string>set word</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>2,2n</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.STR</string>
+       </property>
+       <property name="text">
+        <string>set string</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>n</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.SETW</string>
+       </property>
+       <property name="text">
+        <string>set word at address</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>2</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.SETB</string>
+       </property>
+       <property name="text">
+        <string>set byte at address</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>1</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.RMB</string>
+       </property>
+       <property name="text">
+        <string>reserve memory</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.ORG</string>
+       </property>
+       <property name="text">
+        <string>set compilation address</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.EQU</string>
+       </property>
+       <property name="text">
+        <string>set constant</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>ZZZ.BYTE</string>
+       </property>
+       <property name="text">
+        <string>set byte</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>1,n</string>
+       </property>
+      </item>
       <item>
        <property name="text">
         <string>WAI</string>

@@ -71,6 +71,13 @@ MainWindow::MainWindow(QWidget *parent)
                 item->child(0)->setForeground(1, QBrush(QColor(colorR, 0, 0)));
         }
     }
+    for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row) {
+        QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
+        QString textInColumn0 = item->text(0);
+        if (textInColumn0.startsWith("ZZZ.")) {
+                item->setText(0, textInColumn0.mid(3));
+        }
+    }
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningIndicatior->setText("Operation/second: " + QString::number(std::pow(2, ui->comboBoxSpeedSelector->currentIndex())));
 

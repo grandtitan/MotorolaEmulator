@@ -45,8 +45,6 @@ private:
     QPlainTextEdit *plainTextDisplay;
 
 
-
-
     int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
