@@ -4337,7 +4337,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </column>
       <column>
        <property name="text">
-        <string>Description</string>
+        <string>Operation</string>
        </property>
       </column>
       <column>
@@ -4385,6 +4385,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>bytes</string>
        </property>
       </column>
+      <column>
+       <property name="text">
+        <string>Description</string>
+       </property>
+       <property name="toolTip">
+        <string/>
+       </property>
+      </column>
       <item>
        <property name="text">
         <string>ZZZ.WORD</string>
@@ -4418,6 +4426,18 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>2,2n</string>
+       </property>
+       <property name="text">
+        <string>Sets a 2byte or an array of such values to the current compilation address. Example:</string>
+       </property>
+       <property name="toolTip">
+        <string/>
+       </property>
+       <property name="statusTip">
+        <string/>
+       </property>
+       <property name="whatsThis">
+        <string/>
        </property>
       </item>
       <item>

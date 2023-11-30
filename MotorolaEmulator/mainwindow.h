@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "InstructionList.h"
 #include "externaldisplay.h"
+#include "qtreewidget.h"
 #include <QLineEdit>
 enum FlagToUpdate {
     HalfCarry,
@@ -37,7 +38,9 @@ public:
     uint8_t Memory[0x10000] = {};
     int lastInput = -1;
 public slots:
-
+    void showContextMenu(const QPoint &);
+    void showMnemonicInfo();
+    void showInstructionInfoWindow(QString instruction);
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
@@ -163,5 +166,6 @@ private slots:
     void on_comboBoxVersionSelector_currentIndexChanged(int index);
     void on_checkBoxAutoReset_2_clicked(bool checked);
     void on_comboBoxDisplayStatus_currentIndexChanged(int index);
+    void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
 };
 #endif // MAINWINDOW_H

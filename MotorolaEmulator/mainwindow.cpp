@@ -114,11 +114,67 @@ MainWindow::MainWindow(QWidget *parent)
     executionTimer->setTimerType(Qt::PreciseTimer);
     connect(executionTimer, &QTimer::timeout, this, &MainWindow::executeLoop);
 
+    ui->plainTextCode->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->plainTextCode, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+
 }
 std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+void MainWindow::showContextMenu(const QPoint &pos)
+{
+    QMenu* menu = ui->plainTextCode->createStandardContextMenu();
+    menu->addSeparator();
+
+    // Pass the cursor position as a QVariant to the action
+    QVariant cursorPosVariant(pos);
+    QAction* action = menu->addAction(tr("Mnemonic info"));
+    action->setData(cursorPosVariant);
+
+    // Connect the action to the slot
+    connect(action, SIGNAL(triggered()), this, SLOT(showMnemonicInfo()));
+
+    // Show the context menu at the specified position
+    menu->exec(ui->plainTextCode->mapToGlobal(pos));
+
+    // Delete the menu after it's used
+    menu->deleteLater();
+}
+
+void MainWindow::showMnemonicInfo()
+{
+    QAction* action = qobject_cast<QAction*>(sender());
+    if (action) {
+        QVariant cursorPosVariant = action->data();
+        QPoint cursorPos = cursorPosVariant.toPoint();
+        QString plainText = ui->plainTextCode->toPlainText();
+        int index = ui->plainTextCode->cursorForPosition(cursorPos).position();
+        int rightIndex = index;
+        while (rightIndex < plainText.length() && !plainText[rightIndex].isSpace()) {
+                rightIndex++;
+        }
+        int leftIndex = index;
+        while (leftIndex >= 0 && !plainText[leftIndex].isSpace()) {
+                leftIndex--;
+        }
+
+        QString selectedWord = (plainText.mid(leftIndex + 1, rightIndex - leftIndex - 1)).toUpper();
+
+        qDebug() << "Selected Word at Right-Click Position: " << selectedWord;
+        if (specialInstructions.contains(selectedWord)) {
+                qDebug() << "Assembler directive";
+        } else if (allInstructionsM6800.contains(selectedWord)) {
+                qDebug() << "M6800";
+        } else if (allInstructionsM6803.contains(selectedWord)) {
+                qDebug() << "M6803 specific";
+        } else{
+                qDebug() << "Unkown instruction";
+                return;
+        }
+        showInstructionInfoWindow(selectedWord);
+    }
 }
 
 inline bool bit(int variable, int bitNum){
@@ -4031,4 +4087,41 @@ int MainWindow::executeInstruction(){
     return cycleCount;
 }
 
+void MainWindow::showInstructionInfoWindow(QString instruction)
+{
+    int rowCount = ui->treeWidget->topLevelItemCount();
+
+    for (int row = 0; row < rowCount; ++row) {
+        QTreeWidgetItem* currentItem = ui->treeWidget->topLevelItem(row);
+
+        if (currentItem->text(0) == instruction) {
+            QDialog infoDialog(this);
+            QVBoxLayout layout(&infoDialog);
+
+            QString infoText = "Column 1: " + currentItem->text(1) + "\n";
+
+            // Columns 2-7
+            for (int i = 2; i <= 7; ++i) {
+                infoText += "Column " + QString::number(i) + ": " + currentItem->text(i) + "\t";
+            }
+            infoText += "\n";
+
+            // Columns 8-11
+            for (int i = 8; i <= 11; ++i) {
+                infoText += "Column " + QString::number(i) + ": " + currentItem->text(i) + "\n";
+            }
+
+            QLabel* infoLabel = new QLabel(infoText);
+            layout.addWidget(infoLabel);
+
+            infoDialog.exec();
+            break;
+        }
+    }
+}
+
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+
+}
 
