@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "InstructionList.h"
 #include "externaldisplay.h"
+#include "qfuturewatcher.h"
 #include <QLineEdit>
 enum FlagToUpdate {
     HalfCarry,
@@ -37,20 +38,18 @@ public:
     uint8_t Memory[0x10000] = {};
     int lastInput = -1;
 public slots:
-
+    void startExecutionThread();
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
 
+    QFutureWatcher<void> futureWatcher;
 
-
-
+    int breakIndex = 0;
     int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
-    void updateElement(elementToUpdate element);
-    void updatePending();
     void updateMemoryTab();
     void updateMemoryCell(int address);
     void addCellToPending(int address);
@@ -62,11 +61,11 @@ private:
     void clearSelection(int clearWhat);
     void PrintConsole(const QString& text, int type);
     void Err(const QString& text);
+    void updateElements();
 
-    QTimer *executionTimer;
+    QTimer *updateTimer;
     bool running = false;
-    int executionSpeed = 125;
-    void executeLoop();
+    int executionSpeed = 125000;
     void stopExecution();
     void startExecution();
     int executeInstruction();
@@ -104,6 +103,8 @@ private:
     int currentSMScroll = 0;
     bool writeToMemory = false;
     bool breakEnabled = false;
+    int breakAt = 0;
+    int breakIs = 0;
     bool useCyclesPerSecond = false;
     bool hexReg = true;
     bool compileOnRun = true;
@@ -165,5 +166,7 @@ private slots:
     void on_comboBoxVersionSelector_currentIndexChanged(int index);
     void on_checkBoxAutoReset_2_clicked(bool checked);
     void on_comboBoxDisplayStatus_currentIndexChanged(int index);
+    void on_spinBoxBreakAt_valueChanged(int arg1);
+    void on_spinBoxBreakIs_valueChanged(int arg1);
 };
 #endif // MAINWINDOW_H

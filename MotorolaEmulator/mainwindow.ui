@@ -3466,7 +3466,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -8594,7 +8594,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <rect>
       <x>910</x>
       <y>670</y>
-      <width>61</width>
+      <width>71</width>
       <height>24</height>
      </rect>
     </property>
@@ -8602,7 +8602,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <number>3</number>
     </property>
     <property name="maxVisibleItems">
-     <number>12</number>
+     <number>11</number>
     </property>
     <item>
      <property name="text">
@@ -8661,7 +8661,22 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </item>
     <item>
      <property name="text">
-      <string>max</string>
+      <string>2048</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4096</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8192</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>16.384</string>
      </property>
     </item>
    </widget>
