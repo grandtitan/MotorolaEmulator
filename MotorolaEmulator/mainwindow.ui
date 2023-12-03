@@ -4377,12 +4377,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </column>
       <column>
        <property name="text">
-        <string>cycles</string>
+        <string>bytes</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>bytes</string>
+        <string>cycles</string>
        </property>
       </column>
       <column>
@@ -4422,13 +4422,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string/>
-       </property>
-       <property name="text">
         <string>2,2n</string>
        </property>
        <property name="text">
-        <string>Sets a 2byte or an array of such values to the current compilation address. Example:</string>
+        <string/>
+       </property>
+       <property name="text">
+        <string>Sets a 2-byte value or an array of such values to the current compilation address. Values in an array are sepperated by a comma.</string>
        </property>
        <property name="toolTip">
         <string/>
@@ -4469,10 +4469,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string>n</string>
+       </property>
+       <property name="text">
         <string/>
        </property>
        <property name="text">
-        <string>n</string>
+        <string>Writes a string encapuslated by quotes to the current compilation address.</string>
        </property>
       </item>
       <item>
@@ -4504,10 +4507,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string/>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Sets a 2-byte value at a specified address. The value and address are seperated by a comma.</string>
        </property>
       </item>
       <item>
@@ -4539,10 +4545,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string/>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Sets a 1-byte value at a specified address. The value and address are seperated by a comma.</string>
        </property>
       </item>
       <item>
@@ -4552,6 +4561,36 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>reserve memory</string>
        </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Reserves a specified amount of memory, subsequently incrementing the current compilation address by that specified amount.</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4560,6 +4599,36 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>set compilation address</string>
        </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Sets the current compilation address.</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -4567,6 +4636,36 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>set constant</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="text">
+        <string>Sets a value to a symbol/label.</string>
        </property>
       </item>
       <item>
@@ -4598,10 +4697,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
+        <string>1,n</string>
+       </property>
+       <property name="text">
         <string/>
        </property>
        <property name="text">
-        <string>1,n</string>
+        <string>Sets a 1-byte value or an array of such values to the current compilation address. Values in an array are sepperated by a comma.</string>
        </property>
       </item>
       <item>
@@ -4633,10 +4735,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>9</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Halt program execution until keyboard input is detected.</string>
        </property>
       </item>
       <item>
@@ -4668,10 +4773,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Loads the stack pointer with the contents of the index register, minus one. The contents of the index register remain unchanged.</string>
        </property>
       </item>
       <item>
@@ -4703,10 +4811,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Loads the index register with one plus the contents of the stack pointer. The contents of the stack pointer remain unchanged.</string>
        </property>
       </item>
       <item>
@@ -4738,10 +4849,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**00</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Set condition codes Nand Z according to the contents of ACCB.</string>
        </property>
       </item>
       <item>
@@ -4773,10 +4887,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**00</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Set condition codes Nand Z according to the contents of ACCA.</string>
        </property>
       </item>
       <item>
@@ -4808,10 +4925,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**00</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Set condition codes Nand Z according to the contents of M.</string>
        </property>
       </item>
       <item>
@@ -4843,10 +4963,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Transfers the contents ofthe processor condition codes register to corresponding bit positions 0 thru 5 of accumulator A. Bit positions 6 and 7 of accumulator A are set (Le. go to the &quot;1&quot; state). The processor condition codes register remains unchanged.</string>
        </property>
       </item>
       <item>
@@ -4878,10 +5001,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Moves the contents of ACCB to ACCA. The former contents of ACCA are lost. The contents of ACCB are not affected.</string>
        </property>
       </item>
       <item>
@@ -4913,10 +5039,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>******</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Transfers the contents of bit positions 0 thru 5 of accumulator Ato the corresponding bit positions of the processor condition codes register. The contents of accumulator A remain unchanged.</string>
        </property>
       </item>
       <item>
@@ -4948,10 +5077,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Moves the contents of ACCA to ACCB. The former contents of ACCB are lost. The contents of ACCA are not affected.</string>
        </property>
       </item>
       <item>
@@ -4983,10 +5115,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-1----</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>12</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The program counter is incremented (by 1). The program counter, index register, and accumulator A and B, are pushed into the stack. The condition codes register is then pushed into the stack, with condition codes H, I, N, Z, V, C going respectively into bit positions 5 thru 0, and the top two bits (in bit positions 7 and 6) are set (to the 1 state). The stack pointer is decremented (by 1) after each byte of data is stored in the stack. The interrupt mask bit is then set. The program counter is then loaded with the address stored in the software interrupt pointer at memory locations (n-5) and (n-4), where n is the address corresponding to a high state on all lines of the address bus.</string>
        </property>
       </item>
       <item>
@@ -5018,10 +5153,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>3,2,2,3</string>
+       </property>
+       <property name="text">
         <string>4,5,6,6</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string/>
        </property>
       </item>
       <item>
@@ -5053,10 +5191,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Subtracts the contents of M from the contents of ACCB and places the result in ACCB.</string>
        </property>
       </item>
       <item>
@@ -5088,10 +5229,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Subtracts the contents of M from the contents of ACCA and places the result in ACCA.</string>
        </property>
       </item>
       <item>
@@ -5123,10 +5267,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,3</string>
+       </property>
+       <property name="text">
         <string>4,5,5</string>
        </property>
        <property name="text">
-        <string>2,2,3</string>
+        <string>Stores the more significant byte of the index register in memory at the address specified by the program, and stores the less significant byte of the index register at the next location in memory, at one plus the address specified by the program.</string>
        </property>
       </item>
       <item>
@@ -5158,10 +5305,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,3</string>
+       </property>
+       <property name="text">
         <string>4,5,5</string>
        </property>
        <property name="text">
-        <string>2,2,3</string>
+        <string>Stores the more significant byte of the stack pointer in memory at the address specified by the program, and stores the less significant byte of the stack pointer at the next location in memory, at one plus the address specified by the program.</string>
        </property>
       </item>
       <item>
@@ -5193,10 +5343,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,3,3</string>
+       </property>
+       <property name="text">
         <string>4,5,5</string>
        </property>
        <property name="text">
-        <string>2,3,3</string>
+        <string/>
        </property>
       </item>
       <item>
@@ -5228,10 +5381,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,3</string>
+       </property>
+       <property name="text">
         <string>3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,3</string>
+        <string>Stores the contents of ACCB in memory. The contents of ACCB remains unchanged.</string>
        </property>
       </item>
       <item>
@@ -5263,10 +5419,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,3</string>
+       </property>
+       <property name="text">
         <string>3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,3</string>
+        <string>Stores the contents of ACCA in memory. The contents of ACCA remains unchanged.</string>
        </property>
       </item>
       <item>
@@ -5298,10 +5457,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>----1-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Sets the two's complement overflow bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -5333,10 +5495,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-1----</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Sets the interrupt mask bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -5368,10 +5533,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-----1</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Sets the carry bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -5403,10 +5571,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Subtracts the contents. of M and C from the contents of ACCB and places the result in ACCB.</string>
        </property>
       </item>
       <item>
@@ -5438,10 +5609,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Subtracts the contents. of M and C from the contents of ACCA and places the result in ACCA.</string>
        </property>
       </item>
       <item>
@@ -5473,10 +5647,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Subtracts the contents of ACCB from the contents of ACCA and places the result in ACCA. The contents of ACCB are not affected.</string>
        </property>
       </item>
       <item>
@@ -5508,10 +5685,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>5</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The stack pointer is incremented (by 1). The contents of the byte of memory, at the address now contained in the stack pointer, are loaded into the 8 bits of highest significance in the program counter. The stack pointer is again incremented (by 1). The contents of the byte of memory, at the address now contained in the stack pointer, are loaded into the 8 bits of lowest significiance in th~ program counter.</string>
        </property>
       </item>
       <item>
@@ -5543,10 +5723,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>******</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>10</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The condition codes, accumulators B and A, the index register, and the program counter, will be restored to a state pulled from the stack. Note that the interrupt mask bit will be reset if and only ifthe corresponding bit stored in the stack is zero.</string>
        </property>
       </item>
       <item>
@@ -5578,10 +5761,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCB one place to the right. Bit 7 is loaded from the C bit. The C bit is loaded from the least significant bit of ACCB.</string>
        </property>
       </item>
       <item>
@@ -5613,10 +5799,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCA one place to the right. Bit 7 is loaded from the C bit. The C bit is loaded from the least significant bit of ACCA.</string>
        </property>
       </item>
       <item>
@@ -5648,10 +5837,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Shifts all bits of M one place to the right. Bit 7 is loaded from the C bit. The C bit is loaded from the least significant bit of M.</string>
        </property>
       </item>
       <item>
@@ -5683,10 +5875,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCB one place to the left. Bit 0 is loaded from the C bit. The C bit is loaded from the most significant bit of ACCB.</string>
        </property>
       </item>
       <item>
@@ -5718,10 +5913,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCA one place to the left. Bit 0 is loaded from the C bit. The C bit is loaded from the most significant bit of ACCA.</string>
        </property>
       </item>
       <item>
@@ -5753,10 +5951,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Shifts all bits of M one place to the left. Bit 0 is loaded from the C bit. The C bit is loaded from the most significant bit of M.</string>
        </property>
       </item>
       <item>
@@ -5788,10 +5989,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
-        <string>5</string>
+        <string>1</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>5</string>
        </property>
       </item>
       <item>
@@ -5823,10 +6024,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>4</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The stack pointer is incremented. The ACCB is then loaded from the stack, from the address which is contained in the stack pointer.</string>
        </property>
       </item>
       <item>
@@ -5858,10 +6062,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>4</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The stack pointer is incremented. The ACCA is then loaded from the stack, from the address which is contained in the stack pointer.</string>
        </property>
       </item>
       <item>
@@ -5893,10 +6100,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>4</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string/>
        </property>
       </item>
       <item>
@@ -5928,10 +6138,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The contents of ACCB is stored in the stack at the address contained in the stack pointer. The stack pointer is then decremented.</string>
        </property>
       </item>
       <item>
@@ -5963,10 +6176,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The contents of ACCA is stored in the stack at the address contained in the stack pointer. The stack pointer is then decremented.</string>
        </property>
       </item>
       <item>
@@ -5998,10 +6214,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Perform logical &quot;OR&quot; between the contents of ACCB and the contents of M and places the result in ACCB. (Each bit of ACCB afterthe operation will be the logical &quot;OR&quot; of the corresponding bits of M and of ACCB before the operation).</string>
        </property>
       </item>
       <item>
@@ -6033,10 +6252,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Perform logical &quot;OR&quot; between the contents of ACCA and the contents of M and places the result in ACCA. (Each bit of ACCA afterthe operation will be the logical &quot;OR&quot; of the corresponding bits of M and of ACCA before the operation).</string>
        </property>
       </item>
       <item>
@@ -6068,10 +6290,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>This is a single-word instruction which causes only the program counter to be incremented. No other registers are affected.</string>
        </property>
       </item>
       <item>
@@ -6103,10 +6328,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Replaces the contents of ACCB with its two's complement. Note that 80 is left unchanged.</string>
        </property>
       </item>
       <item>
@@ -6138,10 +6366,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Replaces the contents of ACCA with its two's complement. Note that 80 is left unchanged.</string>
        </property>
       </item>
       <item>
@@ -6173,10 +6404,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Replaces the contents of M with its two's complement. Note that 80 is left unchanged.</string>
        </property>
       </item>
       <item>
@@ -6208,10 +6442,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-----*</string>
        </property>
        <property name="text">
-        <string>10</string>
+        <string>1</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>10</string>
        </property>
       </item>
       <item>
@@ -6243,10 +6477,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0***</string>
        </property>
        <property name="text">
-        <string>3</string>
+        <string>1</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>3</string>
        </property>
       </item>
       <item>
@@ -6278,10 +6512,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0***</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2,2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCB one place to the right. Bit 7 is loaded with a zero. The C bit is loaded from the least significant bit of ACCB.</string>
        </property>
       </item>
       <item>
@@ -6313,10 +6550,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0***</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2,2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCA one place to the right. Bit 7 is loaded with a zero. The C bit is loaded from the least significant bit of ACCA.</string>
        </property>
       </item>
       <item>
@@ -6348,10 +6588,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0***</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Shifts all bits of M one place to the right. Bit 7 is loaded with a zero. The C bit is loaded from the least significant bit of M.</string>
        </property>
       </item>
       <item>
@@ -6383,10 +6626,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>3,2,2,3</string>
+       </property>
+       <property name="text">
         <string>3,4,5,5</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string>Loads the more significant byte of the index register from the byte of memory at the address specified by the program, and loads the less significant byte of the index register from the next byte of memory, at one plus the address specified by the program.</string>
        </property>
       </item>
       <item>
@@ -6418,10 +6664,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>3,2,2,3</string>
+       </property>
+       <property name="text">
         <string>3,4,5,5</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string>Loads the more significant byte of the stack pointer from the byte of memory at the address specified by the program, and loads the less significant byte of the stack pointer from the next byte of memory, at one plus the address specified by the program.</string>
        </property>
       </item>
       <item>
@@ -6453,10 +6702,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>3,2,2,3</string>
+       </property>
+       <property name="text">
         <string>3,4,5,5</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string/>
        </property>
       </item>
       <item>
@@ -6488,10 +6740,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Loads the contents of memory into the accumulator. The condition codes are set according to the data.</string>
        </property>
       </item>
       <item>
@@ -6523,10 +6778,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Loads the contents of memory into the accumulator. The condition codes are set according to the data.</string>
        </property>
       </item>
       <item>
@@ -6558,10 +6816,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2,2,3</string>
+       </property>
+       <property name="text">
         <string>5,5,5</string>
        </property>
        <property name="text">
-        <string>2,2,3</string>
+        <string>The program counter is incremented by 3 or by 2, depending on the addressing mode, and is then pushed onto the stack, eight bits at a time. The stack pointer points to the next empty location in the stack. A jump occurs to the instruction stored at the numerical address. The numerical address is obtained according to the rules for EXTended or INDexed addressing.</string>
        </property>
       </item>
       <item>
@@ -6593,10 +6854,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>3,3</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>A jump occurs to the instruction stored at the numerical address. The numerical address is obtained according to the rules for EXTended or INDexed addressing.</string>
        </property>
       </item>
       <item>
@@ -6628,10 +6892,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>---*--</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Add one to the index register.</string>
        </property>
       </item>
       <item>
@@ -6663,10 +6930,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Add one to the stack pointer.</string>
        </property>
       </item>
       <item>
@@ -6698,10 +6968,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2,2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Add one to the contents of ACCB.</string>
        </property>
       </item>
       <item>
@@ -6733,10 +7006,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2,2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Add one to the contents of ACCA.</string>
        </property>
       </item>
       <item>
@@ -6768,10 +7044,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Add one to the contents of M.</string>
        </property>
       </item>
       <item>
@@ -6803,10 +7082,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Perform logical &quot;EXCLUSIVE OR&quot; between the contents of ACCB and the contents of M, and place the result in ACCB. (Each bit of ACCB afterthe operation will be the logical &quot;EXCLUSIVE OR&quot; of the corresponding bit of M and ACCB before the operation.)</string>
        </property>
       </item>
       <item>
@@ -6838,10 +7120,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Perform logical &quot;EXCLUSIVE OR&quot; between the contents of ACCA and the contents of M, and place the result in ACCA. (Each bit of ACCA afterthe operation will be the logical &quot;EXCLUSIVE OR&quot; of the corresponding bit of M and ACCA before the operation.)</string>
        </property>
       </item>
       <item>
@@ -6873,10 +7158,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>---*--</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Subtract one from the index register.</string>
        </property>
       </item>
       <item>
@@ -6908,10 +7196,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Subtract one from the stack pointer.</string>
        </property>
       </item>
       <item>
@@ -6943,10 +7234,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Subtract one from the contents of ACCB.</string>
        </property>
       </item>
       <item>
@@ -6978,10 +7272,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Subtract one from the contents of ACCA.</string>
        </property>
       </item>
       <item>
@@ -7013,10 +7310,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--***-</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Subtract one from the contents of M.</string>
        </property>
       </item>
       <item>
@@ -7048,10 +7348,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Adjusts the contents of the ACCA register after arithmetic operations with binary-coded-decimal (BCD) operands. It ensures proper representation of BCD sums by adjusting both high and low nibbles, considering the carry bit's state.</string>
        </property>
       </item>
       <item>
@@ -7083,10 +7386,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>3,2,2,3</string>
+       </property>
+       <property name="text">
         <string>4,5,6,6</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string>The more significant byte of the contents of the index register is compared with the contents of the byte of memory at the address specified by the program. The less significant byte of the contents of the index register is compared with the contents of the next byte of memory, at one plus the address specified by the program. The Z bit is set or reset according to the results of these comparisons, and may be used subsequently for conditional branching. The N and V bits, though determined by this operation, are not intended for conditional branching.</string>
        </property>
       </item>
       <item>
@@ -7118,10 +7424,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**01</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Replaces the contents of ACCB with its one's complement. (Each bit of the contents of ACCB is replaced with the complement of that bit.)</string>
        </property>
       </item>
       <item>
@@ -7153,10 +7462,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**01</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Replaces the contents of ACCA with its one's complement. (Each bit of the contents of ACCA is replaced with the complement of that bit.)</string>
        </property>
       </item>
       <item>
@@ -7188,10 +7500,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**01</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Replaces the contents of M with its one's complement. (Each bit of the contents of M is replaced with the complement of that bit.)</string>
        </property>
       </item>
       <item>
@@ -7223,10 +7538,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Compares the contents of ACCB and the contents of M and determines the condition codes, which may be used subsequently for controlling conditional branching. Both operands are unaffected.</string>
        </property>
       </item>
       <item>
@@ -7258,10 +7576,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Compares the contents of ACCA and the contents of M and determines the condition codes, which may be used subsequently for controlling conditional branching. Both operands are unaffected.</string>
        </property>
       </item>
       <item>
@@ -7293,10 +7614,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>----0-</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Clears the two's complement overflow bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -7328,10 +7652,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0100</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The contents of ACCB are replaced with zeros.</string>
        </property>
       </item>
       <item>
@@ -7363,10 +7690,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0100</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>The contents of ACCA are replaced with zeros.</string>
        </property>
       </item>
       <item>
@@ -7398,10 +7728,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--0100</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>The contents of M are replaced with zeros.</string>
        </property>
       </item>
       <item>
@@ -7433,10 +7766,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-0----</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Clears the interrupt mask bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -7468,10 +7804,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>-----0</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Clears the carry bit in the processor condition codes register.</string>
        </property>
       </item>
       <item>
@@ -7503,10 +7842,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Compares the contents of ACCA and the contents of ACCB and sets the condition codes, which may be used for arithmetic and logical conditional branches. Both operands are unaffected.</string>
        </property>
       </item>
       <item>
@@ -7538,10 +7880,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the V bit and causes a branch if the V bit is set.</string>
        </property>
       </item>
       <item>
@@ -7573,10 +7918,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the V bit and causes a branch if the V bit is clear.</string>
        </property>
       </item>
       <item>
@@ -7608,10 +7956,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>6</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>The program counteris incremented by 2. The less significant byte ofthe contents of the program counter is pushed into the stack. The stack pointer is then decremented (by 1). The more significant byte of the contents of the program counter is then pushed into the stack. The stack pointer is again decremented (by 1). A branch then occurs to the location specified by the program.</string>
        </property>
       </item>
       <item>
@@ -7643,10 +7994,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Never causes a branch.</string>
        </property>
       </item>
       <item>
@@ -7678,10 +8032,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Unconditional branch to the address given by the foregoing formula, in which R is the relative address stored as a two's complement number in the second byte of machine code corresponding to the branch instruction</string>
        </property>
       </item>
       <item>
@@ -7713,10 +8070,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the N bit and causes a branch if N is clear</string>
        </property>
       </item>
       <item>
@@ -7748,10 +8108,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the Z bit and causes a branch if the Z bit is clear.</string>
        </property>
       </item>
       <item>
@@ -7783,10 +8146,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the N bit and causes a branch if N is set.</string>
        </property>
       </item>
       <item>
@@ -7818,10 +8184,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if (N is set and V is clear) OR (N is clear and V is set). If the BLT instruction is executed immediately after execution of any of the instructions CBA, CMP, SBA, or SUB, the branch will occur if and only if the two's complement number represented by the minuend (Le. ACCX) was less than the two's complement number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -7853,10 +8222,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if (C is set) OR (Z is set). If the BLS instruction is executed immediately after execution of any of the instructions CBA, CMP, SBA, or SUB, the branch will occur if and only if the unsigned binary number represented by the minuend (Le. ACCX) was less than or equal to the unsigned binary number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -7888,10 +8260,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if [Z is set] OR [(N is set and V is clear) OR (N is clear and V is set)]. If the BlE instruction is executed immediately after execution of any of the instructions CSA, CMP, SBA, or SUB, the branch will occur if and only if the two's complement number represented by the minuend (Le. ACCX) was less then or equal to the two's complement number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -7923,10 +8298,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Performs the logical&quot;AND&quot; comparison of the contents of ACCB and the contents of M and modifies condition codes accordingly. Neitherthe contents of ACCX or M operands are affected. (Each bit of the result of the &quot;AND&quot; would be the logical &quot;AND&quot; of the corresponding bits of M and ACCB.)</string>
        </property>
       </item>
       <item>
@@ -7958,10 +8336,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Performs the logical&quot;AND&quot; comparison of the contents of ACCA and the contents of M and modifies condition codes accordingly. Neitherthe contents of ACCX or M operands are affected. (Each bit of the result of the &quot;AND&quot; would be the logical &quot;AND&quot; of the corresponding bits of M and ACCA.)</string>
        </property>
       </item>
       <item>
@@ -7993,10 +8374,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if (C is clear) AND (Z is clear). If the BHI instruction is executed immediately after execution of any of the instructions CBA, CMP, SBA, or SUB, the branch will occur if and only if the unsigned binary number represented by the minuend (Le. ACCX) was greater than the unsigned binary number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -8028,10 +8412,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if [Z is clear] AND [(N is set and V is set) OR (N is clear and V is clear)]. If the BGT instruction is executed immediately after execution of any of the instructions CBA, CMP, SBA, or SUB, the branch will occur if and only if the two's complement number represented by the minuend (Le. ACCX) was greater than the two's complement number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -8063,10 +8450,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Causes a branch if (N is set and V is set) OR (N is clear and V is clear). If the BGE instruction is .executed immediately after execution of any of the instructions CBA, CMP, SBA, or SUB, the branch will occur if and only if the two'scomplement number represented by the minuend (Le. ACCX) was greater than or equal to the two's complement number represented by the subtrahend (Le. M).</string>
        </property>
       </item>
       <item>
@@ -8098,10 +8488,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the 2 bit and causes a branch if the 2 bit is set.</string>
        </property>
       </item>
       <item>
@@ -8133,10 +8526,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the C bit and causes a branch if C is set.</string>
        </property>
        <item>
         <property name="text">
@@ -8144,6 +8540,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for BCS</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8176,10 +8599,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
+        <string>2</string>
+       </property>
+       <property name="text">
         <string>3</string>
        </property>
        <property name="text">
-        <string>2</string>
+        <string>Tests the state of the C bit and causes a branch if C is clear.</string>
        </property>
        <item>
         <property name="text">
@@ -8187,6 +8613,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for BCC, branch if higher or same </string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8219,10 +8672,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCB one place to the right. Bit 7 is held constant. Bit 0 is loaded into the C bit.</string>
        </property>
       </item>
       <item>
@@ -8254,10 +8710,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of ACCA one place to the right. Bit 7 is held constant. Bit 0 is loaded into the C bit.</string>
        </property>
       </item>
       <item>
@@ -8289,10 +8748,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Shifts all bits of M one place to the right. Bit 7 is held constant. Bit 0 is loaded into the C bit.</string>
        </property>
       </item>
       <item>
@@ -8324,10 +8786,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
-        <string>3</string>
+        <string>1</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>3</string>
        </property>
        <item>
         <property name="text">
@@ -8335,6 +8797,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for ASLD</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8367,10 +8856,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of the ACCB one place to the left. Bit 0 is loaded with a zero. The C bit is loaded from the most significant bit of ACCB.</string>
        </property>
        <item>
         <property name="text">
@@ -8378,6 +8870,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for ASLB</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8410,10 +8929,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Shifts all bits of the ACCA one place to the left. Bit 0 is loaded with a zero. The C bit is loaded from the most significant bit of ACCA.</string>
        </property>
        <item>
         <property name="text">
@@ -8421,6 +8943,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for ASLA</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8453,10 +9002,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
+        <string>2,3</string>
+       </property>
+       <property name="text">
         <string>6,6</string>
        </property>
        <property name="text">
-        <string>2,3</string>
+        <string>Shifts all bits of the M one place to the left. Bit 0 is loaded with a zero. The C bit is loaded from the most significant bit of M.</string>
        </property>
        <item>
         <property name="text">
@@ -8464,6 +9016,33 @@ li.checked::marker { content: &quot;\2612&quot;; }
         </property>
         <property name="text">
          <string>Alias for ASL</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </item>
       </item>
@@ -8496,10 +9075,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Performs logical &quot;AND&quot; between the contents of ACCB and the contents of M and places the result in ACCB. (Each bit of ACCB after the operation will be the logical &quot;AND&quot; of the corresponding bits of M and of ACCB before the operation.)</string>
        </property>
       </item>
       <item>
@@ -8531,10 +9113,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--**0-</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Performs logical &quot;AND&quot; between the contents of ACCA and the contents of M and places the result in ACCA. (Each bit of ACCA after the operation will be the logical &quot;AND&quot; of the corresponding bits of M and of ACCA before the operation.)</string>
        </property>
       </item>
       <item>
@@ -8566,10 +9151,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>--****</string>
        </property>
        <property name="text">
-        <string>4,5,6,6</string>
+        <string>3,2,2,3</string>
        </property>
        <property name="text">
-        <string>3,2,2,3</string>
+        <string>4,5,6,6</string>
        </property>
       </item>
       <item>
@@ -8601,10 +9186,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>*-****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Adds the contents of ACCB and the contents of M and places the result in ACCB.</string>
        </property>
       </item>
       <item>
@@ -8636,10 +9224,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>*-****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Adds the contents of ACCA and the contents of M and places the result in ACCA.</string>
        </property>
       </item>
       <item>
@@ -8671,10 +9262,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>*-****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Adds the contents of the C bit to the sum of the contents of ACCB and M, and places the result in ACCB.</string>
        </property>
       </item>
       <item>
@@ -8715,10 +9309,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>*-****</string>
        </property>
        <property name="text">
+        <string>2,2,2,3</string>
+       </property>
+       <property name="text">
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>2,2,2,3</string>
+        <string>Adds the contents of the C bit to the sum of the contents of ACCA and M, and places the result in ACCA.</string>
        </property>
       </item>
       <item>
@@ -8755,10 +9352,10 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>------</string>
        </property>
        <property name="text">
-        <string>3</string>
+        <string>1</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>3</string>
        </property>
       </item>
       <item>
@@ -8799,10 +9396,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>*-****</string>
        </property>
        <property name="text">
+        <string>1</string>
+       </property>
+       <property name="text">
         <string>2</string>
        </property>
        <property name="text">
-        <string>1</string>
+        <string>Adds the contents of ACCB to the contents of ACCA and places the result in ACCA.</string>
        </property>
       </item>
      </widget>

@@ -40,7 +40,7 @@ public:
 public slots:
     void showContextMenu(const QPoint &);
     void showMnemonicInfo();
-    void showInstructionInfoWindow(QString instruction);
+    void showInstructionInfoWindow(QString instruction, int version);
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;

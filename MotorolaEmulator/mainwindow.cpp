@@ -19,6 +19,7 @@
 #include "InstructionList.h"
 #include <QPointer>
 #include <unordered_map>
+#include "instructioninfodialog.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -61,14 +62,14 @@ MainWindow::MainWindow(QWidget *parent)
         int colorR = 180;
         if (row == 1 || row == 6 ||row == 12 ||row == 31 ||row == 65 ||row == 71 ||row == 72 || row == 81 || row == 84 || row == 106) {
             for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
-                item->setForeground(col, QBrush(QColor(colorR, 0, 0)));
+                item->setForeground(col, QBrush(Qt::red)); //QColor(colorR, 0, 0)
             }
         } else if (row == 62) {
-                item->setForeground(4, QBrush(QColor(colorR, 0, 0)));
+                item->setForeground(4, QBrush(Qt::red));
         }
         if (row == 9 || row == 10 || row == 11 ||row == 12 ||row == 16||row == 17) {
-                item->child(0)->setForeground(0, QBrush(QColor(colorR, 0, 0)));
-                item->child(0)->setForeground(1, QBrush(QColor(colorR, 0, 0)));
+                item->child(0)->setForeground(0, QBrush(Qt::red));
+                item->child(0)->setForeground(1, QBrush(Qt::red));
         }
     }
     for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row) {
@@ -115,7 +116,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(executionTimer, &QTimer::timeout, this, &MainWindow::executeLoop);
 
     ui->plainTextCode->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->plainTextCode, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+    connect(ui->plainTextCode, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(const QPoint &)));
 
 }
 std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
@@ -162,18 +163,17 @@ void MainWindow::showMnemonicInfo()
 
         QString selectedWord = (plainText.mid(leftIndex + 1, rightIndex - leftIndex - 1)).toUpper();
 
-        qDebug() << "Selected Word at Right-Click Position: " << selectedWord;
+        int version = -1; //-1 unkown 6800 6803
         if (specialInstructions.contains(selectedWord)) {
-                qDebug() << "Assembler directive";
+                version = -1;
         } else if (allInstructionsM6800.contains(selectedWord)) {
-                qDebug() << "M6800";
+                version = 6800;
         } else if (allInstructionsM6803.contains(selectedWord)) {
-                qDebug() << "M6803 specific";
+                version = 6803;
         } else{
-                qDebug() << "Unkown instruction";
                 return;
         }
-        showInstructionInfoWindow(selectedWord);
+        showInstructionInfoWindow(selectedWord, version);
     }
 }
 
@@ -695,7 +695,6 @@ void MainWindow::resizeEvent(QResizeEvent* event){
 void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     int buttonYoffset = 30;
     int buttonY = newSize.height() - buttonYoffset;
-
     if (newSize.width() >= 1785) {
         if(ui->comboBoxDisplayStatus->currentIndex() == 0){
             ui->plainTextDisplay->setEnabled(true);
@@ -719,13 +718,11 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
         ui->plainTextDisplay->setVisible(false);
         ui->frameDisplay->setEnabled(false);
         ui->frameDisplay->setVisible(false);
-
         ui->tabWidget->setGeometry(910, 300, newSize.width() - 917, newSize.height() - 289 - buttonYoffset - 17);
         ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? 201 : 281, newSize.height() - buttonYoffset - 17);
         ui->plainTextMemory->setGeometry(400, ui->plainTextMemory->y(), ui->plainTextMemory->width(), newSize.height() - buttonYoffset - 17);
         ui->groupBoxSimpleMemory->setGeometry(400, ui->groupBoxSimpleMemory->y(), ui->groupBoxSimpleMemory->width(), ui->groupBoxSimpleMemory->height());
     }
-
     ui->buttonCompile->setGeometry(ui->buttonCompile->x(), buttonY, ui->buttonCompile->width(), ui->buttonCompile->height());
     ui->comboBoxVersionSelector->setGeometry(ui->comboBoxVersionSelector->x(), buttonY, ui->comboBoxVersionSelector->width(), ui->comboBoxVersionSelector->height());
     ui->buttonLoad->setGeometry(ui->buttonLoad->x(), buttonY, ui->buttonLoad->width(), ui->buttonLoad->height());
@@ -736,17 +733,13 @@ void MainWindow::handleMainWindowSizeChanged(const QSize& newSize){
     ui->comboBoxSpeedSelector->setGeometry(ui->comboBoxSpeedSelector->x(), buttonY, ui->comboBoxSpeedSelector->width(), ui->comboBoxSpeedSelector->height());
     ui->buttonSwitchWrite->setGeometry(ui->buttonSwitchWrite->x(), buttonY, ui->buttonSwitchWrite->width(), ui->buttonSwitchWrite->height());
     ui->labelWritingMode->setGeometry(ui->labelWritingMode->x(), buttonY, ui->labelWritingMode->width(), ui->labelWritingMode->height());
-
     ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), ui->plainTextLines->width(), newSize.height() - buttonYoffset - 33);
     ui->lineCodeLinesSeperator->setGeometry(ui->lineCodeLinesSeperator->x(), newSize.height() - buttonYoffset - 24, ui->lineCodeLinesSeperator->width(), 16);
-
     ui->groupBox->setGeometry(newSize.width() - 370, ui->groupBox->y(), ui->groupBox->width(), 281);
-
     ui->plainTextConsole->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
     ui->plainTextInfo->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
     ui->treeWidget->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
 }
-
 void MainWindow::on_plainTextCode_textChanged(){
     if (ui->plainTextCode->toPlainText().count('\n') > 65535) {
         QString text = ui->plainTextCode->toPlainText();
@@ -763,7 +756,6 @@ void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
     if(ui->lineEditBin->text() != "X"){
         bool ok;
         int number = arg1.toInt(&ok, 2);
-
         if (ok) {
             ui->lineEditDec->setText(QString::number(number));
             ui->lineEditOct->setText(QString::number(number, 8));
@@ -4087,41 +4079,28 @@ int MainWindow::executeInstruction(){
     return cycleCount;
 }
 
-void MainWindow::showInstructionInfoWindow(QString instruction)
+void MainWindow::showInstructionInfoWindow(QString instruction, int version)
 {
-    int rowCount = ui->treeWidget->topLevelItemCount();
-
-    for (int row = 0; row < rowCount; ++row) {
-        QTreeWidgetItem* currentItem = ui->treeWidget->topLevelItem(row);
-
-        if (currentItem->text(0) == instruction) {
-            QDialog infoDialog(this);
-            QVBoxLayout layout(&infoDialog);
-
-            QString infoText = "Column 1: " + currentItem->text(1) + "\n";
-
-            // Columns 2-7
-            for (int i = 2; i <= 7; ++i) {
-                infoText += "Column " + QString::number(i) + ": " + currentItem->text(i) + "\t";
-            }
-            infoText += "\n";
-
-            // Columns 8-11
-            for (int i = 8; i <= 11; ++i) {
-                infoText += "Column " + QString::number(i) + ": " + currentItem->text(i) + "\n";
-            }
-
-            QLabel* infoLabel = new QLabel(infoText);
-            layout.addWidget(infoLabel);
-
-            infoDialog.exec();
+    QTreeWidgetItem item_;
+    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = ui->treeWidget->topLevelItem(i);
+        if (item && item->text(0) == instruction) {
+            item_= *item;
             break;
         }
     }
+    InstructionInfoDialog dialog(item_ , version ,this);
+    dialog.exec();
 }
 
 void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
 {
-
+    int version = 6800;
+    if(item->foreground(0) == Qt::red){
+        qDebug() << "m6803 specific";
+        version = 6803;
+    }
+    InstructionInfoDialog dialog(*item, version ,this);
+    dialog.exec();
 }
 
