@@ -1,0 +1,1205 @@
+&50
+ú4NAMú
+
+NAM ukaz je ukaz ú1simulatorjuú.
+
+ú8Postopek:ú Simulator ime, ki sledi ukazu prenese na polje
+oznaŸeno s ú1Programú v desnem spodnjem kotu zaslona.
+
+ú8Vpliv na izvajanje programa:ú nikakrçen.
+
+ú8Pozor:ú ukaz mora biti v prvi vrstici programa.
+%
+&51
+ú4ORGú
+
+ORG ukaz je ukaz ú1simulatorjuú.
+
+ú8Vpliv na izvajanje programa:ú podano vrednost priredi
+ú1programskemu çtevcuú PC.
+
+ú8Pozor:ú Ker ta ukaz spreminja programski çtevec, je potrebno,
+da je vneçen ú1takoj na zeŸetku programaú za ukazom NAM.
+%
+&52
+ú4EQUú
+
+EQU ukaz je ukaz ú1simulatorjuú.
+
+ú8EQUú priredi simbolu podano vrednost
+
+ú1Pozor:ú Ker se prevajanje izvrçi v enem samem prehodu
+je potrebno, da je ukaz EQU za doloŸen simbol vneçen pred
+prvim ukazom, ki ga uporablja.
+%
+&53
+ú4RMBú
+
+RMB ukaz je ukaz ú1simulatorjuú.
+
+ú8RMBú predvidi podano çtevilo prostih pomnilniçkih celic
+
+ú1Pozor:ú Ukaz RMB se lahko uporabi pred prvim ukazom
+motoroli ali za zadnjim! ú4NIKAKOR PA NE MED UKAZIú, saj bo
+to izvedlo ne§eljene ukaze oz. skoke.
+%
+&54
+ú4FCBú
+
+FCB ukaz je ukaz ú1simulatorjuú.
+
+ú8FCBú predvidi pomnilniçko celico z podano vsebino
+
+ú1Pozor:ú Ukaz FCB se lahko uporabi pred prvim ukazom
+motoroli ali za zadnjim! ú4NIKAKOR PA NE MED UKAZIú, saj bo
+to izvedlo ne§eljen ukaz oz. skok.
+%
+&55
+ú4FDBú
+
+FDB ukaz je ukaz ú1simulatorjuú.
+
+ú8FDBú predvidi dve pomnilniçki celici z podano vsebino
+
+ú1Pozor:ú Ukaz FDB se lahko uporabi pred prvim ukazom
+motoroli ali za zadnjim! ú4NIKAKOR PA NE MED UKAZIú, saj bo
+to izvedlo ne§eljene ukaze oz. skoke.
+%
+&56
+ú4FCCú
+
+FCC ukaz je ukaz ú1simulatorjuú.
+
+ú8FCCú predvidi zaporedje pomnilniçkih besed z ASCII
+kodiranim Ÿrkovnim nizom 'txt'
+
+ú1Pozor:ú Ukaz FCC se lahko uporabi pred prvim ukazom
+motoroli ali za zadnjim! ú4NIKAKOR PA NE MED UKAZIú, saj bo
+to izvedlo ne§eljene ukaze oz. skoke.
+%
+&57
+ú4ENDú
+
+END ukaz je ukaz ú1simulatorjuú.
+
+ú8Vloga:ú Ukaz END pove simulatorju, da se je konŸal
+programski del datoteke in da lahko priŸne z izraŸunavanjem
+naslovov simbolov, ki so bili uporabljeni v programu.
+
+ú8Vpliv na izvajanje programa:ú nikakrçen.
+%
+&58
+ú4SMú   ú8Súet ú8Múemory
+
+SM ukaz je ukaz ú1simulatorjuú.
+
+ú1SMú priredi vrednost pomnilniçki celici
+
+SM je ostanek starega simulatorja za motorolo, ki je
+poznal le ta naŸin za 'roŸni' vnos v pomnilnik. V tem
+simulatorju pa lahko poleg tega uporabite tudi tipko F6.
+%
+&59
+ú4DMú   ú8Dúisplay ú8Múemory
+
+DM ukaz je ukaz ú1simulatorjuú.
+
+ú1DMú prika§i vsebino pomnilniçke celice
+
+DM je ostanek starega simulatorja za motorolo, ki je
+poznal ta naŸin za izpis vsebine pomnilnika. V tem
+simulatorju imate za pomnilnik poseben prostor, DM pa
+postavi doloŸeno lokacijo tako, da je vidna.
+%
+&60
+ú4SRú   ú8Súet ú8Rúegister
+
+SR ukaz je ukaz ú1simulatorjuú.
+
+ú1SRú spremeni vsebino podanega registra
+
+Veljavni registri so A, B, X, S, P in T
+
+SR bo prvi parameter smatral kot enoŸrkovno okrajçavo
+registra in vanj vpisal podano vrednost.
+%
+&100
+ú4ADDAú
+
+Ukaz ú8ADDAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ADDA poveŸa vsebino akumulatorja A za podano
+vrednost.
+
+ú8Spreminja zastaviceú ú1Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+sdfsfd
+%
+&101
+ú4ADDBú
+
+Ukaz ú8ADDBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ADDB poveŸa vsebino akumulatorja B za podano
+vrednost.
+
+ú8Spreminja zastaviceú ú1Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&102
+ú4ABAú
+
+Ukaz ú8ABAú je enozlo§en ukaz.
+
+ú8Delovanje:ú ABA seçteje akumulatorja A in B
+in rezultat shrani v akumulator A.
+
+ú8Spreminja zastaviceú ú1Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&103
+ú4ADCAú
+
+Ukaz ú8ADCAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ADCA seçteje akumulator A, podano vrednost in
+C bit indeksnega registra ter rezultat shrani v akumulator A.
+
+ú8Spreminja zastaviceú ú1Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&104
+ú4ADCBú
+
+Ukaz ú8ADCBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ADCB seçteje akumulator B, podano vrednost in
+C bit indeksnega registra ter rezultat shrani v akumulator B.
+
+ú8Spreminja zastaviceú ú1Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&105
+ú4ANDAú
+
+Ukaz ú8ANDAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ANDA izvrçi operacijo logiŸni AND z akumulatorjem
+A in podano vrednostjo ter rezultat shrani v akumulator A.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&106
+ú4ANDBú
+
+Ukaz ú8ANDBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ANDB izvrçi operacijo logiŸni AND z akumulatorjem
+B in podano vrednostjo ter rezultat shrani v akumulator B.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&109
+ú4CLRú
+
+Ukaz ú8CLRú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú CLR postavi vrednost podane lokacije v
+pomnilniku na vrednost 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&110
+ú4CLRAú
+
+Ukaz ú8CLRAú je enozlo§en ukaz.
+
+ú8Delovanje:ú CLRA postavi vsebino akumulatorja A
+na vrednost 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&111
+ú4CLRBú
+
+Ukaz ú8CLRBú je enozlo§en ukaz.
+
+ú8Delovanje:ú CLRB postavi vsebino akumulatorja B
+na vrednost 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&112
+ú4CMPAú
+
+Ukaz ú8CMPAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú CMPA primerja vsebino akumulatorja A z vsebino
+podane lokacije v pomnilniku
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&113
+ú4CMPBú
+
+Ukaz ú8CMPBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú CMPB primerja vsebino akumulatorja B z vsebino
+podane lokacije v pomnilniku
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&114
+ú4CBAú
+
+Ukaz ú8CBAú je enozlo§en ukaz.
+
+ú8Delovanje:ú CBA primerja vsebino akumulatorja A z vsebino
+akumulatorja B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&115
+ú4COMú
+
+Ukaz ú8COMú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú COM izvede enojni komplement nad
+vsebino podane lokacije
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&116
+ú4COMAú
+
+Ukaz ú8COMAú je enozlo§en ukaz.
+
+ú8Delovanje:ú COMA izvede enojni komplement nad
+vsebino akumulatorja A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&117
+ú4COMBú
+
+Ukaz ú8COMBú je enozlo§en ukaz.
+
+ú8Delovanje:ú COMB izvede enojni komplement nad
+vsebino akumulatorja B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&118
+ú4NEGú
+
+Ukaz ú8NEGú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú NEG izvede negacijo vsebine
+podane lokacije
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&119
+ú4NEGAú
+
+Ukaz ú8NEGAú je enozlo§en ukaz.
+
+ú8Delovanje:ú NEGA izvede negacijo vsebine
+akumulatorja A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&120
+ú4NEGBú
+
+Ukaz ú8NEGBú je enozlo§en ukaz.
+
+ú8Delovanje:ú NEGB izvede negacijo vsebine
+akumulatorja B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&121
+ú4DAAú
+
+Ukaz ú8DAAú je enozlo§en ukaz.
+
+ú8Delovanje:ú DAA izvede negacijo vsebine
+akumulatorja B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&122
+ú4DECú
+
+Ukaz ú8DECú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú DEC pomanjça vsebino podane lokacije
+za ena in dobljen rezultat shrani nazaj v to lokacijo
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&123
+ú4DECAú
+
+Ukaz ú8DECAú je enozlo§en ukaz.
+
+ú8Delovanje:ú DECA pomanjça vsebino akumulatorja A za
+ena in dobljen rezultat shrani nazaj v akumulator A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&124
+ú4DECBú
+
+Ukaz ú8DECBú je enozlo§en ukaz.
+
+ú8Delovanje:ú DECB pomanjça vsebino akumulatorja B za
+ena in dobljen rezultat shrani nazaj v akumulator B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&125
+ú4EORAú
+
+Ukaz ú8EORAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú EORA izvede logiŸno operacijo ú8ekskluzivni aliú med
+vsebino podane lokacije in akumulatorja A ter rezultat shrani
+v akumulator A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&126
+ú4EORBú
+
+Ukaz ú8EORBú je enozlo§en ukaz.
+
+ú8Delovanje:ú EORB izvede logiŸno operacijo ú8ekskluzivni aliú med
+vsebino podane lokacije in akumulatorja B ter rezultat shrani
+v akumulator B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&127
+ú4INCú
+
+Ukaz ú8INCú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú INC poveŸa vsebino podane lokacije
+za ena in dobljen rezultat shrani nazaj v to lokacijo
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&128
+ú4INCAú
+
+Ukaz ú8INCAú je enozlo§en ukaz.
+
+ú8Delovanje:ú INCA poveŸa vsebino akumulatorja A za
+ena in dobljen rezultat shrani nazaj v akumulator A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&129
+ú4INCBú
+
+Ukaz ú8INCBú je enozlo§en ukaz.
+
+ú8Delovanje:ú INCB poveŸa vsebino akumulatorja B za
+ena in dobljen rezultat shrani nazaj v akumulator B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&130
+ú4LDAAú
+
+Ukaz ú8LDAAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú LDAA nalo§i vsebino podane lokacije v
+akumulator A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&131
+ú4LDABú
+
+Ukaz ú8LDABú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú LDAB nalo§i vsebino podane lokacije v
+akumulator B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&132
+ú4ORAAú
+
+Ukaz ú8ORAAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ORAA izvede logiŸno operacijo ú1aliú nad akumulatorjem
+A in podano vrednostjo ter rezultat shrani v akumulator A
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&133
+ú4ORABú
+
+Ukaz ú8ORABú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ORAB izvede logiŸno operacijo ú1aliú nad akumulatorjem
+B in podano vrednostjo ter rezultat shrani v akumulator B
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&138
+ú4ROLú
+
+Ukaz ú8ROLú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ROL prenese bite podane lokacije od 0 do 6 za
+en bit v levo, bit 0 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 7
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&139
+ú4ROLAú
+
+Ukaz ú8ROLAú je enozlo§en ukaz.
+
+ú8Delovanje:ú ROLA prenese bite akumulatorja A od 0 do 6 za
+en bit v levo, bit 0 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 7
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&140
+ú4ROLBú
+
+Ukaz ú8ROLBú je enozlo§en ukaz.
+
+ú8Delovanje:ú ROLB prenese bite akumulatorja B od 0 do 6 za
+en bit v levo, bit 0 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 7
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&141
+ú4RORú
+
+Ukaz ú8RORú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ROR prenese bite podane lokacije od 7 do 1 za
+en bit v desno, bit 7 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&142
+ú4RORAú
+
+Ukaz ú8RORAú je enozlo§en ukaz.
+
+ú8Delovanje:ú RORA prenese bite akumulatorja A od 7 do 1 za
+en bit v desno, bit 7 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&143
+ú4RORBú
+
+Ukaz ú8RORBú je enozlo§en ukaz.
+
+ú8Delovanje:ú RORB prenese bite akumulatorja B od 7 do 1 za
+en bit v levo, bit 7 napolni z vrednostjo C bita pogojnega
+registra in v bit C pogojnega registra shrani bit 0
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&144
+ú4ASLú
+
+Ukaz ú8ASLú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ASL prenese bite podane lokacije od 6 do 0 za
+en bit v levo, bit 0 napolni z vrednostjo 0 bit sedem pa
+shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&145
+ú4ASLAú
+
+Ukaz ú8ASLAú je enozlo§en ukaz.
+
+ú8Delovanje:ú ASLA prenese bite vsebine akumulatorja A
+od 6 do 0 za en bit v levo, bit 0 napolni z vrednostjo 0
+bit sedem pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&146
+ú4ASLBú
+
+Ukaz ú8ASLBú je enozlo§en ukaz.
+
+ú8Delovanje:ú ASLB prenese bite vsebine akumulatorja B
+od 6 do 0 za en bit v levo, bit 0 napolni z vrednostjo 0
+bit sedem pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&147
+ú4ASRú
+
+Ukaz ú8ASRú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú ASR prenese bite podane lokacije od 7 do 1 za
+en bit v desno, bit 7 ostane nespremenjen, bit 0 pa
+shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&148
+ú4ASRAú
+
+Ukaz ú8ASRAú je enozlo§en ukaz.
+
+ú8Delovanje:ú ASRA prenese bite vsebine akumulatorja A
+od 7 do 1 za en bit v desno, bit 7 ostane nespremenjen,
+bit 0 pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&149
+ú4ASRBú
+
+Ukaz ú8ASRBú je enozlo§en ukaz.
+
+ú8Delovanje:ú ASRB prenese bite vsebine akumulatorja B
+od 7 do 1 za en bit v desno, bit 7 ostane nespremenjen,
+bit 0 pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&150
+ú4LSRú
+
+Ukaz ú8LSRú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú LSR prenese bite vsebine podane lokacije
+od 7 do 1 za en bit v desno, bit 7 napolni z niŸlo,
+bit 0 pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&151
+ú4LSRAú
+
+Ukaz ú8LSRAú je enozlo§en ukaz.
+
+ú8Delovanje:ú LSRA prenese bite vsebine akumulatorja A
+od 7 do 1 za en bit v desno, bit 7 napolni z niŸlo,
+bit 0 pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&152
+ú4LSRBú
+
+Ukaz ú8LSRBú je enozlo§en ukaz.
+
+ú8Delovanje:ú LSRB prenese bite vsebine akumulatorja B
+od 7 do 1 za en bit v desno, bit 7 napolni z niŸlo,
+bit 0 pa shrani v bit C pogojnega registra.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&153
+ú4STAAú
+
+Ukaz ú8STAAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú STAA shrani vsebino akumulatorja A na
+podano lokacijo.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Direktno Indeksno Razçirjenoú
+%
+&154
+ú4STABú
+
+Ukaz ú8STABú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú STAB shrani vsebino akumulatorja B na
+podano lokacijo.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Direktno Indeksno Razçirjenoú
+%
+&155
+ú4SUBAú
+
+Ukaz ú8SUBAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú SUBA odçteje od vsebine akumulatorja A
+podano vrednost.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&156
+ú4SUBBú
+
+Ukaz ú8SUBBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú SUBB odçteje od vsebine akumulatorja B
+podano vrednost.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&157
+ú4ABAú
+
+Ukaz ú8ABAú je enozlo§en ukaz.
+
+ú8Delovanje:ú ABA odçteje akumulatorja A in B
+in rezultat shrani v akumulator A.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&158
+ú4SBCAú
+
+Ukaz ú8SBCAú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú SBCA odçteje od akumulatorja A podano vrednost
+in C bit indeksnega registra ter rezultat shrani v akumulator A.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&159
+ú4SBCBú
+
+Ukaz ú8SBCBú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú SBCB odçteje od akumulatorja B podano vrednost
+in C bit indeksnega registra ter rezultat shrani v akumulator B.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&160
+ú4TABú
+
+Ukaz ú8TABú je enozlo§en ukaz.
+
+ú8Delovanje:ú TAB prenese vsebino akumulatorja A v
+akumulator B.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&161
+ú4TBAú
+
+Ukaz ú8TBAú je enozlo§en ukaz.
+
+ú8Delovanje:ú TBA prenese vsebino akumulatorja B v
+akumulator A.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&162
+ú4TSTú
+
+Ukaz ú8TSTú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú TST testira vsebino podane lokacije,
+Ÿe je negativna ali enaka niŸ.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Razçirjeno Indeksnoú
+%
+&163
+ú4TSTAú
+
+Ukaz ú8TSTAú je enozlo§en ukaz.
+
+ú8Delovanje:ú TSTA testira vsebino akumulatorja A,
+Ÿe je negativna ali enaka niŸ.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&164
+ú4TSTBú
+
+Ukaz ú8TSTBú je enozlo§en ukaz.
+
+ú8Delovanje:ú TSTB testira vsebino akumulatorja B,
+Ÿe je negativna ali enaka niŸ.
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú1Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&9999
+ú4RIGLERú    ú0Riglerius Complex (lat.)ú
+
+ But ú8what is killing treesú? Nobody knows exactly, but
+ it is probably air pollution or ú1Riglerius Complexú. ú9Factoriesú,
+ ú9power stationsú and ú9carsú emit ú9tons of smokeú into the air.
+ This smoke contains ú9sulphur dioxideú and ú9nitrogen oxideú. This
+ substances ú9mixú with ú9water vapourú in the ú9atmosphereú and
+ form ú1Riglerius Simplexú. ú9Sunlightú turns this acid into
+ ú4poisonous oxidantú (ú1Riglerius Complexú) which fall ú9in rainú
+ or ú9snowú onto the ú1treesú.
+%
+&165
+ú4CPX
+
+Ukaz ú8CPXú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú CPX primerja vsebino indeksnega registra z
+podano vrednostjo oz. vsebino lokacije
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&166
+ú4DEX
+
+Ukaz ú8DEXú je enozlo§en ukaz.
+
+ú8Delovanje:ú DEX zmanjça vsebino indeksnega
+registra za 1
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú1Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&167
+ú4DES
+
+Ukaz ú8DESú je enozlo§en ukaz.
+
+ú8Delovanje:ú DES zmanjça vsebino kazalca
+sklada za 1
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú0Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&168
+ú4INX
+
+Ukaz ú8INXú je enozlo§en ukaz.
+
+ú8Delovanje:ú INX poveŸa vsebino indeksnega
+registra za 1
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú1Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&169
+ú4INS
+
+Ukaz ú8INSú je enozlo§en ukaz.
+
+ú8Delovanje:ú INS poveŸa vsebino kazalca
+sklada za 1
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú0Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&170
+ú4LDX
+
+Ukaz ú8LDXú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú LDX nalo§i vsebino indeksnega
+registra
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&171
+ú4LDS
+
+Ukaz ú8LDSú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú LDS nalo§i vsebino kazalca
+sklada
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Takojçnje Direktno Indeksno Razçirjenoú
+%
+&172
+ú4STX
+
+Ukaz ú8STXú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú STX skrani vsebino indeksnega
+registra na podano lokacijo
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Direktno Indeksno Razçirjenoú
+%
+&173
+ú4STS
+
+Ukaz ú8STSú je dvo ali trozlo§en ukaz.
+
+ú8Delovanje:ú STS skrani vsebino kazalca
+sklada na podano lokacijo
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú1Nú ú1Zú ú1Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Direktno Indeksno Razçirjenoú
+%
+&174
+ú4TXS
+
+Ukaz ú8TXSú je enozlo§en ukaz.
+
+ú8Delovanje:ú TXS prestavi vsebino indeksnega
+registra minus ena v kazalec sklada
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú0Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&175
+ú4TSX
+
+Ukaz ú8TSXú je enozlo§en ukaz.
+
+ú8Delovanje:ú TSX prestavi vsebino kazalca sklada
+plus ena v indeksni register
+
+ú8Spreminja zastaviceú ú0Hú ú0Iú ú0Nú ú1Zú ú0Vú ú0Cú
+
+ú8NaŸini naslavljanjaú ú9Akumulatorskoú
+%
+&176
+ú4BRA
+
+Ukaz ú8BRAú je brezpogojna vejitev.
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&177
+ú4BCC
+
+Ukaz ú8BCCú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4C = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&178
+ú4BCS
+
+Ukaz ú8BCSú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4C = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&179
+ú4BEQ
+
+Ukaz ú8BEQú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4Z = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&180
+ú4BGE
+
+Ukaz ú8BGEú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4N xali V = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&181
+ú4BGT
+
+Ukaz ú8BGTú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4Z ali (N xali V) = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&182
+ú4BHI
+
+Ukaz ú8BHIú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4C ali Z = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&183
+ú4BLE
+
+Ukaz ú8BLEú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4Z ali (N  xali V) = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&184
+ú4BLS
+
+Ukaz ú8BLSú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4C ali Z = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&185
+ú4BLT
+
+Ukaz ú8BLTú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4N xali V = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&186
+ú4BMI
+
+Ukaz ú8BMIú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4N = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&187
+ú4BNE
+
+Ukaz ú8BNEú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4Z = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&188
+ú4BVC
+
+Ukaz ú8BVCú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4V = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&189
+ú4BVS
+
+Ukaz ú8BVSú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4V = 1ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&190
+ú4BPL
+
+Ukaz ú8BPLú je pogojna vejitev.
+
+ú8Vejitev se izvede, ko je izpolnjen pogoj:ú
+(pogojno kodni register) ú4N = 0ú
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&191
+ú4BSR
+
+Ukaz ú8BSRú je brezpogojna vejitev.
+
+Izvede vejitev v ú1podprogram
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&192
+ú4JMP
+
+Ukaz ú8JMPú je brezpogojen skok.
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&193
+ú4JSR
+
+Ukaz ú8JSRú je brezpogojen skok.
+
+Izvede skok v ú1podprogramú
+
+ú8NaŸini naslavljanjaú ú9Indeksno Razçirjenoú
+%
+&194
+ú4NOP
+
+(No Operation)
+Nima nobenega vpliva na izvajanje programa,
+razen to, da poveŸa programski çtevec
+%
+&195
+ú4RTS
+
+Ukaz ú8RTSú izvede vrnitev iz podprograma
+
+ú8NaŸini naslavljanjaú ú9Relativnoú
+%
+&196
+ú4CLC
+
+Ukaz ú8CLCú sprazne zastavico C
+%
+&197
+ú4CLI
+
+Ukaz ú8CLIú sprazne zastavico I
+%
+&198
+ú4CLV
+
+Ukaz ú8CLVú sprazne zastavico V
+%
+&199
+ú4SEC
+
+Ukaz ú8SECú napolni zastavico C
+%
+&200
+ú4SEI
+
+Ukaz ú8SEIú napolni zastavico I
+%
+&201
+ú4SEV
+
+Ukaz ú8SEVú napolni zastavico V
+%
+&202
+ú4TAP
+
+Ukaz ú8TAPú prestavi vrednosti bitov registra A v
+pogojno kodni register
+%
+&203
+ú4TPA
+Ukaz ú8TPAú prestavi vrednosti bitov pogojno kodnega
+registra register A
+%

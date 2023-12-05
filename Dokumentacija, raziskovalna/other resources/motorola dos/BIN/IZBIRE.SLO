@@ -1,0 +1,44 @@
+IdNum[4chr] Izberljiv Obcutljiv Izbran AjeShortcut? Ime ú Shortcut
+úDúatoteke
+ 0010 1 0 0 1 úNúovüF4
+ 0011 1 0 0 1 úOúdpri ...      üF3
+ 0012 1 0 0 1 úSúhraniüF2
+ 0000 1 0 0 0 $LINE
+ 0014 1 0 0 0 Súpúremeni podroŸje
+ 0013 0 0 0 0 Núaútisni ...
+ 0000 1 0 0 0 $LINE
+ 0001 1 0 0 1 úIúzhodüAlt-X
+û
+úPúrevajanje
+ 0050 1 0 0 1 úSúimuliraj           üCtrl-F9
+ 0057 1 0 0 1 Húiútro izvajanjeüAlt-F9
+ 0051 1 0 0 1 úPúrevediüF9
+ 0052 1 0 0 1 úKúoraküF8
+ 0000 1 0 0 0 $LINE
+ 0054 1 0 0 1 úVúnaçanje v pomnilniküF6
+ 0056 1 0 0 0 úHúitrost simuliranja
+ 0000 1 0 0 0 $LINE
+ 0055 1 0 0 1 úRúesetiranjeüCtrl-F6
+û
+úOúpcije
+ 0100 1 1 1 1 úVúrivanjeüInsert
+ 0102 1 1 1 0 Vúeúlike Ÿrke
+ 0000 1 0 0 0 $LINE
+ 0101 1 1 0 1 æeúsútnajstiçki prikazüF7
+ 0103 1 1 1 0 úPúremikajoŸi pomnilnik
+ 0104 1 1 0 0 úIúzpis registrov med hitrim izvajanjem
+ 0105 1 1 0 0 ¬içŸeúnúje pomnilnika
+ 0107 1 1 0 0 úBúarvno osvetljevanje
+ 0000 1 0 0 0 $LINE
+ 0108 1 0 0 1 úSúhrani opcijeüCtrl-F2
+û
+PoúmúoŸ
+ 0507 1 0 0 1 úOú programuüAlt-F1
+ 0508 1 0 0 1 úTúipke v urejevalnikuüF1
+ 0000 1 0 0 0 $LINE
+ 0009 1 0 0 1 úPúomoŸ o besediüCtrl-F1
+ 0512 1 0 0 0 Múiúçkina obmoŸja
+ 0000 1 0 0 0 $LINE
+ 0510 1 0 0 0 úNúekaj veŸ o programu
+ 0511 1 0 0 1 úKúoliko je ura ...     üAlt-U
+û

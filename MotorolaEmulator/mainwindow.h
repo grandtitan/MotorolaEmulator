@@ -6,6 +6,7 @@
 #include "externaldisplay.h"
 #include "qtreewidget.h"
 #include <QLineEdit>
+
 enum FlagToUpdate {
     HalfCarry,
     InterruptMask,
@@ -22,6 +23,7 @@ enum elementToUpdate {
     regX,
     allFlags
 };
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -29,51 +31,72 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QString softwareVersion = "1.5";
 
-    uint8_t Memory[0x10000] = {};
     int lastInput = -1;
-public slots:
-    void showContextMenu(const QPoint &);
-    void showMnemonicInfo();
-    void showInstructionInfoWindow(QString instruction, int version);
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
 
-
-    int changeFontSize(int delta);
     void updateFlags(FlagToUpdate flag, bool value);
     void updateElement(elementToUpdate element);
-    void updatePending();
-    void updateMemoryTab();
-    void updateMemoryCell(int address);
     void addCellToPending(int address);
+    void updateMemoryCell(int address);
+    std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
+    QList<int> pendingCells;
+    void updatePending();
+
+    void updateMemoryTab();
     void updateLinesBox();
+
+    int linesMarkLine = -1;
+    int linesMarkAddress = -1;
+    int memoryEditAddress = -1;
+    QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
+    QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
+    QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
+    QList<QTextEdit::ExtraSelection> linesSelectionsLines;
+    QList<QTextEdit::ExtraSelection> codeSelectionsLines;
+    QList<QTextEdit::ExtraSelection> memorySelectionsLines;
+    QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
     void updateSelectionsRunTime();
     void updateSelectionsLines(int line = -1);
     void updateSelectionsMemoryEdit(int address = -1);
     void updateSelectionCompileError(int charNum);
     void clearSelection(int clearWhat);
+
     void PrintConsole(const QString& text, int type);
     void Err(const QString& text);
 
+    int oldCursorX = 0;
+    int oldCursorY = 0;
+    uint8_t Memory[0x10000] = {};
+    uint8_t backupMemory[0x10000] = {};
+    uint8_t aReg = 0,bReg = 0;
+    uint16_t PC = 0, SP = 0xF000;
+    uint16_t xRegister = 0;
+    //uint16_t yRegister = 0; //not implemented
+    //bool indexRegister = true; //true x false y not implemented properly
+    uint8_t flags = 0;
+    int waitCycles = 0;
+    int cycleNum = 1;
+    int interruptLocations = 0xFFFF;
+    int executeInstruction();
+
     QTimer *executionTimer;
-    bool running = false;
     int executionSpeed = 125;
+    bool running = false;
     void executeLoop();
     void stopExecution();
     void startExecution();
-    int executeInstruction();
-
     void resetEmulator(bool failedCompile);
 
+    int previousScrollCode = 0;
     int compilerVersionIndex = 0;
     int currentCompilerLine = 0;
     int currentCompilerAddress = 0;
@@ -86,20 +109,9 @@ private:
     void setCompileStatus(bool isCompile);
     QString uncompiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(255,30,30);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(255, 0, 50);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(255, 0, 50);\n}";
     QString compiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(0,180,0);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(0, 180, 20);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(0, 180, 20);\n}";
-    bool reverseCompile(int ver, int begLoc);
+
     int inputNextAddress(int curAdr, QString err);
-
-    uint8_t backupMemory[0x10000] = {};
-    uint8_t aReg = 0,bReg = 0;
-    uint16_t PC = 0, SP = 0xF000;
-    uint16_t xRegister = 0;
-    //uint16_t yRegister = 0; //not implemented
-    //bool indexRegister = true; //true x false y not implemented properly
-    uint8_t flags = 0;
-    int waitCycles = 0;
-    int cycleNum = 1;
-    int interruptLocations = 0xFFFF;
-
+    bool reverseCompile(int ver, int begLoc);
 
     bool simpleMemory = false;
     int currentSMScroll = 0;
@@ -108,6 +120,8 @@ private:
     bool useCyclesPerSecond = false;
     bool hexReg = true;
     bool compileOnRun = true;
+    int autoScrollUpLimit = 20;
+    int autoScrollDownLimit = 5;
 
     QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG", ".WORD", ".RMB", ".SETB", ".SETW", ".STR" };
     QStringList allInstructionsM6800 = { "ABA", "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BITA", "BITB", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "LSRA", "LSRB", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PULA", "PULB", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
@@ -118,7 +132,6 @@ private:
     QStringList razInstructionsM6800 = { "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "TST" };
     QStringList indInstructionsM6800 = { "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "TST" };
     QStringList relInstructionsM6800 = { "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS" };
-
     QStringList allInstructionsM6803 = { "ABA", "ABX", "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASLD", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BHS", "BITA", "BITB", "BLE", "BLO", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BRN", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSLA", "LSLB", "LSLD", "LSR", "LSRA", "LSRB", "LSRD", "MUL", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PSHX", "PULA", "PULB", "PULX", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList vseInstructionsM6803 = { "ABA", "ABX", "ASLA", "ASLB", "ASLD", "ASRA", "ASRB", "CBA", "CLC", "CLI", "CLRA", "CLRB", "CLV", "COMA", "COMB", "DAA", "DECA", "DECB", "DES", "DEX", "INCA", "INCB", "INS", "INX", "LSLA", "LSLB", "LSLD", "LSRA", "LSRB", "LSRD", "MUL", "NEGA", "NEGB", "NOP", "PSHA", "PSHB", "PSHX", "PULA", "PULB", "PULX", "ROLA", "ROLB", "RORA", "RORB", "RTI", "RTS", "SBA", "SEC", "SEI", "SEV", "SWI", "TAB", "TAP", "TBA", "TPA", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
     QStringList takInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB",  "ANDA", "ANDB", "BITA", "BITB", "CMPA", "CMPB", "EORA", "EORB", "LDAA", "LDAB", "ORAA", "ORAB", "SBCA", "SBCB", "SUBA", "SUBB" };
@@ -132,15 +145,18 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 signals:
     void resized(const QSize& newSize);
+public slots:
+    void showContextMenu(const QPoint &);
+    void showMnemonicInfo();
+    void showInstructionInfoWindow(QString instruction, int version);
 private slots:
-
-    void handleVerticalScrollBarValueChanged(int value);
+    void handleCodeVerticalScrollBarValueChanged(int value);
     void handleLinesScroll();
     void handleDisplayScrollVertical();
     void handleDisplayScrollHorizontal();
-    void handleMemoryScrollHorizontal();
-
+    void handleMemoryScrollHorizontal(); 
     void handleMainWindowSizeChanged(const QSize& newSize);
+
     bool on_buttonCompile_clicked();
     void on_plainTextCode_textChanged();
     void on_buttonStep_clicked();

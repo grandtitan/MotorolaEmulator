@@ -59,10 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     }
     for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row) {
         QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
-        int colorR = 180;
         if (row == 1 || row == 6 ||row == 12 ||row == 31 ||row == 65 ||row == 71 ||row == 72 || row == 81 || row == 84 || row == 106) {
             for (int col = 0; col < ui->treeWidget->columnCount(); ++col) {
-                item->setForeground(col, QBrush(Qt::red)); //QColor(colorR, 0, 0)
+                item->setForeground(col, QBrush(Qt::red));
             }
         } else if (row == 62) {
                 item->setForeground(4, QBrush(Qt::red));
@@ -84,7 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->labelRunningCycleNum->setVisible(false);
     ui->labelRunningCycleNum->setText("Instruction cycle: ");
-    connect(ui->plainTextCode->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleVerticalScrollBarValueChanged);
+    connect(ui->plainTextCode->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleCodeVerticalScrollBarValueChanged);
     connect(ui->plainTextLines->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleLinesScroll);
 
     connect(ui->plainTextDisplay->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollVertical);
@@ -118,32 +117,39 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plainTextCode->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->plainTextCode, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(const QPoint &)));
 
+    ui->plainTextCode->moveCursor(QTextCursor::End);
+
 }
-std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 void MainWindow::showContextMenu(const QPoint &pos)
 {
     QMenu* menu = ui->plainTextCode->createStandardContextMenu();
     menu->addSeparator();
 
-    // Pass the cursor position as a QVariant to the action
     QVariant cursorPosVariant(pos);
     QAction* action = menu->addAction(tr("Mnemonic info"));
     action->setData(cursorPosVariant);
 
-    // Connect the action to the slot
     connect(action, SIGNAL(triggered()), this, SLOT(showMnemonicInfo()));
 
-    // Show the context menu at the specified position
     menu->exec(ui->plainTextCode->mapToGlobal(pos));
 
-    // Delete the menu after it's used
     menu->deleteLater();
 }
-
+void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+{
+    int version = 6800;
+    if(item->foreground(0) == Qt::red){
+        qDebug() << "m6803 specific";
+        version = 6803;
+    }
+    InstructionInfoDialog dialog(*item, version ,this);
+    dialog.exec();
+}
 void MainWindow::showMnemonicInfo()
 {
     QAction* action = qobject_cast<QAction*>(sender());
@@ -176,6 +182,19 @@ void MainWindow::showMnemonicInfo()
         showInstructionInfoWindow(selectedWord, version);
     }
 }
+void MainWindow::showInstructionInfoWindow(QString instruction, int version)
+{
+    QTreeWidgetItem item_;
+    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = ui->treeWidget->topLevelItem(i);
+        if (item && item->text(0) == instruction) {
+                item_= *item;
+                break;
+        }
+    }
+    InstructionInfoDialog dialog(item_ , version ,this);
+    dialog.exec();
+}
 
 inline bool bit(int variable, int bitNum){
     return (variable & (1 << bitNum)) != 0;
@@ -186,9 +205,6 @@ QString convertToQString(int number, int width){
     std::string str = stream.str();
     return QString::fromStdString(str);
 }
-int linesMarkLine = -1;
-int linesMarkAddress = -1;
-int memoryEditAddress = -1;
 void MainWindow::setCompileStatus(bool isCompiled){
     if(isCompiled){
         ui->buttonCompile->setStyleSheet(compiledButton);
@@ -209,20 +225,62 @@ void MainWindow::setCompileStatus(bool isCompiled){
     }
 }
 
-QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
-QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
-QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
-QList<QTextEdit::ExtraSelection> linesSelectionsLines;
-QList<QTextEdit::ExtraSelection> codeSelectionsLines;
-QList<QTextEdit::ExtraSelection> memorySelectionsLines;
-QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
-int previousScrollCode = 0;
-int previousScrollMemory = 0;
-int autoScrollUpLimit = 20;
-int autoScrollDownLimit = 5;
+void MainWindow::updateLinesBox(){
+    if (ui->checkBoxAdvancedInfo->isChecked()) {
+        if (instructionList.isEmpty()) {
+                QString code = ui->plainTextCode->toPlainText();
+                QString text;
+                for (int i = 0; i < code.count("\n") + 1; i++) {
+                text = text + convertToQString(i, 5) + "\n";
+                }
+                ui->plainTextLines->setPlainText(text);
+        }
+        else {
+                QString code = ui->plainTextCode->toPlainText();
+                QString text;
+                for (int i = 0; i < code.count("\n") + 1; i++) {
+                const InstructionList::Instruction& instr = instructionList.getObjectByLine(i);
+                if (instr.address == -1) {
+                    text = text % convertToQString(i, 5) % ":----\n";
+                }
+                else {
+                    text = text % convertToQString(i, 5)
+                           % ":" % QString("%1").arg(instr.address, 4, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte1, 2, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte2, 2, 16, QChar('0'))
+                           % ":" % QString("%1").arg(instr.byte3, 2, 16, QChar('0'))
+                           % "\n";
+                }
+                }
+                ui->plainTextLines->setPlainText(text);
+        }
+    }
+    else {
+        if (instructionList.isEmpty()) {
+                QString code = ui->plainTextCode->toPlainText();
+                QString text;
+                for (int i = 0; i < code.count("\n") + 1; i++) {
+                text = text % convertToQString(i, 5) % "\n";
+                }
+                ui->plainTextLines->setPlainText(text);
+        }
+        else {
+                QString code = ui->plainTextCode->toPlainText();
+                QString text;
 
-
-
+                for (int i = 0; i < code.count("\n") + 1; i++) {
+                if (instructionList.getObjectByLine(i).address == -1) {
+                    text = text % convertToQString(i, 5) % ":----\n";
+                }
+                else {
+                    text = text % convertToQString(i, 5) % ":" % QString("%1").arg(instructionList.getObjectByLine(i).address, 4, 16, QChar('0')) % "\n";
+                }
+                }
+                ui->plainTextLines->setPlainText(text);
+        }
+    }
+    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
+}
 void MainWindow::updateMemoryTab(){
     if(simpleMemory){
         for (int i = 0; i < 20; ++i) {
@@ -254,119 +312,6 @@ void MainWindow::updateMemoryTab(){
         ui->plainTextMemory->setPlainText(text);
         ui->plainTextMemory->verticalScrollBar()->setValue(scrollPosition);
     }
-}
-QList<int> pendingCells;
-void MainWindow::addCellToPending(int address){
-    pendingCells.append(address);
-}
-void MainWindow::updateMemoryCell(int address) {
-    if(simpleMemory){
-        for (int i = 0; i < 20; ++i) {
-            QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
-            item->setTextAlignment(Qt::AlignCenter);
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-            ui->tableWidgetSM->setItem(i,0,item);
-            item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8>(Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
-            item->setTextAlignment(Qt::AlignCenter);
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-            ui->tableWidgetSM->setItem(i,1,item);
-        }
-    }else{
-        int line = std::floor(address / 16)+1;
-        int position = (address % 16) * 3 + 4;
-        QTextCursor cursor(ui->plainTextMemory->document());
-        cursor.setPosition(line * 55 + position);
-        cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
-        cursor.insertText(QString("%1").arg(Memory[address], 2, 16, QChar('0')));
-        if(address >= 0xFB00 && address <= 0xFF37){
-            int relativeAddress = address-0xFB00;
-            int line = std::floor(relativeAddress / 54);
-            int position = (relativeAddress % 54);
-            if(ui->comboBoxDisplayStatus->currentIndex() == 1){
-                QTextCursor cursord2(plainTextDisplay->document());
-                cursord2.setPosition(line * 55 + position);
-                cursord2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-                ushort charValue = Memory[address];
-                if (charValue < 32 || charValue == 127) {
-                    cursord2.insertText(" ");
-                } else {
-                    cursord2.insertText(QChar(static_cast<ushort>(charValue)));
-                }
-            } else{
-                QTextCursor cursord(ui->plainTextDisplay->document());
-                cursord.setPosition(line * 55 + position);
-                cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
-                ushort charValue = Memory[address];
-                if (charValue < 32 || charValue == 127) {
-                    cursord.insertText(" ");
-                } else {
-                    cursord.insertText(QChar(static_cast<ushort>(charValue)));
-                }
-            }
-        }
-        if(address == linesMarkAddress){
-            updateSelectionsLines();
-        }
-        if(address == memoryEditAddress){
-            updateSelectionsMemoryEdit(address);
-        }
-    }
-}
-void MainWindow::updateLinesBox(){
-    if (ui->checkBoxAdvancedInfo->isChecked()) {
-        if (instructionList.isEmpty()) {
-            QString code = ui->plainTextCode->toPlainText();
-            QString text;
-            for (int i = 0; i < code.count("\n") + 1; i++) {
-                text = text + convertToQString(i, 5) + "\n";
-            }
-            ui->plainTextLines->setPlainText(text);
-        }
-        else {
-            QString code = ui->plainTextCode->toPlainText();
-            QString text;
-            for (int i = 0; i < code.count("\n") + 1; i++) {
-                const InstructionList::Instruction& instr = instructionList.getObjectByLine(i);
-                if (instr.address == -1) {
-                    text = text % convertToQString(i, 5) % ":----\n";
-                }
-                else {
-                    text = text % convertToQString(i, 5)
-                           % ":" % QString("%1").arg(instr.address, 4, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instr.byte1, 2, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instr.byte2, 2, 16, QChar('0'))
-                           % ":" % QString("%1").arg(instr.byte3, 2, 16, QChar('0'))
-                           % "\n";
-                }
-            }
-            ui->plainTextLines->setPlainText(text);
-        }
-    }
-    else {
-        if (instructionList.isEmpty()) {
-            QString code = ui->plainTextCode->toPlainText();
-            QString text;
-            for (int i = 0; i < code.count("\n") + 1; i++) {
-                text = text % convertToQString(i, 5) % "\n";
-            }
-            ui->plainTextLines->setPlainText(text);
-        }
-        else {
-            QString code = ui->plainTextCode->toPlainText();
-            QString text;
-
-            for (int i = 0; i < code.count("\n") + 1; i++) {
-                if (instructionList.getObjectByLine(i).address == -1) {
-                    text = text % convertToQString(i, 5) % ":----\n";
-                }
-                else {
-                    text = text % convertToQString(i, 5) % ":" % QString("%1").arg(instructionList.getObjectByLine(i).address, 4, 16, QChar('0')) % "\n";
-                }
-            }
-            ui->plainTextLines->setPlainText(text);
-        }
-    }
-    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
 }
 
 void MainWindow::updateFlags(FlagToUpdate flag, bool value){
@@ -448,6 +393,72 @@ void MainWindow::updateElement(elementToUpdate element){
         throw;
     }
 }
+void MainWindow::addCellToPending(int address){
+    pendingCells.append(address);
+}
+void MainWindow::updateMemoryCell(int address) {
+    if(simpleMemory){
+        for (int i = 0; i < 20; ++i) {
+            QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
+            item->setTextAlignment(Qt::AlignCenter);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            ui->tableWidgetSM->setItem(i,0,item);
+            item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8>(Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
+            item->setTextAlignment(Qt::AlignCenter);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            ui->tableWidgetSM->setItem(i,1,item);
+        }
+    }else{
+        int line = std::floor(address / 16)+1;
+        int position = (address % 16) * 3 + 4;
+        QTextCursor cursor(ui->plainTextMemory->document());
+        cursor.setPosition(line * 55 + position);
+        cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+        cursor.insertText(QString("%1").arg(Memory[address], 2, 16, QChar('0')));
+        if(address >= 0xFB00 && address <= 0xFF37){
+            int relativeAddress = address-0xFB00;
+            int line = std::floor(relativeAddress / 54);
+            int position = (relativeAddress % 54);
+            if(ui->comboBoxDisplayStatus->currentIndex() == 1){
+                QTextCursor cursord2(plainTextDisplay->document());
+                cursord2.setPosition(line * 55 + position);
+                cursord2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
+                ushort charValue = Memory[address];
+                if (charValue < 32 || charValue == 127) {
+                    cursord2.insertText(" ");
+                } else {
+                    cursord2.insertText(QChar(static_cast<ushort>(charValue)));
+                }
+            } else{
+                QTextCursor cursord(ui->plainTextDisplay->document());
+                cursord.setPosition(line * 55 + position);
+                cursord.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 1);
+                ushort charValue = Memory[address];
+                if (charValue < 32 || charValue == 127) {
+                    cursord.insertText(" ");
+                } else {
+                    cursord.insertText(QChar(static_cast<ushort>(charValue)));
+                }
+            }
+        }
+        if(address == linesMarkAddress){
+            updateSelectionsLines();
+        }
+        if(address == memoryEditAddress){
+            updateSelectionsMemoryEdit(address);
+        }
+    }
+}
+void MainWindow::updatePending(){
+    for (auto it = pendingUpdateUMap.begin(); it != pendingUpdateUMap.end(); ) {
+        it->first->setText(it->second);
+        it = pendingUpdateUMap.erase(it);
+    }
+    for (int i = 0; i < pendingCells.length(); ++i) {
+        updateMemoryCell(pendingCells[i]);
+    }
+    pendingCells.clear();
+}
 
 void MainWindow::PrintConsole(const QString& text, int type){
     QString consoleText;
@@ -468,7 +479,6 @@ void MainWindow::PrintConsole(const QString& text, int type){
 void MainWindow::Err(const QString& text){
     PrintConsole("Ln:" + QString::number(currentCompilerLine) + " " + text, 0);
 }
-
 
 void MainWindow::updateSelectionsLines(int line){ //-1 current
     if(line != -1) linesMarkLine = line;
@@ -646,46 +656,7 @@ void MainWindow::clearSelection(int clearWhat) {
 
 }
 
-void MainWindow::resetEmulator(bool failedCompile){
-    if (running){
-        stopExecution();
-    }
-    waitCycles = 0;
-    cycleNum = 1;
-    pendingUpdateUMap.clear();
-    pendingCells.clear();
-    aReg = 0;
-    bReg = 0;
-    xRegister = 0;
-    PC = 0;
-    SP = 0xF000;
-    flags = 0xC0;
-    lastInput = -1;
-    std::memcpy(Memory, backupMemory, sizeof(backupMemory));
-    updateMemoryTab();
-    updateElement(regPC);
-    updateElement(regSP);
-    updateElement(regA);
-    updateElement(regB);
-    updateElement(regX);
-    ui->lineEditHValue->setText(QString::number(flags & 0x30));
-    ui->lineEditIValue->setText(QString::number(flags & 0x20));
-    ui->lineEditNValue->setText(QString::number(flags & 0x10));
-    ui->lineEditZValue->setText(QString::number(flags & 0x04));
-    ui->lineEditVValue->setText(QString::number(flags & 0x02));
-    ui->lineEditCValue->setText(QString::number(flags & 0x01));
-    updatePending();
-    ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
-    plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
-    if(!failedCompile){
-        updateSelectionsRunTime();
-        updateSelectionsLines();
-        updateSelectionsMemoryEdit();
-
-    }
-}
-
-void MainWindow::handleVerticalScrollBarValueChanged(int value){
+void MainWindow::handleCodeVerticalScrollBarValueChanged(int value){
     ui->plainTextLines->verticalScrollBar()->setValue(value);
 }
 void MainWindow::resizeEvent(QResizeEvent* event){
@@ -752,131 +723,51 @@ void MainWindow::on_plainTextCode_textChanged(){
         setCompileStatus(false);
     }
 }
-void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
-    if(ui->lineEditBin->text() != "X"){
-        bool ok;
-        int number = arg1.toInt(&ok, 2);
-        if (ok) {
-            ui->lineEditDec->setText(QString::number(number));
-            ui->lineEditOct->setText(QString::number(number, 8));
-            ui->lineEditHex->setText(QString::number(number, 16));
-        } else {
-            ui->lineEditDec->setText("X");
-            ui->lineEditOct->setText("X");
-            ui->lineEditHex->setText("X");
-        }
-    }
-}
-void MainWindow::on_lineEditOct_textChanged(const QString &arg1){
-    if(ui->lineEditOct->text() != "X"){
-        bool ok;
-        int number = arg1.toInt(&ok, 8);
-
-        if (ok) {
-            ui->lineEditDec->setText(QString::number(number));
-            ui->lineEditBin->setText(QString::number(number, 2));
-            ui->lineEditHex->setText(QString::number(number, 16));
-        } else {
-            ui->lineEditDec->setText("X");
-            ui->lineEditBin->setText("X");
-            ui->lineEditHex->setText("X");
-        }
-    }
-
-}
-void MainWindow::on_lineEditHex_textChanged(const QString &arg1){
-    if(ui->lineEditHex->text() != "X"){
-        bool ok;
-        int number = arg1.toInt(&ok, 16);
-        if (ok) {
-            ui->lineEditDec->setText(QString::number(number));
-            ui->lineEditBin->setText(QString::number(number, 2));
-            ui->lineEditOct->setText(QString::number(number, 8));
-        } else {
-            ui->lineEditDec->setText("X");
-            ui->lineEditBin->setText("X");
-            ui->lineEditOct->setText("X");
-        }
-    }
-
-}
-void MainWindow::on_lineEditDec_textChanged(const QString &arg1){
-    if(ui->lineEditDec->text() != "X"){
-        bool ok;
-        int number = arg1.toInt(&ok);
-        if(ok){
-            ui->lineEditBin->setText(QString::number(number, 2));
-            ui->lineEditOct->setText(QString::number(number, 8));
-            ui->lineEditHex->setText(QString::number(number, 16));
-
-        }else{
-            ui->lineEditBin->setText("X");
-            ui->lineEditOct->setText("X");
-            ui->lineEditHex->setText("X");
-        }
-    }
-
-}
-
-void MainWindow::handleLinesScroll(){
-    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
-}
-void MainWindow::handleDisplayScrollVertical(){
-    ui->plainTextDisplay->verticalScrollBar()->setValue(0);
-}
-void MainWindow::handleDisplayScrollHorizontal(){
-    ui->plainTextDisplay->horizontalScrollBar()->setValue(0);
-}
-void MainWindow::handleMemoryScrollHorizontal(){
-    ui->plainTextMemory->horizontalScrollBar()->setValue(0);
-}
-
-
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->plainTextDisplay) {
         if(ui->comboBoxDisplayStatus->currentIndex() == 0){
-        if (event->type() == QEvent::KeyPress) {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent->key() <= Qt::Key_AsciiTilde) {
-                char asciiValue = static_cast<uint8_t>(keyEvent->key());
-                Memory[0xFFF0] = asciiValue;
-                lastInput = asciiValue;
-                updateMemoryCell(0xFFF0);
+            if (event->type() == QEvent::KeyPress) {
+                QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+                if (keyEvent->key() <= Qt::Key_AsciiTilde) {
+                    char asciiValue = static_cast<uint8_t>(keyEvent->key());
+                    Memory[0xFFF0] = asciiValue;
+                    lastInput = asciiValue;
+                    updateMemoryCell(0xFFF0);
+                }
+                return true;
+            } else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick) {
+                QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+                if (mouseEvent->button() == Qt::LeftButton) {
+                    Memory[0xFFF1] = 1;
+                    updateMemoryCell(0xFFF1);
+                } else if (mouseEvent->button() == Qt::RightButton) {
+                    Memory[0xFFF1] = 2;
+                    updateMemoryCell(0xFFF1);
+                } else if (mouseEvent->button() == Qt::MiddleButton) {
+                    Memory[0xFFF1] = 3;
+                    updateMemoryCell(0xFFF1);
+                }
+                return true;
+            } else if (event->type() == QMouseEvent::MouseButtonRelease) {
+                QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+                if (mouseEvent->button() == Qt::LeftButton) {
+                    Memory[0xFFF1] = 4;
+                    updateMemoryCell(0xFFF1);
+                } else if (mouseEvent->button() == Qt::RightButton) {
+                    Memory[0xFFF1] = 5;
+                    updateMemoryCell(0xFFF1);
+                } else if (mouseEvent->button() == Qt::MiddleButton) {
+                    Memory[0xFFF1] = 6;
+                    updateMemoryCell(0xFFF1);
+                }
+                return true;
+            }else if(event->type() == QEvent::FocusIn){
+                ui->plainTextDisplay->setStyleSheet("QPlainTextEdit:focus { border: 2px solid blue; }");
+            } else if(event->type() == QEvent::FocusOut){
+                ui->plainTextDisplay->setStyleSheet("");
             }
-            return true;
-        } else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick) {
-            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-            if (mouseEvent->button() == Qt::LeftButton) {
-                Memory[0xFFF1] = 1;
-                updateMemoryCell(0xFFF1);
-            } else if (mouseEvent->button() == Qt::RightButton) {
-                Memory[0xFFF1] = 2;
-                updateMemoryCell(0xFFF1);
-            } else if (mouseEvent->button() == Qt::MiddleButton) {
-                Memory[0xFFF1] = 3;
-                updateMemoryCell(0xFFF1);
-            }
-            return true;
-        } else if (event->type() == QMouseEvent::MouseButtonRelease) {
-            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-            if (mouseEvent->button() == Qt::LeftButton) {
-                Memory[0xFFF1] = 4;
-                updateMemoryCell(0xFFF1);
-            } else if (mouseEvent->button() == Qt::RightButton) {
-                Memory[0xFFF1] = 5;
-                updateMemoryCell(0xFFF1);
-            } else if (mouseEvent->button() == Qt::MiddleButton) {
-                Memory[0xFFF1] = 6;
-                updateMemoryCell(0xFFF1);
-            }
-            return true;
-        }else if(event->type() == QEvent::FocusIn){
-            ui->plainTextDisplay->setStyleSheet("QPlainTextEdit:focus { border: 2px solid blue; }");
-        } else if(event->type() == QEvent::FocusOut){
-            ui->plainTextDisplay->setStyleSheet("");
-        }
         }
     }
     else if (obj == ui->plainTextLines){
@@ -957,7 +848,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             plainTextDisplay->setStyleSheet("");
         }
     }else if (obj == ui->plainTextMemory){
-         if(event->type() == QEvent::KeyPress){
+        if(event->type() == QEvent::KeyPress){
             if(writeToMemory){
                 QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
 
@@ -1005,387 +896,56 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
     }
     return QMainWindow::eventFilter(obj, event);
 }
-int MainWindow::changeFontSize(int delta)
-{
-    QFont font = ui->plainTextCode->font();
-    int newSize = font.pointSize() + delta;
-    if (newSize > 5 && newSize < 50)
-    {
-        font.setPointSize(newSize);
-        ui->plainTextCode->setFont(font);
-    }
-    return newSize;
+void MainWindow::handleLinesScroll(){
+    ui->plainTextLines->verticalScrollBar()->setValue(ui->plainTextCode->verticalScrollBar()->value());
 }
-void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
-{
-    compilerVersionIndex = index;
-    setCompileStatus(false);
-    resetEmulator(true);
-    updateSelectionsMemoryEdit();
+void MainWindow::handleDisplayScrollVertical(){
+    ui->plainTextDisplay->verticalScrollBar()->setValue(0);
 }
-bool MainWindow::on_buttonCompile_clicked()
-{
-    ui->plainTextConsole->clear();
-    if(!writeToMemory){
-        bool ok = false;
-        ok = compileMix(compilerVersionIndex);
-        resetEmulator(!ok);
-        return ok;
-    }else{
-        bool ok;
-        QString text = QInputDialog::getText(this, "Input Dialog", "Enter the decimal address where the program beggins. Data before that will be written with .BYTE.", QLineEdit::Normal, QString(), &ok);
-        if (ok) {
-            bool iok;
-            int number = text.toInt(&iok);
-            if(iok && number >= 0 && number <= 0xFFFF){
-                bool cok = reverseCompile(compilerVersionIndex, number);
-                resetEmulator(!cok);
-                return cok;
-            }else{
-                Err("Invalid address");
-                return false;
-            }
-        } else {
-            PrintConsole("Decompile canceled",1);
-            return false;
-        }
-    }
+void MainWindow::handleDisplayScrollHorizontal(){
+    ui->plainTextDisplay->horizontalScrollBar()->setValue(0);
+}
+void MainWindow::handleMemoryScrollHorizontal(){
+    ui->plainTextMemory->horizontalScrollBar()->setValue(0);
+}
 
-}
-void MainWindow::on_buttonLoad_clicked()
-{
-    if(!writeToMemory){
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt);;All Files (*)"));
-
-        if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QTextStream in(&file);
-                ui->plainTextCode->setPlainText(in.readAll());
-                file.close();
-            } else {
-              PrintConsole("Error loading script",0);
-            }
-        }
-    }else{
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Binary Files (*.bin);;All Files (*)"));
-
-        if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            if (file.open(QIODevice::ReadOnly)) {
-              QByteArray byteArray = file.readAll();
-              if (byteArray.size() == sizeof(Memory)) {
-                    stopExecution();
-                    if(compiled){
-                        setCompileStatus(false);
-                    }
-                    std::memcpy(Memory, byteArray.constData(), sizeof(Memory));
-                    std::memcpy(backupMemory, Memory, sizeof(Memory));
-                    updateMemoryTab();
-                    resetEmulator(false);
-              } else {
-                    PrintConsole("Error: File size doesn't match Memory size", 0);
-              }
-              file.close();
-            } else {
-              PrintConsole("Error loading memory", 0);
-            }
-        }
-    }
-}
-void MainWindow::on_buttonSave_clicked()
-{
-    if(!writeToMemory){
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text Files (*.txt);;All Files (*)"));
-        if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                QTextStream out(&file);
-                out << ui->plainTextCode->toPlainText();
-                file.close();
-            } else {
-                PrintConsole("Error saving script",0);
-            }
-        }
-    }else{
-        QByteArray byteArray(reinterpret_cast<char*>(Memory), sizeof(Memory));
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Binary Files (*.bin);;All Files (*)"));
-
-        if (!filePath.isEmpty()) {
-            QFile file(filePath);
-            if (file.open(QIODevice::WriteOnly)) {
-                file.write(byteArray);
-                file.close();
-            } else {
-                PrintConsole("Error saving memory", 0);
-            }
-        }
-    }
-}
-void MainWindow::on_buttonReset_clicked()
-{
-    resetEmulator(false);
-}
-void MainWindow::on_buttonStep_clicked()
-{
+void MainWindow::resetEmulator(bool failedCompile){
     if (running){
         stopExecution();
     }
-    bool ok = true;;
-    if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
-    if(ok){
-        executeInstruction();
-        updatePending();
-        updateSelectionsRunTime();
-    }
-}
-void MainWindow::on_buttonRunStop_clicked()
-{
-    if (running){
-        stopExecution();
-    }else {
-        bool ok = true;
-        if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
-        if(ok){
-            if(ui->checkBoxAutoReset->isChecked()){
-                if (Memory[PC] == 0){
-                    resetEmulator(false);
-                }
-            }
-            startExecution();
-        }
-    }
-}
-void MainWindow::on_comboBoxSpeedSelector_activated(int index)
-{
-    if (running){
-        stopExecution();
-    }
-    if(index != 11){
-        executionSpeed = std::pow(2, index);
-        ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(executionSpeed));
-        executionSpeed = std::ceil(1000.0 / executionSpeed);
-    } else{
-        executionSpeed = 0;
-        ui->labelRunningIndicatior->setText("Operation/second: full speed");
-    }
-
-}
-
-void MainWindow::on_checkBoxHexRegs_clicked(bool checked)
-{
-    hexReg = checked;
+    waitCycles = 0;
+    cycleNum = 1;
+    pendingUpdateUMap.clear();
+    pendingCells.clear();
+    aReg = 0;
+    bReg = 0;
+    xRegister = 0;
+    SP = 0xF000;
+    flags = 0xC0;
+    lastInput = -1;
+    std::memcpy(Memory, backupMemory, sizeof(backupMemory));
+    PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
+    updateMemoryTab();
     updateElement(regPC);
     updateElement(regSP);
     updateElement(regA);
     updateElement(regB);
     updateElement(regX);
-}
-void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
-{
-    if (checked) {
-        ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 181, ui->plainTextLines->height());
-        ui->lineCodeLinesSeperator->setGeometry(190, ui->lineCodeLinesSeperator->y(), 1, 16);
-        updateLinesBox();
-    }
-    else {
-        ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 101, ui->plainTextLines->height());
-        ui->lineCodeLinesSeperator->setGeometry(110, ui->lineCodeLinesSeperator->y(), 1, 16);
-        updateLinesBox();
-    }
-    updateSelectionsLines();
-    updateSelectionsRunTime();
-    handleMainWindowSizeChanged(MainWindow::size());
-
-}
-void MainWindow::on_checkBoxCompileOnRun_clicked(bool checked)
-{
-    compileOnRun = checked;
-}
-void MainWindow::on_spinBoxLow_valueChanged(int arg1)
-{
-    autoScrollDownLimit = arg1;
-}
-void MainWindow::on_spinBoxUp_valueChanged(int arg1)
-{
-    autoScrollUpLimit = arg1;
-}
-void MainWindow::on_checkBoxWriteMemory_clicked(bool checked)
-{
-    if(checked){
-        ui->buttonSwitchWrite->setVisible(true);
-        ui->labelWritingMode->setVisible(true);
-        ui->buttonSwitchWrite->setEnabled(true);
-        ui->labelWritingMode->setEnabled(true);
-    }else{
-        ui->buttonSwitchWrite->setVisible(false);
-        ui->labelWritingMode->setVisible(false);
-        ui->buttonSwitchWrite->setEnabled(false);
-        ui->labelWritingMode->setEnabled(false);
-        writeToMemory = false;
-        ui->plainTextCode->setReadOnly(false);
-        //ui->buttonCompile->setEnabled(true);
-        ui->checkBoxCompileOnRun->setEnabled(true);
-        compileOnRun = true;
-        ui->labelWritingMode->setText("Code");
-        clearSelection(3);
-        ui->buttonLoad->setText("Load Code");
-        ui->buttonSave->setText("Save Code");
-        ui->buttonCompile->setText("Assemble");
-    }
-}
-void MainWindow::on_buttonSwitchWrite_clicked()
-{
-    if(writeToMemory){
-        writeToMemory = false;
-        ui->plainTextCode->setReadOnly(false);
-        //ui->buttonCompile->setEnabled(true);
-        ui->checkBoxCompileOnRun->setEnabled(true);
-        compileOnRun = true;
-        ui->labelWritingMode->setText("Code");
-        clearSelection(3);
-        ui->buttonLoad->setText("Load Code");
-        ui->buttonSave->setText("Save Code");
-        ui->buttonCompile->setText("Assemble");
-    }else{
-        writeToMemory = true;
-        ui->plainTextCode->setReadOnly(true);
-        //ui->buttonCompile->setEnabled(false);
-        ui->checkBoxCompileOnRun->setEnabled(false);
-        compileOnRun = false;
-        ui->labelWritingMode->setText("Memory");
-        updateSelectionsMemoryEdit();
-        ui->buttonLoad->setText("Load Memory");
-        ui->buttonSave->setText("Save Memory");
-        ui->buttonCompile->setText("Disassemble");
-
-    }
-}
-void MainWindow::on_comboBoxBreakWhen_currentIndexChanged(int index)
-{
-    ui->spinBoxBreakAt->setValue(0);
-    ui->spinBoxBreakIs->setValue(0);
-    if(index == 0){
-        breakEnabled = false;
-    }else{
-        breakEnabled = true;
-    }
-    if(index == 13){
-        ui->labelAt->setVisible(true);
-        ui->spinBoxBreakAt->setVisible(true);
-    }else{
-        ui->labelAt->setVisible(false);
-        ui->spinBoxBreakAt->setVisible(false);
-    }
-    switch(ui->comboBoxBreakWhen->currentIndex()){
-    case 1:
-        ui->spinBoxBreakIs->setMaximum(65535);
-        break;
-    case 2:
-        ui->spinBoxBreakIs->setMaximum(0xFFFF);
-        break;
-    case 3:
-        ui->spinBoxBreakIs->setMaximum(0xFFFF);
-        break;
-    case 4:
-        ui->spinBoxBreakIs->setMaximum(0xFFFF);
-        break;
-    case 5:
-        ui->spinBoxBreakIs->setMaximum(0xFF);
-        break;
-    case 6:
-        ui->spinBoxBreakIs->setMaximum(0xFF);
-        break;
-    case 7:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 8:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 9:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 10:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 11:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 12:
-        ui->spinBoxBreakIs->setMaximum(1);
-        break;
-    case 13:
-        ui->spinBoxBreakIs->setMaximum(0xFF);
-        break;
-
-
-    }
-}
-void MainWindow::on_checkBoxSimpleMemory_clicked(bool checked)
-{
-    simpleMemory = checked;
-    updateMemoryTab();
-    if(checked){
-        ui->groupBoxSimpleMemory->setVisible(true);
-        ui->groupBoxSimpleMemory->setEnabled(true);
-        ui->plainTextMemory->setVisible(false);
-        ui->plainTextMemory->setEnabled(false);
-    }else{
-        ui->plainTextMemory->setVisible(true);
-        ui->plainTextMemory->setEnabled(true);
-        ui->groupBoxSimpleMemory->setVisible(false);
-        ui->groupBoxSimpleMemory->setEnabled(false);
-        updateSelectionsMemoryEdit();
-        updateSelectionsLines();
-        updateSelectionsRunTime();
-    }
-}
-void MainWindow::on_spinBox_valueChanged(int arg1)
-{
-    currentSMScroll = arg1;
-    updateMemoryTab();
-}
-void MainWindow::on_checkBoxAutoReset_2_clicked(bool checked)
-{
-    useCyclesPerSecond = checked;
-    if(!useCyclesPerSecond){
-        ui->labelRunningCycleNum->setVisible(false);
-
-    }else if(running){
-        ui->labelRunningCycleNum->setVisible(true);
-    }
-    waitCycles = 0;
-    cycleNum = 0;
-}
-void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
-{
-    if(index == 1){
-        externalDisplay->show();
-    } else{
-        externalDisplay->hide();
-    }
-}
-
-
-void MainWindow::updatePending(){
-    for (auto it = pendingUpdateUMap.begin(); it != pendingUpdateUMap.end(); ) {
-        it->first->setText(it->second);
-        it = pendingUpdateUMap.erase(it);
-    }
-    for (int i = 0; i < pendingCells.length(); ++i) {
-        updateMemoryCell(pendingCells[i]);
-    }
-    pendingCells.clear();
-}
-void MainWindow::stopExecution(){
-    running = false;
-    waitCycles = 0;
-    cycleNum = 1;
-    executionTimer->stop();
-    ui->labelRunningIndicatior->setVisible(false);
-    ui->labelRunningCycleNum->setVisible(false);
+    ui->lineEditHValue->setText(QString::number(flags & 0x30));
+    ui->lineEditIValue->setText(QString::number(flags & 0x20));
+    ui->lineEditNValue->setText(QString::number(flags & 0x10));
+    ui->lineEditZValue->setText(QString::number(flags & 0x04));
+    ui->lineEditVValue->setText(QString::number(flags & 0x02));
+    ui->lineEditCValue->setText(QString::number(flags & 0x01));
     updatePending();
-    updateSelectionsRunTime();
+    ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
+    if(!failedCompile){
+        updateSelectionsRunTime();
+        updateSelectionsLines();
+        updateSelectionsMemoryEdit();
+
+    }
 }
 void MainWindow::startExecution(){
     running = true;
@@ -1398,7 +958,16 @@ void MainWindow::startExecution(){
         executionTimer->start(executionSpeed);
     }
 }
-
+void MainWindow::stopExecution(){
+    running = false;
+    waitCycles = 0;
+    cycleNum = 1;
+    executionTimer->stop();
+    ui->labelRunningIndicatior->setVisible(false);
+    ui->labelRunningCycleNum->setVisible(false);
+    updatePending();
+    updateSelectionsRunTime();
+}
 void MainWindow::executeLoop(){
     if(useCyclesPerSecond){
         if(waitCycles > 0){
@@ -1557,8 +1126,6 @@ void MainWindow::executeLoop(){
 
     }
 }
-int oldX = 0;
-int oldY = 0;
 int MainWindow::executeInstruction(){
     int cycleCount = 1;
     uint8_t uInt8 = 0;
@@ -1580,11 +1147,11 @@ int MainWindow::executeInstruction(){
             int x = localMousePos.x() / charWidth;
             int y = localMousePos.y() / charHeight;
             if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
-                oldX = x;
-                oldY = y;
+                oldCursorX = x;
+                oldCursorY = y;
             } else{
-                x = oldX;
-                y = oldY;
+                x = oldCursorX;
+                y = oldCursorY;
             }
             Memory[0xFFF2] = x;
             Memory[0xFFF3] = y;
@@ -1593,31 +1160,31 @@ int MainWindow::executeInstruction(){
         }
     }else{
         if (plainTextDisplay->hasFocus()) {
-        QPoint position = QCursor::pos();
-        QPoint localMousePos = plainTextDisplay->mapFromGlobal(position);
-        localMousePos.setX(localMousePos.x() - 3);
-        localMousePos.setY(localMousePos.y() - 5);
-        QFontMetrics fontMetrics(plainTextDisplay->font());
-        int charWidth = fontMetrics.averageCharWidth();
-        int charHeight = fontMetrics.height();
-        int x = localMousePos.x() / charWidth;
-        int y = localMousePos.y() / charHeight;
-        if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
-                oldX = x;
-                oldY = y;
-        } else{
-                x = oldX;
-                y = oldY;
-        }
-        Memory[0xFFF2] = x;
-        Memory[0xFFF3] = y;
-        updateMemoryCell(0xFFF2);
-        updateMemoryCell(0xFFF3);
+            QPoint position = QCursor::pos();
+            QPoint localMousePos = plainTextDisplay->mapFromGlobal(position);
+            localMousePos.setX(localMousePos.x() - 3);
+            localMousePos.setY(localMousePos.y() - 5);
+            QFontMetrics fontMetrics(plainTextDisplay->font());
+            int charWidth = fontMetrics.averageCharWidth();
+            int charHeight = fontMetrics.height();
+            int x = localMousePos.x() / charWidth;
+            int y = localMousePos.y() / charHeight;
+            if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
+                oldCursorX = x;
+                oldCursorY = y;
+            } else{
+                x = oldCursorX;
+                y = oldCursorY;
+            }
+            Memory[0xFFF2] = x;
+            Memory[0xFFF3] = y;
+            updateMemoryCell(0xFFF2);
+            updateMemoryCell(0xFFF3);
         }
     }
 
     //if (!indexRegister) {
-        //curIndReg = &yRegister;
+    //curIndReg = &yRegister;
     //}
     switch(Memory[PC]){
     case 0x00:
@@ -4079,28 +3646,422 @@ int MainWindow::executeInstruction(){
     return cycleCount;
 }
 
-void MainWindow::showInstructionInfoWindow(QString instruction, int version)
+bool MainWindow::on_buttonCompile_clicked()
 {
-    QTreeWidgetItem item_;
-    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); ++i) {
-        QTreeWidgetItem* item = ui->treeWidget->topLevelItem(i);
-        if (item && item->text(0) == instruction) {
-            item_= *item;
-            break;
+    ui->plainTextConsole->clear();
+    if(!writeToMemory){
+        bool ok = false;
+        ok = compileMix(compilerVersionIndex);
+        resetEmulator(!ok);
+        return ok;
+    }else{
+        bool ok;
+        QString text = QInputDialog::getText(this, "Input Dialog", "Enter the decimal address where the program beggins. Data before that will be written with .BYTE.", QLineEdit::Normal, QString(), &ok);
+        if (ok) {
+            bool iok;
+            int number = text.toInt(&iok);
+            if(iok && number >= 0 && number <= 0xFFFF){
+                bool cok = reverseCompile(compilerVersionIndex, number);
+                resetEmulator(!cok);
+                return cok;
+            }else{
+                Err("Invalid address");
+                return false;
+            }
+        } else {
+            PrintConsole("Decompile canceled",1);
+            return false;
         }
     }
-    InstructionInfoDialog dialog(item_ , version ,this);
-    dialog.exec();
+
+}
+void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
+{
+    compilerVersionIndex = index;
+    setCompileStatus(false);
+    resetEmulator(true);
+    updateSelectionsMemoryEdit();
+}
+void MainWindow::on_buttonLoad_clicked()
+{
+    if(!writeToMemory){
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Text Files (*.txt);;All Files (*)"));
+
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(&file);
+                ui->plainTextCode->setPlainText(in.readAll());
+                file.close();
+            } else {
+              PrintConsole("Error loading script",0);
+            }
+        }
+    }else{
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("Binary Files (*.bin);;All Files (*)"));
+
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::ReadOnly)) {
+              QByteArray byteArray = file.readAll();
+              if (byteArray.size() == sizeof(Memory)) {
+                    stopExecution();
+                    if(compiled){
+                        setCompileStatus(false);
+                    }
+                    std::memcpy(Memory, byteArray.constData(), sizeof(Memory));
+                    std::memcpy(backupMemory, Memory, sizeof(Memory));
+                    updateMemoryTab();
+                    resetEmulator(false);
+              } else {
+                    PrintConsole("Error: File size doesn't match Memory size", 0);
+              }
+              file.close();
+            } else {
+              PrintConsole("Error loading memory", 0);
+            }
+        }
+    }
+}
+void MainWindow::on_buttonSave_clicked()
+{
+    if(!writeToMemory){
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Text Files (*.txt);;All Files (*)"));
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                QTextStream out(&file);
+                out << ui->plainTextCode->toPlainText();
+                file.close();
+            } else {
+                PrintConsole("Error saving script",0);
+            }
+        }
+    }else{
+        QByteArray byteArray(reinterpret_cast<char*>(Memory), sizeof(Memory));
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Save File"), "", tr("Binary Files (*.bin);;All Files (*)"));
+
+        if (!filePath.isEmpty()) {
+            QFile file(filePath);
+            if (file.open(QIODevice::WriteOnly)) {
+                file.write(byteArray);
+                file.close();
+            } else {
+                PrintConsole("Error saving memory", 0);
+            }
+        }
+    }
+}
+void MainWindow::on_buttonReset_clicked()
+{
+    resetEmulator(false);
+}
+void MainWindow::on_buttonStep_clicked()
+{
+    if (running){
+        stopExecution();
+    }
+    bool ok = true;;
+    if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
+    if(ok){
+        executeInstruction();
+        updatePending();
+        updateSelectionsRunTime();
+    }
+}
+void MainWindow::on_buttonRunStop_clicked()
+{
+    if (running){
+        stopExecution();
+    }else {
+        bool ok = true;
+        if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
+        if(ok){
+            if(ui->checkBoxAutoReset->isChecked()){
+                if (Memory[PC] == 0){
+                    resetEmulator(false);
+                }
+            }
+            startExecution();
+        }
+    }
+}
+void MainWindow::on_comboBoxSpeedSelector_activated(int index)
+{
+    if (running){
+        stopExecution();
+    }
+    if(index != 11){
+        executionSpeed = std::pow(2, index);
+        ui->labelRunningIndicatior->setText("Operation/second: "+ QString::number(executionSpeed));
+        executionSpeed = std::ceil(1000.0 / executionSpeed);
+    } else{
+        executionSpeed = 0;
+        ui->labelRunningIndicatior->setText("Operation/second: full speed");
+    }
+
 }
 
-void MainWindow::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column)
+void MainWindow::on_checkBoxHexRegs_clicked(bool checked)
 {
-    int version = 6800;
-    if(item->foreground(0) == Qt::red){
-        qDebug() << "m6803 specific";
-        version = 6803;
-    }
-    InstructionInfoDialog dialog(*item, version ,this);
-    dialog.exec();
+    hexReg = checked;
+    updateElement(regPC);
+    updateElement(regSP);
+    updateElement(regA);
+    updateElement(regB);
+    updateElement(regX);
 }
+void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
+{
+    if (checked) {
+        ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 181, ui->plainTextLines->height());
+        ui->lineCodeLinesSeperator->setGeometry(190, ui->lineCodeLinesSeperator->y(), 1, 16);
+        updateLinesBox();
+    }
+    else {
+        ui->plainTextLines->setGeometry(ui->plainTextLines->x(), ui->plainTextLines->y(), 101, ui->plainTextLines->height());
+        ui->lineCodeLinesSeperator->setGeometry(110, ui->lineCodeLinesSeperator->y(), 1, 16);
+        updateLinesBox();
+    }
+    updateSelectionsLines();
+    updateSelectionsRunTime();
+    handleMainWindowSizeChanged(MainWindow::size());
+
+}
+void MainWindow::on_checkBoxCompileOnRun_clicked(bool checked)
+{
+    compileOnRun = checked;
+}
+void MainWindow::on_spinBoxLow_valueChanged(int arg1)
+{
+    autoScrollDownLimit = arg1;
+}
+void MainWindow::on_spinBoxUp_valueChanged(int arg1)
+{
+    autoScrollUpLimit = arg1;
+}
+void MainWindow::on_checkBoxWriteMemory_clicked(bool checked)
+{
+    if(checked){
+        ui->buttonSwitchWrite->setVisible(true);
+        ui->labelWritingMode->setVisible(true);
+        ui->buttonSwitchWrite->setEnabled(true);
+        ui->labelWritingMode->setEnabled(true);
+    }else{
+        ui->buttonSwitchWrite->setVisible(false);
+        ui->labelWritingMode->setVisible(false);
+        ui->buttonSwitchWrite->setEnabled(false);
+        ui->labelWritingMode->setEnabled(false);
+        writeToMemory = false;
+        ui->plainTextCode->setReadOnly(false);
+        //ui->buttonCompile->setEnabled(true);
+        ui->checkBoxCompileOnRun->setEnabled(true);
+        compileOnRun = true;
+        ui->labelWritingMode->setText("Code");
+        clearSelection(3);
+        ui->buttonLoad->setText("Load Code");
+        ui->buttonSave->setText("Save Code");
+        ui->buttonCompile->setText("Assemble");
+    }
+}
+void MainWindow::on_buttonSwitchWrite_clicked()
+{
+    if(writeToMemory){
+        writeToMemory = false;
+        ui->plainTextCode->setReadOnly(false);
+        //ui->buttonCompile->setEnabled(true);
+        ui->checkBoxCompileOnRun->setEnabled(true);
+        compileOnRun = true;
+        ui->labelWritingMode->setText("Code");
+        clearSelection(3);
+        ui->buttonLoad->setText("Load Code");
+        ui->buttonSave->setText("Save Code");
+        ui->buttonCompile->setText("Assemble");
+    }else{
+        writeToMemory = true;
+        ui->plainTextCode->setReadOnly(true);
+        //ui->buttonCompile->setEnabled(false);
+        ui->checkBoxCompileOnRun->setEnabled(false);
+        compileOnRun = false;
+        ui->labelWritingMode->setText("Memory");
+        updateSelectionsMemoryEdit();
+        ui->buttonLoad->setText("Load Memory");
+        ui->buttonSave->setText("Save Memory");
+        ui->buttonCompile->setText("Disassemble");
+
+    }
+}
+void MainWindow::on_comboBoxBreakWhen_currentIndexChanged(int index)
+{
+    ui->spinBoxBreakAt->setValue(0);
+    ui->spinBoxBreakIs->setValue(0);
+    if(index == 0){
+        breakEnabled = false;
+    }else{
+        breakEnabled = true;
+    }
+    if(index == 13){
+        ui->labelAt->setVisible(true);
+        ui->spinBoxBreakAt->setVisible(true);
+    }else{
+        ui->labelAt->setVisible(false);
+        ui->spinBoxBreakAt->setVisible(false);
+    }
+    switch(ui->comboBoxBreakWhen->currentIndex()){
+    case 1:
+        ui->spinBoxBreakIs->setMaximum(65535);
+        break;
+    case 2:
+        ui->spinBoxBreakIs->setMaximum(0xFFFF);
+        break;
+    case 3:
+        ui->spinBoxBreakIs->setMaximum(0xFFFF);
+        break;
+    case 4:
+        ui->spinBoxBreakIs->setMaximum(0xFFFF);
+        break;
+    case 5:
+        ui->spinBoxBreakIs->setMaximum(0xFF);
+        break;
+    case 6:
+        ui->spinBoxBreakIs->setMaximum(0xFF);
+        break;
+    case 7:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 8:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 9:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 10:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 11:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 12:
+        ui->spinBoxBreakIs->setMaximum(1);
+        break;
+    case 13:
+        ui->spinBoxBreakIs->setMaximum(0xFF);
+        break;
+
+
+    }
+}
+void MainWindow::on_checkBoxSimpleMemory_clicked(bool checked)
+{
+    simpleMemory = checked;
+    updateMemoryTab();
+    if(checked){
+        ui->groupBoxSimpleMemory->setVisible(true);
+        ui->groupBoxSimpleMemory->setEnabled(true);
+        ui->plainTextMemory->setVisible(false);
+        ui->plainTextMemory->setEnabled(false);
+    }else{
+        ui->plainTextMemory->setVisible(true);
+        ui->plainTextMemory->setEnabled(true);
+        ui->groupBoxSimpleMemory->setVisible(false);
+        ui->groupBoxSimpleMemory->setEnabled(false);
+        updateSelectionsMemoryEdit();
+        updateSelectionsLines();
+        updateSelectionsRunTime();
+    }
+}
+void MainWindow::on_spinBox_valueChanged(int arg1)
+{
+    currentSMScroll = arg1;
+    updateMemoryTab();
+}
+void MainWindow::on_checkBoxAutoReset_2_clicked(bool checked)
+{
+    useCyclesPerSecond = checked;
+    if(!useCyclesPerSecond){
+        ui->labelRunningCycleNum->setVisible(false);
+
+    }else if(running){
+        ui->labelRunningCycleNum->setVisible(true);
+    }
+    waitCycles = 0;
+    cycleNum = 0;
+}
+void MainWindow::on_comboBoxDisplayStatus_currentIndexChanged(int index)
+{
+    if(index == 1){
+        externalDisplay->show();
+    } else{
+        externalDisplay->hide();
+    }
+}
+
+void MainWindow::on_lineEditBin_textChanged(const QString &arg1){
+    if(ui->lineEditBin->text() != "X"){
+        bool ok;
+        int number = arg1.toInt(&ok, 2);
+        if (ok) {
+            ui->lineEditDec->setText(QString::number(number));
+            ui->lineEditOct->setText(QString::number(number, 8));
+            ui->lineEditHex->setText(QString::number(number, 16));
+        } else {
+            ui->lineEditDec->setText("X");
+            ui->lineEditOct->setText("X");
+            ui->lineEditHex->setText("X");
+        }
+    }
+}
+void MainWindow::on_lineEditOct_textChanged(const QString &arg1){
+    if(ui->lineEditOct->text() != "X"){
+        bool ok;
+        int number = arg1.toInt(&ok, 8);
+
+        if (ok) {
+            ui->lineEditDec->setText(QString::number(number));
+            ui->lineEditBin->setText(QString::number(number, 2));
+            ui->lineEditHex->setText(QString::number(number, 16));
+        } else {
+            ui->lineEditDec->setText("X");
+            ui->lineEditBin->setText("X");
+            ui->lineEditHex->setText("X");
+        }
+    }
+
+}
+void MainWindow::on_lineEditHex_textChanged(const QString &arg1){
+    if(ui->lineEditHex->text() != "X"){
+        bool ok;
+        int number = arg1.toInt(&ok, 16);
+        if (ok) {
+            ui->lineEditDec->setText(QString::number(number));
+            ui->lineEditBin->setText(QString::number(number, 2));
+            ui->lineEditOct->setText(QString::number(number, 8));
+        } else {
+            ui->lineEditDec->setText("X");
+            ui->lineEditBin->setText("X");
+            ui->lineEditOct->setText("X");
+        }
+    }
+
+}
+void MainWindow::on_lineEditDec_textChanged(const QString &arg1){
+    if(ui->lineEditDec->text() != "X"){
+        bool ok;
+        int number = arg1.toInt(&ok);
+        if(ok){
+            ui->lineEditBin->setText(QString::number(number, 2));
+            ui->lineEditOct->setText(QString::number(number, 8));
+            ui->lineEditHex->setText(QString::number(number, 16));
+
+        }else{
+            ui->lineEditBin->setText("X");
+            ui->lineEditOct->setText("X");
+            ui->lineEditHex->setText("X");
+        }
+    }
+
+}
+
+
+
 

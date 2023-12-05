@@ -1,0 +1,42 @@
+IdNum[4chr] Izberljiv Obcutljiv Izbran AjeShortcut? Ime ú Shortcut
+úFúile
+ 0010 1 0 0 1 úNúewüF4
+ 0011 1 0 0 1 úOúpen ...      üF3
+ 0012 1 0 0 1 úSúaveüF2
+ 0000 1 0 0 0 $LINE
+ 0014 1 0 0 0 úCúhange directory
+ 0013 0 0 0 0 úPúrint ...
+ 0000 1 0 0 0 $LINE
+ 0001 1 0 0 1 úEúxitüAlt-X
+û
+úCúompile
+ 0050 1 0 0 1 úSúimulate           üCtrl-F9
+ 0057 1 0 0 1 úFúast executionüAlt-F9
+ 0051 1 0 0 1 úCúompileüF9
+ 0052 1 0 0 1 úTúraceüF8
+ 0000 1 0 0 0 $LINE
+ 0054 1 0 0 1 úCúhange memoryüF6
+ 0056 1 0 0 0 úSúimulation speed
+ 0000 1 0 0 0 $LINE
+ 0055 1 0 0 0 úRúeset
+û
+úOúptions
+ 0100 1 1 1 1 úIúnsertüInsert
+ 0102 1 1 1 0 úUúpper case characters
+ 0000 1 0 0 0 $LINE
+ 0101 1 1 0 1 úHúexadecimal outputüF7
+ 0103 1 1 1 0 úMúoving memory
+ 0104 1 1 0 0 úDúisplay registers during fast execution
+ 0105 1 1 0 0 Múeúmory cleaning
+ 0000 1 0 0 0 $LINE
+ 0106 1 1 1 0 úSúlovene Language
+û
+úHúelp
+ 0507 1 0 0 1 úAúboutüAlt-F1
+ 0508 1 0 0 1 úUúsing the editorüF1
+ 0000 1 0 0 0 $LINE
+ 0009 1 0 0 1 úWúord searchüCtrl-F1
+ 0000 1 0 0 0 $LINE
+ 0510 1 0 0 0 úMúore about program
+ 0511 1 0 0 1 úTúime      üAlt-U
+û

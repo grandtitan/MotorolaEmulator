@@ -68,7 +68,8 @@
      <enum>QPlainTextEdit::NoWrap</enum>
     </property>
     <property name="plainText">
-     <string/>
+     <string>	.org $100
+</string>
     </property>
     <property name="maximumBlockCount">
      <number>0</number>
@@ -3466,7 +3467,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>2</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -3868,9 +3869,9 @@ QPushButton:pressed{
      <widget class="QCheckBox" name="checkBoxWarn">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>158</width>
+        <x>120</x>
+        <y>10</y>
+        <width>121</width>
         <height>20</height>
        </rect>
       </property>
@@ -3884,9 +3885,9 @@ QPushButton:pressed{
      <widget class="QCheckBox" name="checkBoxDebug">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>50</y>
-        <width>158</width>
+        <x>250</x>
+        <y>10</y>
+        <width>101</width>
         <height>20</height>
        </rect>
       </property>
@@ -3901,7 +3902,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>80</y>
+        <y>40</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3914,7 +3915,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>100</y>
+        <y>60</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3930,7 +3931,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>120</y>
+        <y>80</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3946,7 +3947,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>240</y>
+        <y>200</y>
         <width>42</width>
         <height>25</height>
        </rect>
@@ -3965,7 +3966,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>270</y>
+        <y>230</y>
         <width>41</width>
         <height>25</height>
        </rect>
@@ -3984,7 +3985,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>240</y>
+        <y>200</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -3997,7 +3998,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>270</y>
+        <y>230</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -4010,7 +4011,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>210</y>
+        <y>170</y>
         <width>341</width>
         <height>21</height>
        </rect>
@@ -4023,7 +4024,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>140</y>
+        <y>100</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -4039,7 +4040,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>190</y>
+        <y>150</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -4055,7 +4056,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>160</y>
+        <y>120</y>
         <width>501</width>
         <height>22</height>
        </rect>
@@ -4074,7 +4075,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>300</y>
+        <y>260</y>
         <width>131</width>
         <height>24</height>
        </rect>
@@ -4097,13 +4098,45 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>300</y>
+        <y>260</y>
         <width>131</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Display location:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>290</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Tab Width:</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="spinBoxTabWidth">
+      <property name="geometry">
+       <rect>
+        <x>91</x>
+        <y>290</y>
+        <width>41</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>2</number>
+      </property>
+      <property name="maximum">
+       <number>10</number>
+      </property>
+      <property name="value">
+       <number>8</number>
       </property>
      </widget>
     </widget>
@@ -4149,7 +4182,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;Comment:&lt;/span&gt; Optional and used for software documentation. Preceded by a semicolon.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:700; color:#00007f;&quot;&gt;Compiler instructions:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;.ORG&lt;/span&gt; - sets the current address of compilation to its operand. example:&lt;br /&gt;	*tab* .org $50&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;.ORG&lt;/span&gt; - sets the current address of compilation to its operand. Sets the reset pointer to the operand. example:&lt;br /&gt;	*tab* .org $50&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;.EQU&lt;/span&gt; - sets its label to the value of the operand. Calling LABEL .ORG 56 will return 56. example:&lt;br /&gt;	hello *tab* .equ 56 &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;.RMB&lt;/span&gt; - reserves memory. Shifts current address of compilation by its operand. example:&lt;br /&gt;	*tab* .rmb  56 &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:700;&quot;&gt;.BYTE&lt;/span&gt; - sets an address in memory to a byte represented by its operand. By seperating multiple bytes with commas, they will be consecutively written as an array to memory. The label will be the location of the first byte. examples:&lt;br /&gt;	*tab* .byte %101011&lt;br /&gt;	*tab* .byte 'g,$62,35&lt;/p&gt;
@@ -4219,7 +4252,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Internal interrupt pointer spans from n-7 to n-6. n-7 contains the most significant byte of the address. n-6 contains the least significant byte of the address. *NOT IMPLEMENTED*&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Software interrupt pointer spans from n-5 to n-4. (called with the SWI instruction) &lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Non-maskable interrupt pointer spans from n-3 to n-2. *NOT IMPLEMENTED* &lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset pointer spans from n-1 to n-0. *NOT IMPLEMENTED* &lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Reset pointer spans from n-1 to n-0.&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The WAI instruction will not act as an interrupt because there is already a buffer for that. That instruction will only suspend the execution of the program until the display tab receives a keyboard input(0xFFF0 changes).&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
@@ -4627,7 +4660,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string/>
        </property>
        <property name="text">
-        <string>Sets the current compilation address.</string>
+        <string>Sets the current compilation address. Writes the operand to the reset pointer((n-1):n).</string>
        </property>
       </item>
       <item>
@@ -5159,7 +5192,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>4,5,6,6</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Subtracts the contents of M:(M+1) from the contents of ACCA:ACCB and places the result in ACCA:ACCB.</string>
        </property>
       </item>
       <item>
@@ -5197,7 +5230,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>2,3,4,4</string>
        </property>
        <property name="text">
-        <string>Subtracts the contents of M from the contents of ACCB and places the result in ACCB.</string>
+        <string>Subtracts the contents of M from the contents of ACCA:ACCB and places the result in ACCA:ACCB.</string>
        </property>
       </item>
       <item>
@@ -5349,7 +5382,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>4,5,5</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Stores the contents of ACCB in memory. The contents of ACCB remains unchanged.</string>
        </property>
       </item>
       <item>
@@ -5994,6 +6027,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>5</string>
        </property>
+       <property name="text">
+        <string>SP is incremented. The data at the address which is contained in the SP is then loaded from the stack to the least significant byte of X register. Then SP is incremented again, and the data at the address of SP is stored to the most significant byte of the X register.</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -6106,7 +6142,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>4</string>
        </property>
        <property name="text">
-        <string/>
+        <string>The contents of the most significant byte of the X register is stored in the stack at the address contained in the stack pointer. The stack pointer is then decremented. The same then happens for the least significant byte of X.</string>
        </property>
       </item>
       <item>
@@ -6418,7 +6454,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>MUL</string>
        </property>
        <property name="text">
-        <string>ACCB &lt;- ACCA * ACCB</string>
+        <string>ACCA:ACCB &lt;- ACCA * ACCB</string>
        </property>
        <property name="text">
         <string>3D</string>
@@ -6446,6 +6482,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>10</string>
+       </property>
+       <property name="text">
+        <string>Multiplies ACCA and ACCB and stores the result in ACCA:ACCB.</string>
        </property>
       </item>
       <item>
@@ -6481,6 +6520,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </property>
        <property name="text">
         <string>3</string>
+       </property>
+       <property name="text">
+        <string>Shifts all bits of ACCA:ACCB one place to the right. Bit 7 is loaded with a zero. The C bit is loaded from the least significant bit of ACCA:ACCB.</string>
        </property>
       </item>
       <item>
@@ -6708,7 +6750,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <string>3,4,5,5</string>
        </property>
        <property name="text">
-        <string/>
+        <string>Loads the contents of memory into ACCA. Then the content at memory address specified incremented by one, is stored to ACCB. The condition codes are set according to the data.</string>
        </property>
       </item>
       <item>
@@ -8791,6 +8833,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>3</string>
        </property>
+       <property name="text">
+        <string>Shifts all bits of the ACCA:ACCB one place to the left. Bit 0 is loaded with a zero. The C bit is loaded from the most significant bit of ACCA:ACCB.</string>
+       </property>
        <item>
         <property name="text">
          <string>LSLD</string>
@@ -9156,6 +9201,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>4,5,6,6</string>
        </property>
+       <property name="text">
+        <string>Adds the contents of ACCA:ACCB and the contents of M:(M+1) and places the result in ACCA:ACCB.</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -9357,6 +9405,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <property name="text">
         <string>3</string>
        </property>
+       <property name="text">
+        <string>Adds the contents of ACCB to the contents of the X register and places the result in the X register.</string>
+       </property>
       </item>
       <item>
        <property name="text">
@@ -9413,7 +9464,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <rect>
       <x>910</x>
       <y>670</y>
-      <width>61</width>
+      <width>71</width>
       <height>24</height>
      </rect>
     </property>

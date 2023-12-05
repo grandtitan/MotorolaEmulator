@@ -86,7 +86,7 @@ bool MainWindow::compileMix(int ver){
             goto skipLine;
         }
         else if (line[0].isLetter()) {
-            //extract lable
+            //extract label
             charNum++;
             for (; charNum < line.size(); ++charNum) {
                 if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
@@ -505,6 +505,8 @@ bool MainWindow::compileMix(int ver){
                             Err("Backward reference not permitted: " + QString::number(value));
                             goto end;
                         }
+                        Memory[interruptLocations-1] = (value & 0xFF00)>>8;
+                        Memory[interruptLocations] = value & 0xFF;
                         currentCompilerAddress = value;
                         goto skipLine;
                     }
