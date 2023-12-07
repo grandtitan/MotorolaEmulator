@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
+#include <QFontMetrics>
 #include <QMouseEvent>
 #include <QTableWidget>
 #include <QInputDialog>
@@ -119,6 +120,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->plainTextCode->moveCursor(QTextCursor::End);
 
+    QFontMetrics metrics(ui->plainTextCode->font());
+    ui->plainTextCode->setTabStopDistance(metrics.horizontalAdvance(' ') * ui->spinBoxTabWidth->value());
 }
 MainWindow::~MainWindow()
 {
@@ -920,8 +923,8 @@ void MainWindow::resetEmulator(bool failedCompile){
     aReg = 0;
     bReg = 0;
     xRegister = 0;
-    SP = 0xF000;
-    flags = 0xC0;
+    SP = 0x00F0;
+    flags = 0xD0;
     lastInput = -1;
     std::memcpy(Memory, backupMemory, sizeof(backupMemory));
     PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
@@ -4064,4 +4067,82 @@ void MainWindow::on_lineEditDec_textChanged(const QString &arg1){
 
 
 
+
+
+void MainWindow::on_spinBoxTabWidth_valueChanged(int arg1)
+{
+    QFontMetrics metrics(ui->plainTextCode->font());
+    ui->plainTextCode->setTabStopDistance(metrics.horizontalAdvance(' ') * arg1);
+}
+
+
+void MainWindow::on_buttonTidyUp_clicked()
+{
+    QStringList lines = ui->plainTextCode->toPlainText().split("\n");
+
+    // Find the longest label and calculate tabCount
+    int maxLabelLength = 0;
+    for (const QString& line : lines) {
+        if(line.isEmpty()) continue;
+        int charNum = 0;
+        if (line[charNum].isLetter()) {
+            for (; charNum < line.length(); ++charNum) {
+                if (line[charNum] == ' ' || line[charNum] == '\t') {
+                    break;
+                }
+            }
+            maxLabelLength = std::max(maxLabelLength, charNum);
+        }
+    }
+    int tabCount = ceil((maxLabelLength + 1.0F) / ui->spinBoxTabWidth->value());
+
+    for (QString& line : lines) {
+        if(line.isEmpty()) continue;
+        int charNum = 0;
+        if (line[charNum] == ' ' || line[charNum] == '\t') {
+            for (; charNum < line.length(); ++charNum) {
+                if (line[charNum] != ' ' && line[charNum] != '\t') {
+                    break;
+                }
+            }
+            line = QString(tabCount, '\t') + line.mid(charNum);
+        } else {
+            for (; charNum < line.length(); ++charNum) {
+                if (line[charNum] == ' ' || line[charNum] == '\t') {
+                    break;
+                }
+            }
+            float labelEnd = charNum;
+            charNum++;
+            for (; charNum < line.length(); ++charNum) {
+                if (line[charNum] != ' ' && line[charNum] != '\t') {
+                    break;
+                }
+            }
+            line = line.mid(0, labelEnd) + QString(tabCount - floor(labelEnd / ui->spinBoxTabWidth->value()), '\t') + line.mid(charNum);
+
+        }
+    }
+
+    QString modifiedCode = lines.join("\n");
+    ui->plainTextCode->setPlainText(modifiedCode);
+}
+
+
+void MainWindow::on_pushButton_3_clicked()
+{
+
+}
+
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+
+}
 

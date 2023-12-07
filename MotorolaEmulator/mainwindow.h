@@ -183,5 +183,10 @@ private slots:
     void on_checkBoxAutoReset_2_clicked(bool checked);
     void on_comboBoxDisplayStatus_currentIndexChanged(int index);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_spinBoxTabWidth_valueChanged(int arg1);
+    void on_buttonTidyUp_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 };
 #endif // MAINWINDOW_H

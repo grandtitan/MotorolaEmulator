@@ -91,15 +91,15 @@ bool MainWindow::compileMix(int ver){
             for (; charNum < line.size(); ++charNum) {
                 if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
                     if (charNum == line.size() - 1) {
-                        Err("Missing instruction");
+                        Err("zMissing instruction");
                         goto end;
                     }
                 }
-                else if (line[charNum] == '\t') {
+                else if (line[charNum] == '\t'  || line[charNum] == ' ') {
                     label = line.sliced(0, charNum).toUpper();
                     charNum++;
                     for (; charNum < line.size(); ++charNum) {
-                        if (line[charNum] == '\t') {
+                        if (line[charNum] == '\t' || line[charNum] == ' ') {
                             if (charNum == line.size() - 1) {
                                 Err("Missing instruction");
                                 goto end;
@@ -110,20 +110,16 @@ bool MainWindow::compileMix(int ver){
                         }
                     }
                 }
-                else if (line[charNum] == ' ') {
-                    Err("Label may not contain a space and must be followed by a tab.");
-                    goto end;
-                }
                 else {
                     Err("Label may not contain: '" % line[charNum] % "'");
                     goto end;
                 }
             }
         }
-        else if (line[0] == '\t') {
+        else if (line[0] == '\t' || line[0] == ' ') {
             charNum++;
             for (; charNum < line.size(); ++charNum) {
-                if (line[charNum] == '\t') {
+                if (line[charNum] == '\t' || line[charNum] == ' ') {
                     if (charNum == line.size() - 1) {
                         Err("Missing instruction");
                         goto end;
@@ -4459,28 +4455,21 @@ int MainWindow::inputNextAddress(int curAdr, QString err){
 
 bool MainWindow::reverseCompile(int ver, int begLoc){
     QString code;
-    int index = 0;
+    int address = 0;
     int line = 0;
     instructionList.clear();
     int zeroCount = 0;
-    int lastIndex = 0xFFFF;
-    for (int i = 0xFFFF; i >= 0; i--) {
-        if (Memory[i] != 0) {
-            lastIndex = i;
-            break;
-        }
-    }
-    for (; index <= lastIndex; ) {
-        if (index < begLoc){
-            code.append("\t.BYTE " + QString::number(Memory[index]) + "\n");
-            instructionList.addInstruction(index, line, 0, 0, 0);
-            index++;
+    for (; address <= 0xFFFF; ) {
+        if (address < begLoc){
+            code.append("\t.BYTE " + QString::number(Memory[address]) + "\n");
+            instructionList.addInstruction(address, line, 0, 0, 0);
+            address++;
             line++;
         }else{
             int inSize = 1;
             int inType = -2; //  -3 m6803 -2 unkown -1 zero 0 inh 1 imm 2 dir 3 ind 4 ext 5 rel
             QString in;
-            switch (Memory[index]){
+            switch (Memory[address]){
             case 0x00:
                     inType = -1;
                     break;
@@ -5416,33 +5405,33 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             }
             if(zeroCount != 0 && inType != -1){
                     code.append("\t.RMB "+ QString::number(zeroCount) + "\n");
-                    instructionList.addInstruction(index - zeroCount, line, 0, 0, 0);
+                    instructionList.addInstruction(address - zeroCount, line, 0, 0, 0);
                     line++;
                     zeroCount = 0;
             }
             if(inType == -3){
-                PrintConsole("M6803 and higher support instruction at address: " + QString::number(index),1);
-                int nextI = inputNextAddress(index, "M6803 and higher support instruction");
+                PrintConsole("M6803 and higher support instruction at address: " + QString::number(address),1);
+                int nextI = inputNextAddress(address, "M6803 and higher support instruction");
                 if(nextI == -1){break;}
-                for (; index < nextI; ++index) {
-                    code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
-                    instructionList.addInstruction(index, line, 0, 0, 0);
+                for (; address < nextI; ++address) {
+                    code.append("\t.BYTE " + QString::number(Memory[address],10) + "\n");
+                    instructionList.addInstruction(address, line, 0, 0, 0);
                     line++;
                 }
                 continue;
             } else if(inType == -2){
-                PrintConsole("Unkown instruction at address: " + QString::number(index),1);
-                int nextI = inputNextAddress(index, "Unkown instruction");
+                PrintConsole("Unkown instruction at address: " + QString::number(address),1);
+                int nextI = inputNextAddress(address, "Unkown instruction");
                 if(nextI == -1){break;}
-                for (; index < nextI; ++index) {
-                    code.append("\t.BYTE " + QString::number(Memory[index],10) + "\n");
-                    instructionList.addInstruction(index, line, 0, 0, 0);
+                for (; address < nextI; ++address) {
+                    code.append("\t.BYTE " + QString::number(Memory[address],10) + "\n");
+                    instructionList.addInstruction(address, line, 0, 0, 0);
                     line++;
                 }
                 continue;
             } else if(inType == -1){
                 zeroCount++;
-                index++;
+                address++;
                 continue;
             }
             int opCode = 0, opCode2 = 0;
@@ -5453,37 +5442,37 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             else if(inType == 1){
                     code.append("\t" + in + " ");
                     if(inSize == 2){
-                        opCode = Memory[index+1 % 0xFFFF];
-                        code.append("#" + QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
+                        opCode = Memory[address+1 % 0xFFFF];
+                        code.append("#" + QString::number(Memory[address+1 % 0xFFFF],10) + "\n");
                     }else{
-                        opCode = Memory[index+1 % 0xFFFF];
-                        opCode2 = Memory[index+2 % 0xFFFF];
-                        code.append("#" + QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
+                        opCode = Memory[address+1 % 0xFFFF];
+                        opCode2 = Memory[address+2 % 0xFFFF];
+                        code.append("#" + QString::number((Memory[address+1 % 0xFFFF] << 8) + Memory[address+2 % 0xFFFF],10) + "\n");
                     }
             }
             else if(inType == 2){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    opCode = Memory[index+1 % 0xFFFF];
-                    code.append(QString::number(Memory[index+1 % 0xFFFF],10) + "\n");
+                    opCode = Memory[address+1 % 0xFFFF];
+                    code.append(QString::number(Memory[address+1 % 0xFFFF],10) + "\n");
             }
             else if(inType == 3){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    opCode = Memory[index+1 % 0xFFFF];
-                    code.append(QString::number(Memory[index+1 % 0xFFFF],10) + ","+ "X" + "\n");
+                    opCode = Memory[address+1 % 0xFFFF];
+                    code.append(QString::number(Memory[address+1 % 0xFFFF],10) + ","+ "X" + "\n");
             }
             else if(inType == 4){
                     inSize = 3;
                     code.append("\t" + in + " ");
-                    opCode = Memory[index+1 % 0xFFFF];
-                    opCode2 = Memory[index+2 % 0xFFFF];
-                    code.append(QString::number((Memory[index+1 % 0xFFFF] << 8) + Memory[index+2 % 0xFFFF],10) + "\n");
+                    opCode = Memory[address+1 % 0xFFFF];
+                    opCode2 = Memory[address+2 % 0xFFFF];
+                    code.append(QString::number((Memory[address+1 % 0xFFFF] << 8) + Memory[address+2 % 0xFFFF],10) + "\n");
             }
             else if(inType == 5){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    int8_t num = static_cast<int8_t>(Memory[index+1 % 0xFFFF]);
+                    int8_t num = static_cast<int8_t>(Memory[address+1 % 0xFFFF]);
                     if(num == -1){
                         code.append("0 ;Relative address FF is out of bounds and cannot be reverse compiled\n");
                         PrintConsole("Relative address FF is out of bounds and cannot be reverse compiled",1);
@@ -5494,21 +5483,18 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     } else{
                         code.append(QString::number(num,10) + "\n");
                     }
-                    opCode = Memory[index+1 % 0xFFFF];
+                    opCode = Memory[address+1 % 0xFFFF];
             }
-            instructionList.addInstruction(index, line, Memory[index], opCode, opCode2);
+            instructionList.addInstruction(address, line, Memory[address], opCode, opCode2);
             line++;
-            index += inSize;
+            address += inSize;
         }
 
     }
-    if(index == lastIndex +1){
-        ui->plainTextCode->setPlainText(code);
-        std::memcpy(backupMemory, Memory, sizeof(Memory));
-        setCompileStatus(true);
-        return true;
-    }else{
-        setCompileStatus(false);
-        return false;
-    }
+
+    ui->plainTextCode->setPlainText(code);
+    std::memcpy(backupMemory, Memory, sizeof(Memory));
+    setCompileStatus(true);
+    return true;
+
 }
