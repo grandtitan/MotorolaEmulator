@@ -44,12 +44,10 @@ private:
     QPlainTextEdit *plainTextDisplay;
 
     void updateFlags(FlagToUpdate flag, bool value);
-    void updateElement(elementToUpdate element);
     void addCellToPending(int address);
     void updateMemoryCell(int address);
-    std::map<QPointer<QLineEdit>, QString> pendingUpdateUMap;
     QList<int> pendingCells;
-    void updatePending();
+    void updateUi();
 
     void updateMemoryTab();
     void updateLinesBox();
@@ -185,8 +183,8 @@ private slots:
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_spinBoxTabWidth_valueChanged(int arg1);
     void on_buttonTidyUp_clicked();
-    void on_pushButton_3_clicked();
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
+    void on_buttonRST_clicked();
+    void on_buttonNMI_clicked();
+    void on_pushButtonIRQ_clicked();
 };
 #endif // MAINWINDOW_H

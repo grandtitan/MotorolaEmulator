@@ -3450,7 +3450,7 @@ QPushButton:pressed{
       <string>Instruction cycle:</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="buttonNMI">
      <property name="geometry">
       <rect>
        <x>220</x>
@@ -3486,7 +3486,7 @@ QPushButton:pressed{
       <string>NMI</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="pushButtonIRQ">
      <property name="geometry">
       <rect>
        <x>270</x>
@@ -3522,7 +3522,7 @@ QPushButton:pressed{
       <string>IRQ</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="buttonRST">
      <property name="geometry">
       <rect>
        <x>170</x>
@@ -3575,7 +3575,7 @@ QPushButton:pressed{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>

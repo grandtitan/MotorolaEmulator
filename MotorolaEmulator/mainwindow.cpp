@@ -321,76 +321,21 @@ void MainWindow::updateFlags(FlagToUpdate flag, bool value){
     switch (flag) {
     case HalfCarry:
         flags = (flags & ~(1 << 5)) | (value << 5);
-        pendingUpdateUMap.emplace(ui->lineEditHValue, QString::number(value));
         break;
     case InterruptMask:
         flags = (flags & ~(1 << 4)) | (value << 4);
-        pendingUpdateUMap.emplace(ui->lineEditIValue, QString::number(value));
         break;
     case Negative:
         flags = (flags & ~(1 << 3)) | (value << 3);
-        pendingUpdateUMap.emplace(ui->lineEditNValue, QString::number(value));
         break;
     case Zero:
         flags = (flags & ~(1 << 2)) | (value << 2);
-        pendingUpdateUMap.emplace(ui->lineEditZValue, QString::number(value));
         break;
     case Overflow:
         flags = (flags & ~(1 << 1)) | (value << 1);
-        pendingUpdateUMap.emplace(ui->lineEditVValue, QString::number(value));
         break;
     case Carry:
         flags = (flags & ~(1)) | (value);
-        pendingUpdateUMap.emplace(ui->lineEditCValue, QString::number(value));
-        break;
-    default:
-        throw;
-    }
-}
-void MainWindow::updateElement(elementToUpdate element){
-    switch (element) {
-    case regPC:
-        if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditPCValue, QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
-        }else{
-            pendingUpdateUMap.emplace(ui->lineEditPCValue, QString::number(PC));
-        }
-        break;
-    case regSP:
-        if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditSPValue, QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
-        }else{
-            pendingUpdateUMap.emplace(ui->lineEditSPValue, QString::number(SP));
-        }
-        break;
-    case regA:
-        if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditAValue, QString("%1").arg(aReg, 2, 16, QLatin1Char('0')).toUpper());
-        }else{
-            pendingUpdateUMap.emplace(ui->lineEditAValue, QString::number(aReg));
-        }
-        break;
-    case regB:
-        if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditBValue, QString("%1").arg(bReg, 2, 16, QLatin1Char('0')).toUpper());
-        }else{
-            pendingUpdateUMap.emplace(ui->lineEditBValue, QString::number(bReg));
-        }
-        break;
-    case regX:
-        if(hexReg){
-            pendingUpdateUMap.emplace(ui->lineEditXValue, QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
-        }else{
-            pendingUpdateUMap.emplace(ui->lineEditXValue, QString::number(xRegister));
-        }
-        break;
-    case allFlags:
-        pendingUpdateUMap.emplace(ui->lineEditHValue, QString::number(bit(flags,5)));
-        pendingUpdateUMap.emplace(ui->lineEditIValue, QString::number(bit(flags,4)));
-        pendingUpdateUMap.emplace(ui->lineEditNValue, QString::number(bit(flags,3)));
-        pendingUpdateUMap.emplace(ui->lineEditZValue, QString::number(bit(flags,2)));
-        pendingUpdateUMap.emplace(ui->lineEditVValue, QString::number(bit(flags,1)));
-        pendingUpdateUMap.emplace(ui->lineEditCValue, QString::number(bit(flags,0)));
         break;
     default:
         throw;
@@ -452,15 +397,32 @@ void MainWindow::updateMemoryCell(int address) {
         }
     }
 }
-void MainWindow::updatePending(){
-    for (auto it = pendingUpdateUMap.begin(); it != pendingUpdateUMap.end(); ) {
-        it->first->setText(it->second);
-        it = pendingUpdateUMap.erase(it);
-    }
+void MainWindow::updateUi(){
     for (int i = 0; i < pendingCells.length(); ++i) {
         updateMemoryCell(pendingCells[i]);
     }
     pendingCells.clear();
+    ui->lineEditHValue->setText(QString::number(bit(flags, 5)));
+    ui->lineEditIValue->setText(QString::number(bit(flags, 4)));
+    ui->lineEditNValue->setText(QString::number(bit(flags, 3)));
+    ui->lineEditZValue->setText(QString::number(bit(flags, 2)));
+    ui->lineEditVValue->setText(QString::number(bit(flags, 1)));
+    ui->lineEditCValue->setText(QString::number(bit(flags, 0)));
+    if(hexReg){
+        ui->lineEditPCValue->setText(QString("%1").arg(PC, 4, 16, QLatin1Char('0')).toUpper());
+        ui->lineEditSPValue->setText(QString("%1").arg(SP, 4, 16, QLatin1Char('0')).toUpper());
+        ui->lineEditAValue->setText(QString("%1").arg(aReg, 2, 16, QLatin1Char('0')).toUpper());
+        ui->lineEditBValue->setText(QString("%1").arg(bReg, 2, 16, QLatin1Char('0')).toUpper());
+        ui->lineEditXValue->setText(QString("%1").arg(xRegister, 4, 16, QLatin1Char('0')).toUpper());
+    } else{
+        ui->lineEditPCValue->setText(QString::number(PC));
+        ui->lineEditSPValue->setText(QString::number(SP));
+        ui->lineEditAValue->setText(QString::number(aReg));
+        ui->lineEditBValue->setText(QString::number(bReg));
+        ui->lineEditXValue->setText(QString::number(xRegister));
+    }
+    updateSelectionsRunTime();
+
 }
 
 void MainWindow::PrintConsole(const QString& text, int type){
@@ -918,7 +880,6 @@ void MainWindow::resetEmulator(bool failedCompile){
     }
     waitCycles = 0;
     cycleNum = 1;
-    pendingUpdateUMap.clear();
     pendingCells.clear();
     aReg = 0;
     bReg = 0;
@@ -929,18 +890,7 @@ void MainWindow::resetEmulator(bool failedCompile){
     std::memcpy(Memory, backupMemory, sizeof(backupMemory));
     PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
     updateMemoryTab();
-    updateElement(regPC);
-    updateElement(regSP);
-    updateElement(regA);
-    updateElement(regB);
-    updateElement(regX);
-    ui->lineEditHValue->setText(QString::number(flags & 0x30));
-    ui->lineEditIValue->setText(QString::number(flags & 0x20));
-    ui->lineEditNValue->setText(QString::number(flags & 0x10));
-    ui->lineEditZValue->setText(QString::number(flags & 0x04));
-    ui->lineEditVValue->setText(QString::number(flags & 0x02));
-    ui->lineEditCValue->setText(QString::number(flags & 0x01));
-    updatePending();
+    updateUi();
     ui->plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
     plainTextDisplay->setPlainText("                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                      \n                                                       ,");
     if(!failedCompile){
@@ -961,6 +911,7 @@ void MainWindow::startExecution(){
         executionTimer->start(executionSpeed);
     }
 }
+int pendingInterrupt = 0; //1 RST //2 NMI //3 IRQ
 void MainWindow::stopExecution(){
     running = false;
     waitCycles = 0;
@@ -968,8 +919,7 @@ void MainWindow::stopExecution(){
     executionTimer->stop();
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningCycleNum->setVisible(false);
-    updatePending();
-    updateSelectionsRunTime();
+    updateUi();
 }
 void MainWindow::executeLoop(){
     if(useCyclesPerSecond){
@@ -977,9 +927,75 @@ void MainWindow::executeLoop(){
             cycleNum++;
             waitCycles--;
         }else{
-            updatePending();
-            updateSelectionsRunTime();
-            waitCycles = executeInstruction();
+            updateUi();
+            switch (pendingInterrupt){
+            case 0:
+                waitCycles = executeInstruction();
+                break;
+            case 1:
+                updateFlags(InterruptMask,1);
+                PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
+                pendingInterrupt = 0;
+                break;
+            case 2:
+                PC++;
+                Memory[SP] = PC & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = (PC >> 8) & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = xRegister & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = (xRegister >> 8) & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = aReg;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = bReg;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = flags;
+                addCellToPending(SP);
+                SP--;
+                updateFlags(InterruptMask, 1);
+                PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+                pendingInterrupt = 0;
+                break;
+            case 3:
+                if(!bit(flags, 4)){
+                    PC++;
+                    Memory[SP] = PC & 0xFF;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = (PC >> 8) & 0xFF;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = xRegister & 0xFF;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = (xRegister >> 8) & 0xFF;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = aReg;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = bReg;
+                    addCellToPending(SP);
+                    SP--;
+                    Memory[SP] = flags;
+                    addCellToPending(SP);
+                    SP--;
+                    updateFlags(InterruptMask, 1);
+                    PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                }else{
+                     waitCycles = executeInstruction();
+                }
+                pendingInterrupt = 0;
+                break;
+            }
             cycleNum = 1;
             waitCycles--;
             if (breakEnabled){
@@ -1054,9 +1070,76 @@ void MainWindow::executeLoop(){
         }
         ui->labelRunningCycleNum->setText("Instruction cycle: "+ QString::number(cycleNum));
     }else{
-        executeInstruction();
-        updatePending();
-        updateSelectionsRunTime();
+        switch (pendingInterrupt){
+        case 0:
+            executeInstruction();
+            break;
+        case 1:
+            updateFlags(InterruptMask,1);
+            PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
+            pendingInterrupt = 0;
+
+            break;
+        case 2:
+            PC++;
+            Memory[SP] = PC & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (PC >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = xRegister & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (xRegister >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = aReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = bReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = flags;
+            addCellToPending(SP);
+            SP--;
+            updateFlags(InterruptMask, 1);
+            PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+            pendingInterrupt = 0;
+            break;
+        case 3:
+            if(!bit(flags, 4)){
+            PC++;
+            Memory[SP] = PC & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (PC >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = xRegister & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (xRegister >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = aReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = bReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = flags;
+            addCellToPending(SP);
+            SP--;
+            updateFlags(InterruptMask, 1);
+            PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+            }else{
+                executeInstruction();
+            }
+            pendingInterrupt = 0;
+            break;
+        }
+        updateUi();
         if (breakEnabled){
             switch(ui->comboBoxBreakWhen->currentIndex()){
             case 1:
@@ -1214,8 +1297,6 @@ int MainWindow::executeInstruction(){
             updateFlags(Zero, uInt16 == 0);
             updateFlags(Overflow,uInt8);
             updateFlags(Carry,uInt8);
-            updateElement(regA);
-            updateElement(regB);
             PC++;
 
         } else{
@@ -1235,8 +1316,6 @@ int MainWindow::executeInstruction(){
             updateFlags(Zero, uInt16 == 0);
             updateFlags(Overflow, uInt8 ^ bit(aReg, 7));
             updateFlags(Carry, uInt8);
-            updateElement(regA);
-            updateElement(regB);
             PC++;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -1257,21 +1336,18 @@ int MainWindow::executeInstruction(){
     case 0x07:
         cycleCount = 2;
         aReg = flags;
-        updateElement(regA);
         PC++;
         break;
     case 0x08:
         cycleCount = 3;
         (*curIndReg)++;
         updateFlags(Zero, (*curIndReg) == 0);
-        updateElement(regX);
         PC++;
         break;
     case 0x09:
         cycleCount = 3;
         (*curIndReg)--;
         updateFlags(Zero, (*curIndReg) == 0);
-        updateElement(regX);
         PC++;
         break;
     case 0x0A:
@@ -1312,7 +1388,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Overflow,(bit(aReg, 7) && !bit(bReg, 7) && !bit(uInt8, 7)) || (!bit(aReg, 7)  && bit(bReg, 7) && bit(uInt8, 7)));
         updateFlags(Carry,((!bit(aReg, 7) && bit(bReg, 7)) || (bit(bReg, 7) && bit(uInt8, 7)) || (bit(uInt8, 7) && !bit(aReg, 7))));
         aReg = uInt8;
-        updateElement(regA);
         PC++;
         break;
     case 0x11:
@@ -1330,7 +1405,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
         PC++;
         break;
     case 0x17:
@@ -1339,7 +1413,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
         PC++;
         break;
     case 0x19:
@@ -1378,7 +1451,6 @@ int MainWindow::executeInstruction(){
         }
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
         PC++;
         break;
     case 0x1B:
@@ -1390,7 +1462,6 @@ int MainWindow::executeInstruction(){
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
         PC++;
         break;
     case 0x20:
@@ -1528,41 +1599,33 @@ int MainWindow::executeInstruction(){
     case 0x30:
         cycleCount = 3;
         (*curIndReg) = SP + 1;
-        updateElement(regX);
         PC++;
         break;
     case 0x31:
         cycleCount = 3;
         SP++;
-        updateElement(regSP);
         PC++;
         break;
     case 0x32:
         cycleCount = 4;
         SP++;
         aReg = Memory[SP];
-        updateElement(regSP);
-        updateElement(regA);
         PC++;
         break;
     case 0x33:
         cycleCount = 4;
         SP++;
         bReg = Memory[SP];
-        updateElement(regSP);
-        updateElement(regB);
         PC++;
         break;
     case 0x34:
         cycleCount = 3;
         SP--;
-        updateElement(regSP);
         PC++;
         break;
     case 0x35:
         cycleCount = 3;
         SP = (*curIndReg) - 1;
-        updateElement(regSP);
         PC++;
         break;
     case 0x36:
@@ -1570,7 +1633,6 @@ int MainWindow::executeInstruction(){
         Memory[SP] = aReg;
         addCellToPending(SP);
         SP--;
-        updateElement(regSP);
         PC++;
         break;
     case 0x37:
@@ -1578,7 +1640,6 @@ int MainWindow::executeInstruction(){
         Memory[SP] = bReg;
         addCellToPending(SP);
         SP--;
-        updateElement(regSP);
         PC++;
         break;
     case 0x38:
@@ -1588,8 +1649,6 @@ int MainWindow::executeInstruction(){
             (*curIndReg) = (Memory[SP] << 8);
             SP++;
             (*curIndReg) += Memory[SP];
-            updateElement(regSP);
-            updateElement(regX);
             PC++;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -1603,14 +1662,12 @@ int MainWindow::executeInstruction(){
         PC = Memory[SP] << 8;
         SP++;
         PC += Memory[SP];
-        updateElement(regSP);
         break;
     case 0x3A:
         if(compilerVersionIndex>=1){
             cycleCount = 3;
             (*curIndReg) = (*curIndReg) + bReg;
             PC++;
-            updateElement(regX);
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
             PC++;
@@ -1634,11 +1691,6 @@ int MainWindow::executeInstruction(){
         SP+=2;
         PC = (Memory[SP] << 8) + Memory[(SP+ 1) % 0x10000];
         SP++;
-        updateElement(regSP);
-        updateElement(regA);
-        updateElement(regB);
-        updateElement(regX);
-        updateElement(allFlags);
         break;
     case 0x3C:
         if(compilerVersionIndex>=1){
@@ -1648,7 +1700,6 @@ int MainWindow::executeInstruction(){
             Memory[SP - 1] = (((*curIndReg) >> 8) & 0xFF);
             addCellToPending(SP-1);
             SP-=2;
-            updateElement(regSP);
             PC++;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -1663,8 +1714,6 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry, (uInt16 >> 8) != 0);
             aReg = (uInt16 >> 8);
             bReg = (uInt16 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
             PC++;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -1705,7 +1754,6 @@ int MainWindow::executeInstruction(){
         SP--;
         updateFlags(InterruptMask, 1);
         PC = (Memory[(interruptLocations - 5)] << 8) + Memory[(interruptLocations - 4)];
-        updateElement(regSP);
         break;
     case 0x40:
         cycleCount = 2;
@@ -1714,7 +1762,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow, aReg == 0x80);
         updateFlags(Carry, aReg != 0);
-        updateElement(regA);
         PC++;
         break;
     case 0x43:
@@ -1724,7 +1771,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
         updateFlags(Carry,1);
-        updateElement(regA);
         PC++;
         break;
     case 0x44:
@@ -1735,7 +1781,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,uInt8);
         updateFlags(Carry,uInt8);
-        updateElement(regA);
         PC++;
         break;
     case 0x46:
@@ -1747,7 +1792,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(aReg, 7));
-        updateElement(regA);
         PC++;
         break;
     case 0x47:
@@ -1759,7 +1803,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(aReg, 7));
-        updateElement(regA);
         PC++;
         break;
     case 0x48:
@@ -1770,7 +1813,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(aReg, 7));
-        updateElement(regA);
         PC++;
         break;
     case 0x49:
@@ -1781,7 +1823,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(aReg, 7));
-        updateElement(regA);
         PC++;
         break;
     case 0x4A:
@@ -1790,7 +1831,6 @@ int MainWindow::executeInstruction(){
         aReg--;
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
         PC++;
         break;
     case 0x4C:
@@ -1799,7 +1839,6 @@ int MainWindow::executeInstruction(){
         aReg++;
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
         PC++;
         break;
     case 0x4D:
@@ -1817,7 +1856,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, 1);
         updateFlags(Overflow,0);
         updateFlags(Carry,0);
-        updateElement(regA);
         PC++;
         break;
     case 0x50:
@@ -1827,7 +1865,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow, bReg == 0x80);
         updateFlags(Carry, bReg != 0);
-        updateElement(regB);
         PC++;
         break;
     case 0x53:
@@ -1837,7 +1874,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
         updateFlags(Carry,1);
-        updateElement(regB);
         PC++;
         break;
     case 0x54:
@@ -1848,7 +1884,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,uInt8);
         updateFlags(Carry,uInt8);
-        updateElement(regB);
         PC++;
         break;
     case 0x56:
@@ -1860,7 +1895,6 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(bReg, 7));
-        updateElement(regB);
         PC++;
         break;
     case 0x57:
@@ -1871,7 +1905,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(bReg, 7));
-        updateElement(regB);
+
         PC++;
         break;
     case 0x58:
@@ -1882,7 +1916,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(bReg, 7));
-        updateElement(regB);
+
         PC++;
         break;
     case 0x59:
@@ -1893,7 +1927,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative,bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow, uInt8 ^ bit(bReg, 7));
-        updateElement(regB);
+
         PC++;
         break;
     case 0x5A:
@@ -1902,7 +1936,7 @@ int MainWindow::executeInstruction(){
         bReg--;
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC++;
         break;
     case 0x5C:
@@ -1911,7 +1945,7 @@ int MainWindow::executeInstruction(){
         bReg++;
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC++;
         break;
     case 0x5D:
@@ -1929,7 +1963,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, 1);
         updateFlags(Overflow,0);
         updateFlags(Carry,0);
-        updateElement(regB);
+
         PC++;
         break;
     case 0x60:
@@ -2196,7 +2230,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0x81:
         cycleCount = 2;
@@ -2218,7 +2252,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0x83:
         if(compilerVersionIndex>=1){
@@ -2233,8 +2267,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(!bit(aReg,7) && bit(adr,15)) || (bit(adr,15) && bit(uInt162,15)) || (bit(uInt162,15) && !bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -2247,7 +2281,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x85:
@@ -2264,7 +2298,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x88:
@@ -2273,7 +2307,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x89:
@@ -2286,7 +2320,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x8A:
@@ -2295,7 +2329,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x8B:
@@ -2308,7 +2342,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x8C:
@@ -2330,7 +2364,7 @@ int MainWindow::executeInstruction(){
         addCellToPending(SP-1);
         SP-=2;
         PC += sInt8;
-        updateElement(regSP);
+
         break;
     case 0x8E:
         cycleCount = 3;
@@ -2339,7 +2373,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow, 0);
         PC+=3;
-        updateElement(regSP);
+
         break;
     case 0x90:
         cycleCount = 3;
@@ -2351,7 +2385,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0x91:
         cycleCount = 3;
@@ -2373,7 +2407,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0x93:
         if(compilerVersionIndex>=1){
@@ -2388,8 +2422,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(!bit(aReg,7) && bit(adr,15)) || (bit(adr,15) && bit(uInt162,15)) || (bit(uInt162,15) && !bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -2403,7 +2437,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x95:
@@ -2420,7 +2454,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x97:
@@ -2439,7 +2473,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x99:
@@ -2452,7 +2486,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x9A:
@@ -2461,7 +2495,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x9B:
@@ -2474,7 +2508,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0x9C:
@@ -2498,7 +2532,7 @@ int MainWindow::executeInstruction(){
             addCellToPending(SP-1);
             SP-=2;
             PC = adr;
-            updateElement(regSP);
+
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
             PC++;
@@ -2513,7 +2547,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow, 0);
         PC+=2;
-        updateElement(regSP);
+
         break;
     case 0x9F:
         cycleCount = 4;
@@ -2537,7 +2571,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0xA1:
         cycleCount = 4;
@@ -2559,7 +2593,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=2;
-        updateElement(regA);
+
         break;
     case 0xA3:
         if(compilerVersionIndex>=1){
@@ -2574,8 +2608,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(!bit(aReg,7) && bit(adr,15)) || (bit(adr,15) && bit(uInt162,15)) || (bit(uInt162,15) && !bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -2589,7 +2623,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xA5:
@@ -2606,7 +2640,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xA7:
@@ -2625,7 +2659,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xA9:
@@ -2638,7 +2672,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xAA:
@@ -2647,7 +2681,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xAB:
@@ -2660,7 +2694,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=2;
         break;
     case 0xAC:
@@ -2683,7 +2717,7 @@ int MainWindow::executeInstruction(){
         addCellToPending(SP-1);
         SP-=2;
         PC = adr;
-        updateElement(regSP);
+
         break;
     case 0xAE:
         cycleCount = 5;
@@ -2693,7 +2727,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow, 0);
         PC+=2;
-        updateElement(regSP);
+
         break;
     case 0xAF:
         cycleCount = 5;
@@ -2717,7 +2751,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=3;
-        updateElement(regA);
+
         break;
     case 0xB1:
         cycleCount = 4;
@@ -2739,7 +2773,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(aReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(aReg,7)));
         aReg = uInt82;
         PC+=3;
-        updateElement(regA);
+
         break;
     case 0xB3:
         if(compilerVersionIndex>=1){
@@ -2754,8 +2788,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(!bit(aReg,7) && bit(adr,15)) || (bit(adr,15) && bit(uInt162,15)) || (bit(uInt162,15) && !bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -2769,7 +2803,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xB5:
@@ -2786,7 +2820,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg,7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xB7:
@@ -2805,7 +2839,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xB9:
@@ -2818,7 +2852,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xBA:
@@ -2827,7 +2861,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(aReg, 7));
         updateFlags(Zero, aReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xBB:
@@ -2840,7 +2874,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(aReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         aReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, aReg == 0);
-        updateElement(regA);
+
         PC+=3;
         break;
     case 0xBC:
@@ -2863,7 +2897,7 @@ int MainWindow::executeInstruction(){
         addCellToPending(SP-1);
         SP-=2;
         PC = adr;
-        updateElement(regSP);
+
         break;
     case 0xBE:
         cycleCount = 5;
@@ -2873,7 +2907,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, SP == 0);
         updateFlags(Overflow, 0);
         PC+=3;
-        updateElement(regSP);
+
         break;
     case 0xBF:
         cycleCount = 5;
@@ -2897,7 +2931,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xC1:
         cycleCount = 2;
@@ -2919,7 +2953,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xC3:
         if(compilerVersionIndex>=1){
@@ -2934,8 +2968,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(bit(aReg,7) && bit(uInt16,15)) || (bit(uInt16,15) && !bit(uInt162,12)) || (!bit(uInt162,12) && bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -2948,7 +2982,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xC5:
@@ -2965,7 +2999,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xC8:
@@ -2974,7 +3008,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xC9:
@@ -2987,7 +3021,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xCA:
@@ -2996,7 +3030,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xCB:
@@ -3009,7 +3043,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xCC:
@@ -3022,8 +3056,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Overflow, 0);
             aReg = (uInt16 >> 8);
             bReg = (uInt16 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -3037,7 +3071,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow, 0);
         PC+=3;
-        updateElement(regX);
+
         break;
     case 0xD0:
         cycleCount = 3;
@@ -3049,7 +3083,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xD1:
         cycleCount = 3;
@@ -3071,7 +3105,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xD3:
         if(compilerVersionIndex>=1){
@@ -3087,8 +3121,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(bit(aReg,7) && bit(uInt16,15)) || (bit(uInt16,15) && !bit(uInt162,12)) || (!bit(uInt162,12) && bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -3101,7 +3135,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xD5:
@@ -3118,7 +3152,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xD7:
@@ -3137,7 +3171,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xD9:
@@ -3150,7 +3184,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xDA:
@@ -3159,7 +3193,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xDB:
@@ -3172,7 +3206,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xDC:
@@ -3186,8 +3220,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Overflow, 0);
             aReg = (uInt16 >> 8);
             bReg = (uInt16 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -3220,7 +3254,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow, 0);
         PC+=2;
-        updateElement(regX);
+
         break;
     case 0xDF:
         cycleCount = 4;
@@ -3244,7 +3278,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xE1:
         cycleCount = 4;
@@ -3266,7 +3300,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=2;
-        updateElement(regB);
+
         break;
     case 0xE3:
         if(compilerVersionIndex>=1){
@@ -3281,8 +3315,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(bit(aReg,7) && bit(uInt16,15)) || (bit(uInt16,15) && !bit(uInt162,12)) || (!bit(uInt162,12) && bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
 
         } else{
@@ -3296,7 +3330,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xE5:
@@ -3313,7 +3347,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xE7:
@@ -3332,7 +3366,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xE9:
@@ -3345,7 +3379,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xEA:
@@ -3354,7 +3388,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xEB:
@@ -3367,7 +3401,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=2;
         break;
     case 0xEC:
@@ -3381,8 +3415,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Overflow, 0);
             aReg = (uInt16 >> 8);
             bReg = (uInt16 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=2;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -3415,7 +3449,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow, 0);
         PC+=2;
-        updateElement(regX);
+
         break;
     case 0xEF:
         cycleCount = 5;
@@ -3439,7 +3473,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=3;
-        updateElement(regB);
+
         break;
     case 0xF1:
         cycleCount = 4;
@@ -3461,7 +3495,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry,(!bit(bReg,7) && bit(uInt8,7)) || (bit(uInt8,7) && bit(uInt82,7)) || (bit(uInt82,7) && !bit(bReg,7)));
         bReg = uInt82;
         PC+=3;
-        updateElement(regB);
+
         break;
     case 0xF3:
         if(compilerVersionIndex>=1){
@@ -3477,8 +3511,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Carry,(bit(aReg,7) && bit(uInt16,15)) || (bit(uInt16,15) && !bit(uInt162,12)) || (!bit(uInt162,12) && bit(aReg,7)));
             aReg = (uInt162 >> 8);
             bReg = (uInt162 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
         } else{
             PrintConsole("Unkown instruction:" + QString::number(Memory[PC]), 1);
@@ -3491,7 +3525,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xF5:
@@ -3508,7 +3542,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg,7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xF7:
@@ -3527,7 +3561,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xF9:
@@ -3540,7 +3574,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xFA:
@@ -3549,7 +3583,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Negative, bit(bReg, 7));
         updateFlags(Zero, bReg == 0);
         updateFlags(Overflow,0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xFB:
@@ -3562,7 +3596,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Carry, (bit(bReg, 7) && bit(uInt8, 7)) || (!bit(uInt16, 7) && bit(bReg, 7)) || (bit(uInt8, 7) && !bit(uInt16, 7)));
         bReg = static_cast<uint8_t>(uInt16);
         updateFlags(Zero, bReg == 0);
-        updateElement(regB);
+
         PC+=3;
         break;
     case 0xFC:
@@ -3575,8 +3609,8 @@ int MainWindow::executeInstruction(){
             updateFlags(Overflow, 0);
             aReg = (uInt16 >> 8);
             bReg = (uInt16 & 0xFF);
-            updateElement(regA);
-            updateElement(regB);
+
+
             PC+=3;
 
         } else{
@@ -3610,7 +3644,7 @@ int MainWindow::executeInstruction(){
         updateFlags(Zero, (*curIndReg) == 0);
         updateFlags(Overflow, 0);
         PC+=3;
-        updateElement(regX);
+
         break;
     case 0xFF:
         cycleCount = 5;
@@ -3630,7 +3664,7 @@ int MainWindow::executeInstruction(){
         break;
     }
     PC = PC % 0x10000;
-    updateElement(regPC);
+
 
 
     int lineNum = instructionList.getObjectByAddress(PC).lineNumber;
@@ -3767,9 +3801,75 @@ void MainWindow::on_buttonStep_clicked()
     bool ok = true;;
     if (!compiled && compileOnRun){ok = on_buttonCompile_clicked();}
     if(ok){
-        executeInstruction();
-        updatePending();
-        updateSelectionsRunTime();
+        switch (pendingInterrupt){
+        case 0:
+            executeInstruction();
+            break;
+        case 1:
+            updateFlags(InterruptMask,1);
+            PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
+            pendingInterrupt = 0;
+            break;
+        case 2:
+            PC++;
+            Memory[SP] = PC & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (PC >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = xRegister & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = (xRegister >> 8) & 0xFF;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = aReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = bReg;
+            addCellToPending(SP);
+            SP--;
+            Memory[SP] = flags;
+            addCellToPending(SP);
+            SP--;
+            updateFlags(InterruptMask, 1);
+            PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+            pendingInterrupt = 0;
+            break;
+        case 3:
+            if(!bit(flags, 4)){
+                PC++;
+                Memory[SP] = PC & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = (PC >> 8) & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = xRegister & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = (xRegister >> 8) & 0xFF;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = aReg;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = bReg;
+                addCellToPending(SP);
+                SP--;
+                Memory[SP] = flags;
+                addCellToPending(SP);
+                SP--;
+                updateFlags(InterruptMask, 1);
+                PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+            } else{
+                executeInstruction();
+            }
+            pendingInterrupt = 0;
+            break;
+        }
+        updateUi();
     }
 }
 void MainWindow::on_buttonRunStop_clicked()
@@ -3808,11 +3908,6 @@ void MainWindow::on_comboBoxSpeedSelector_activated(int index)
 void MainWindow::on_checkBoxHexRegs_clicked(bool checked)
 {
     hexReg = checked;
-    updateElement(regPC);
-    updateElement(regSP);
-    updateElement(regA);
-    updateElement(regB);
-    updateElement(regX);
 }
 void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
 {
@@ -4129,20 +4224,26 @@ void MainWindow::on_buttonTidyUp_clicked()
 }
 
 
-void MainWindow::on_pushButton_3_clicked()
-{
 
+
+void MainWindow::on_buttonRST_clicked()
+{
+    pendingInterrupt = 1;
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_buttonNMI_clicked()
 {
-
+    if(pendingInterrupt == 0){
+        pendingInterrupt = 2;
+    }
 }
 
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_pushButtonIRQ_clicked()
 {
-
+    if(pendingInterrupt == 0){
+        pendingInterrupt = 3;
+    }
 }
 
