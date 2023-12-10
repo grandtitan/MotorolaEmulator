@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "InstructionList.h"
 #include "externaldisplay.h"
+#include "qfuturewatcher.h"
 #include "qtreewidget.h"
 #include <QLineEdit>
 
@@ -35,13 +36,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QString softwareVersion = "1.5";
-
+    QFutureWatcher<void> futureWatcher;
     int lastInput = -1;
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
+
 
     void updateFlags(FlagToUpdate flag, bool value);
     void addCellToPending(int address);
@@ -71,6 +73,7 @@ private:
     void PrintConsole(const QString& text, int type);
     void Err(const QString& text);
 
+    int pendingInterrupt = 0; //1 RST //2 NMI //3 IRQ
     int oldCursorX = 0;
     int oldCursorY = 0;
     uint8_t Memory[0x10000] = {};
@@ -93,6 +96,11 @@ private:
     void stopExecution();
     void startExecution();
     void resetEmulator(bool failedCompile);
+    int breakWhenIndex = 0;
+    int breakAtValue = 0;
+    int breakIsValue = 0;
+
+
 
     int previousScrollCode = 0;
     int compilerVersionIndex = 0;
@@ -114,7 +122,6 @@ private:
     bool simpleMemory = false;
     int currentSMScroll = 0;
     bool writeToMemory = false;
-    bool breakEnabled = false;
     bool useCyclesPerSecond = false;
     bool hexReg = true;
     bool compileOnRun = true;
@@ -186,5 +193,7 @@ private slots:
     void on_buttonRST_clicked();
     void on_buttonNMI_clicked();
     void on_pushButtonIRQ_clicked();
+    void on_spinBoxBreakAt_valueChanged(int arg1);
+    void on_spinBoxBreakIs_valueChanged(int arg1);
 };
 #endif // MAINWINDOW_H
