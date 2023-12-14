@@ -49,7 +49,7 @@ private:
     void addCellToPending(int address);
     void updateMemoryCell(int address);
     QList<int> pendingCells;
-    void updateUi();
+    void updateUi(int whatToUpdate);
 
     void updateMemoryTab();
     void updateLinesBox();
@@ -89,10 +89,13 @@ private:
     int interruptLocations = 0xFFFF;
     int executeInstruction();
 
-    QTimer *executionTimer;
-    int executionSpeed = 125;
+    QTimer *uiUpdateTimer;
+    void updateIfReady();
+    float uiUpdateSpeed = 256;
+    int updateReady;
+    int stepSkipCount = 0;
+    int executionSpeed = 0;
     bool running = false;
-    void executeLoop();
     void stopExecution();
     void startExecution();
     void resetEmulator(bool failedCompile);

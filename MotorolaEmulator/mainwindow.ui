@@ -1763,7 +1763,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditNName">
      <property name="geometry">
       <rect>
-       <x>121</x>
+       <x>120</x>
        <y>230</y>
        <width>20</width>
        <height>31</height>
@@ -2000,7 +2000,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditNValue">
      <property name="geometry">
       <rect>
-       <x>140</x>
+       <x>139</x>
        <y>230</y>
        <width>21</width>
        <height>31</height>
@@ -2863,7 +2863,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditIValue">
      <property name="geometry">
       <rect>
-       <x>90</x>
+       <x>89</x>
        <y>230</y>
        <width>21</width>
        <height>31</height>
@@ -2901,7 +2901,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditIName">
      <property name="geometry">
       <rect>
-       <x>71</x>
+       <x>70</x>
        <y>230</y>
        <width>20</width>
        <height>31</height>
@@ -3138,7 +3138,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditHValue">
      <property name="geometry">
       <rect>
-       <x>39</x>
+       <x>40</x>
        <y>230</y>
        <width>21</width>
        <height>31</height>
@@ -3176,7 +3176,7 @@ QPushButton:pressed{
     <widget class="QLineEdit" name="lineEditHName">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>21</x>
        <y>230</y>
        <width>20</width>
        <height>31</height>
@@ -3415,8 +3415,8 @@ QPushButton:pressed{
       <rect>
        <x>20</x>
        <y>60</y>
-       <width>291</width>
-       <height>16</height>
+       <width>171</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="font">
@@ -3435,8 +3435,8 @@ QPushButton:pressed{
       <rect>
        <x>20</x>
        <y>80</y>
-       <width>291</width>
-       <height>16</height>
+       <width>171</width>
+       <height>20</height>
       </rect>
      </property>
      <property name="font">
@@ -3454,7 +3454,7 @@ QPushButton:pressed{
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>70</y>
+       <y>130</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -3490,7 +3490,7 @@ QPushButton:pressed{
      <property name="geometry">
       <rect>
        <x>270</x>
-       <y>70</y>
+       <y>130</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -3526,7 +3526,7 @@ QPushButton:pressed{
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>70</y>
+       <y>130</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -9600,7 +9600,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <rect>
       <x>910</x>
       <y>670</y>
-      <width>71</width>
+      <width>111</width>
       <height>24</height>
      </rect>
     </property>
@@ -9611,7 +9611,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <number>3</number>
     </property>
     <property name="maxVisibleItems">
-     <number>12</number>
+     <number>8</number>
     </property>
     <item>
      <property name="text">
@@ -9670,7 +9670,52 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </item>
     <item>
      <property name="text">
-      <string>max</string>
+      <string>2048</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>4096</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>8192</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>16384</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>32768</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>65536</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>131072</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>262144</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>524288</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>1048576</string>
      </property>
     </item>
    </widget>
