@@ -87,17 +87,15 @@ bool MainWindow::compileMix(int ver){
         }
         else if (line[0].isLetter()) {
             //extract label
-            charNum++;
             for (; charNum < line.size(); ++charNum) {
                 if (line[charNum].isLetterOrNumber() || line[charNum] == '_') {
                     if (charNum == line.size() - 1) {
-                        Err("zMissing instruction");
+                        Err("Missing instruction");
                         goto end;
                     }
                 }
                 else if (line[charNum] == '\t'  || line[charNum] == ' ') {
                     label = line.sliced(0, charNum).toUpper();
-                    charNum++;
                     for (; charNum < line.size(); ++charNum) {
                         if (line[charNum] == '\t' || line[charNum] == ' ') {
                             if (charNum == line.size() - 1) {

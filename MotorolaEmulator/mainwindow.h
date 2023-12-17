@@ -44,13 +44,11 @@ private:
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
 
-
     void updateFlags(FlagToUpdate flag, bool value);
     void addCellToPending(int address);
     void updateMemoryCell(int address);
     QList<int> pendingCells;
     void updateUi(int whatToUpdate);
-
     void updateMemoryTab();
     void updateLinesBox();
 
@@ -95,7 +93,7 @@ private:
     int updateReady;
     int stepSkipCount = 0;
     int executionSpeed = 0;
-    bool running = false;
+    std::atomic<bool> running = false;
     void stopExecution();
     void startExecution();
     void resetEmulator(bool failedCompile);
@@ -158,6 +156,7 @@ public slots:
     void showMnemonicInfo();
     void showInstructionInfoWindow(QString instruction, int version);
 private slots:
+    void stopUiUpdateTimer();
     void handleCodeVerticalScrollBarValueChanged(int value);
     void handleLinesScroll();
     void handleDisplayScrollVertical();

@@ -21,8 +21,9 @@
 #include <QPointer>
 #include <unordered_map>
 #include "instructioninfodialog.h"
-#include <QtConcurrent/QtConcurrent>
+#include <QtConcurrent/QtConcurrentRun>
 #include <chrono>
+#include <QThreadPool>
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -428,7 +429,9 @@ void MainWindow::updateFlags(FlagToUpdate flag, bool value)
 }
 void MainWindow::addCellToPending(int address)
 {
-    pendingCells.append(address);
+    if (!pendingCells.contains(address)) {
+            pendingCells.append(address);
+    }
 }
 void MainWindow::updateMemoryCell(int address)
 {
@@ -606,6 +609,9 @@ void MainWindow::updateSelectionsMemoryEdit(int address)
 }
 void MainWindow::updateSelectionCompileError(int charNum)
 {
+    linesSelectionsLines.clear();
+    codeSelectionsLines.clear();
+    memorySelectionsLines.clear();
     QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentCompilerLine);
     QTextCursor codeCursor(codeBlock);
     codeCursor.select(QTextCursor::LineUnderCursor);
@@ -614,20 +620,21 @@ void MainWindow::updateSelectionCompileError(int charNum)
     charCursor.setPosition(codeBlock.position() + charNum + 1, QTextCursor::KeepAnchor);
 
     QTextCharFormat lineFormat;
-    QList<QTextEdit::ExtraSelection > combinedCodeSelections;
     QTextEdit::ExtraSelection lineSelection;
 
     lineFormat.setBackground(Qt::darkYellow);
     lineSelection.format = lineFormat;
     lineSelection.cursor = codeCursor;
-    combinedCodeSelections.append(lineSelection);
+    codeSelectionsLines.append(lineSelection);
 
     lineFormat.setBackground(Qt::darkGreen);
     lineSelection.format = lineFormat;
     lineSelection.cursor = charCursor;
-    combinedCodeSelections.append(lineSelection);
+    codeSelectionsLines.append(lineSelection);
 
-    ui->plainTextCode->setExtraSelections(combinedCodeSelections);
+    ui->plainTextLines->setExtraSelections(linesSelectionsRunTime + linesSelectionsLines);
+    ui->plainTextCode->setExtraSelections(codeSelectionsRunTime + codeSelectionsLines);
+    ui->plainTextMemory->setExtraSelections(memorySelectionsRunTime + memorySelectionsLines + memorySelectionsMemoryEdit);
     if (currentCompilerLine > ui->plainTextCode->verticalScrollBar()->value() + autoScrollUpLimit)
     {
         ui->plainTextLines->verticalScrollBar()->setValue(currentCompilerLine - autoScrollUpLimit);
@@ -1114,7 +1121,7 @@ void MainWindow::resetEmulator(bool failedCompile)
 }
 void MainWindow::updateUi(int whatToUpdate)
 {
-    if (ui->comboBoxDisplayStatus->currentIndex() == 0)
+ if (ui->comboBoxDisplayStatus->currentIndex() == 0)
     {
         if (ui->plainTextDisplay->hasFocus())
         {
@@ -1232,20 +1239,20 @@ void MainWindow::updateIfReady(){
     }
 }
 void MainWindow::startExecution() {
+
     running = true;
     uiUpdateTimer->start(ceil(1000/uiUpdateSpeed));
     ui->labelRunningIndicatior->setVisible(true);
     if (useCyclesPerSecond) {
-        ui -> labelRunningCycleNum -> setVisible(true);
+        ui->labelRunningCycleNum->setVisible(true);
     }
+    qDebug() << "called from Physical Thread ID: " << QThread::currentThreadId();
     futureWatcher.setFuture(QtConcurrent::run([this]() {
+        qDebug() << "Physical Thread ID: " << QThread::currentThreadId();
         auto last = std::chrono::system_clock::now();
         while (running) {
-            auto cur = std::chrono::system_clock::now();
-//            qDebug() << std::chrono::duration_cast<std::chrono::milliseconds>(cur.time_since_epoch()).count() << " "
-  //                   << std::chrono::duration_cast<std::chrono::milliseconds>(last.time_since_epoch()).count() << " "
-    //                 << std::chrono::duration_cast<std::chrono::milliseconds>((last + std::chrono::nanoseconds(executionSpeed * stepSkipCount)).time_since_epoch()).count();
-            if (cur > (last + std::chrono::nanoseconds(executionSpeed * stepSkipCount))) {
+           auto cur = std::chrono::system_clock::now();
+           if (cur > (last + std::chrono::nanoseconds(executionSpeed * stepSkipCount))) {
                 last = cur;
                 for (int i = 0; i < stepSkipCount; i++) {
                     if (!running){
@@ -1333,70 +1340,71 @@ void MainWindow::startExecution() {
                                 break;
                             case 1:
                                 if (instructionList.getObjectByAddress(PC).lineNumber == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 2:
                                 if (PC == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 3:
                                 if (SP == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 4:
                                 if (xRegister == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 5:
                                 if (aReg == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 6:
                                 if (bReg == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 7:
                                 if (bit(flags, 5) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 8:
                                 if (bit(flags, 4) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 9:
                                 if (bit(flags, 3) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 10:
                                 if (bit(flags, 2) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 11:
                                 if (bit(flags, 1) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 12:
                                 if (bit(flags, 0) == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             case 13:
                                 if (Memory[breakAtValue] == breakIsValue) {
-                                    stopExecution();
+                                    running = false;
                                 }
                                 break;
                             }
+
                         }
 
                     } else {
@@ -1475,67 +1483,67 @@ void MainWindow::startExecution() {
                             break;
                         case 1:
                             if (instructionList.getObjectByAddress(PC).lineNumber == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 2:
                             if (PC == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 3:
                             if (SP == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 4:
                             if (xRegister == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 5:
                             if (aReg == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 6:
                             if (bReg == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 7:
                             if (bit(flags, 5) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 8:
                             if (bit(flags, 4) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 9:
                             if (bit(flags, 3) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 10:
                             if (bit(flags, 2) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 11:
                             if (bit(flags, 1) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 12:
                             if (bit(flags, 0) == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         case 13:
                             if (Memory[breakAtValue] == breakIsValue) {
-                                stopExecution();
+                                running = false;
                             }
                             break;
                         }
@@ -1545,18 +1553,21 @@ void MainWindow::startExecution() {
             }
 
         }
+        waitCycles = 0;
+        cycleNum = 1;
+        QMetaObject::invokeMethod(this, "stopUiUpdateTimer", Qt::QueuedConnection);
+        ui->labelRunningIndicatior->setVisible(false);
+        ui->labelRunningCycleNum->setVisible(false);
+        updateUi(1);
     }));
+}
+void MainWindow::stopUiUpdateTimer(){
+    uiUpdateTimer->stop();
 }
 void MainWindow::stopExecution()
 {
     running = false;
     futureWatcher.waitForFinished();
-    waitCycles = 0;
-    cycleNum = 1;
-    uiUpdateTimer->stop();
-    ui->labelRunningIndicatior->setVisible(false);
-    ui->labelRunningCycleNum->setVisible(false);
-    updateUi(1);
 }
 int MainWindow::executeInstruction()
 {
@@ -1576,15 +1587,11 @@ int MainWindow::executeInstruction()
     switch (Memory[PC])
     {
         case 0x00:
-            if (running)
-            {
-                stopExecution();
-            }
-            else
-            {
-                PC++;
-            }
-
+        if(running){
+            running = false;
+        }else{
+            PC++;
+        }
             break;
         case 0x01:
             cycleCount = 2;
