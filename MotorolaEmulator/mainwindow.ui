@@ -3775,6 +3775,9 @@ QPushButton:pressed{
         <height>24</height>
        </rect>
       </property>
+      <property name="placeholderText">
+       <string/>
+      </property>
      </widget>
      <widget class="QComboBox" name="comboBoxBreakWhen">
       <property name="geometry">
@@ -3923,6 +3926,12 @@ QPushButton:pressed{
         <height>25</height>
        </rect>
       </property>
+      <property name="prefix">
+       <string>$</string>
+      </property>
+      <property name="displayIntegerBase">
+       <number>16</number>
+      </property>
      </widget>
      <widget class="QLabel" name="labelAt">
       <property name="geometry">
@@ -3946,8 +3955,14 @@ QPushButton:pressed{
         <height>31</height>
        </rect>
       </property>
+      <property name="prefix">
+       <string>$</string>
+      </property>
       <property name="maximum">
        <number>65535</number>
+      </property>
+      <property name="displayIntegerBase">
+       <number>16</number>
       </property>
      </widget>
     </widget>
@@ -3955,57 +3970,6 @@ QPushButton:pressed{
      <attribute name="title">
       <string>Settings</string>
      </attribute>
-     <widget class="QCheckBox" name="checkBoxError">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>158</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Show errors</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-      <property name="tristate">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBoxWarn">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>10</y>
-        <width>121</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Show warnings</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QCheckBox" name="checkBoxDebug">
-      <property name="geometry">
-       <rect>
-        <x>250</x>
-        <y>10</y>
-        <width>101</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Show debug</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
      <widget class="QCheckBox" name="checkBoxAdvancedInfo">
       <property name="geometry">
        <rect>
@@ -4273,6 +4237,19 @@ QPushButton:pressed{
       </property>
       <property name="text">
        <string>Tidy up</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxIncrementPC">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>261</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>increment PC on unkown instruction</string>
       </property>
      </widget>
     </widget>

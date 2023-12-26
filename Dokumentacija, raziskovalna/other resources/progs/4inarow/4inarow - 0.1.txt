@@ -1,0 +1,60 @@
+	jmp start
+	.org 42
+currentTurn	.byte 'O
+	.org 100
+resetGame	ldx #0
+	ldaa #$5F
+loopClearBoard	staa 0,x
+	inx
+	cpx #42
+	bne loopClearBoard
+	ldaa #'O
+	staa currentTurn
+	rts
+drawBoard	ldx #41
+loopDrawBoardPsh	ldaa 0,x
+	psha
+	dex
+	cpx #$FFFF
+	bne loopDrawBoardPsh
+	ldx #$FB00
+	clra
+loopDrawBoardPul	pulb
+	stab 0,x
+	inx
+	inca
+	cmpa #7
+	bne loopDrawBoardPul
+	ldab #47
+	clra
+	abx
+	cpx #$FC44
+	bne loopDrawBoardPul
+	rts
+start	jsr resetGame
+	jsr drawBoard
+round	nop
+getInput	WAI
+	ldab $FFF0
+	stab $FB35
+	cmpb '1
+	beq placeMove
+	cmpb '2
+	beq placeMove
+	cmpb '3
+	beq placeMove
+	cmpb '4
+	beq placeMove
+	cmpb '5
+	beq placeMove
+	cmpb '6
+	beq placeMove
+	cmpb '7
+	beq placeMove
+	jmp getInput
+placeMove	subb #48
+	ldx #$FB00
+	abx
+	ldab 0,x
+	cmpa '-
+	beq getInput

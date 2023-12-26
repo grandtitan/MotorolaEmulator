@@ -16,14 +16,7 @@ enum FlagToUpdate {
     Overflow,
     Carry
 };
-enum elementToUpdate {
-    regPC,
-    regSP,
-    regA,
-    regB,
-    regX,
-    allFlags
-};
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -46,9 +39,7 @@ private:
 
     void updateFlags(FlagToUpdate flag, bool value);
     void addCellToPending(int address);
-    void updateMemoryCell(int address);
     QList<int> pendingCells;
-    void updateUi(int whatToUpdate);
     void updateMemoryTab();
     void updateLinesBox();
 
@@ -62,7 +53,7 @@ private:
     QList<QTextEdit::ExtraSelection> codeSelectionsLines;
     QList<QTextEdit::ExtraSelection> memorySelectionsLines;
     QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
-    void updateSelectionsRunTime();
+    void updateSelectionsRunTime(int address);
     void updateSelectionsLines(int line = -1);
     void updateSelectionsMemoryEdit(int address = -1);
     void updateSelectionCompileError(int charNum);
@@ -74,26 +65,31 @@ private:
     int pendingInterrupt = 0; //1 RST //2 NMI //3 IRQ
     int oldCursorX = 0;
     int oldCursorY = 0;
-    uint8_t Memory[0x10000] = {};
     uint8_t backupMemory[0x10000] = {};
+
+    uint8_t Memory[0x10000] = {};
     uint8_t aReg = 0,bReg = 0;
-    uint16_t PC = 0, SP = 0xF000;
+    uint16_t PC = 0, SP = 0x00FF;
     uint16_t xRegister = 0;
-    //uint16_t yRegister = 0; //not implemented
-    //bool indexRegister = true; //true x false y not implemented properly
     uint8_t flags = 0;
-    int waitCycles = 0;
-    int cycleNum = 1;
+    int currentCycleNum = 1;
+    int lastInstructionCycleCount = 0;
+
+    void updateUi();
+    void updateCurUi();
+    void updateCurMemoryCell(int address, uint8_t curMemory[0x10000]);
+    bool incrementPCOnMissingInstruction = false;
     int interruptLocations = 0xFFFF;
     int executeInstruction();
+    //uint16_t yRegister = 0; //not implemented
+    //bool indexRegister = true; //true x false y not implemented properly
 
-    QTimer *uiUpdateTimer;
     void updateIfReady();
+    QTimer *uiUpdateTimer;
     float uiUpdateSpeed = 256;
-    int updateReady;
     int stepSkipCount = 0;
     int executionSpeed = 0;
-    std::atomic<bool> running = false;
+    bool running = false;
     void stopExecution();
     void startExecution();
     void resetEmulator(bool failedCompile);
@@ -152,6 +148,7 @@ protected:
 signals:
     void resized(const QSize& newSize);
 public slots:
+    void setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int curCycle, uint8_t curFlags , uint16_t curPC, uint16_t curSP, uint8_t curA, uint8_t curB, uint16_t curX);
     void showContextMenu(const QPoint &);
     void showMnemonicInfo();
     void showInstructionInfoWindow(QString instruction, int version);
@@ -197,5 +194,6 @@ private slots:
     void on_pushButtonIRQ_clicked();
     void on_spinBoxBreakAt_valueChanged(int arg1);
     void on_spinBoxBreakIs_valueChanged(int arg1);
+    void on_checkBoxIncrementPC_clicked(bool checked);
 };
 #endif // MAINWINDOW_H

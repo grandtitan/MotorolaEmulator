@@ -1,0 +1,31 @@
+	JSR drawBoard
+	.byte 45
+	.byte 46
+	.org 30
+	.byte 46
+		.org 42
+drawBoard	clra
+pshToStack	clrx
+	ldab 0,x
+	pshb
+	inx
+	cpx #42
+	bne pshToStack
+writFromStack	ldx #$FB00
+loopX		pulb
+		stab 0,X
+		inca
+		cmpa #7
+		bne loopX
+		clra
+		ldab #4D
+	abx
+
+
+
+
+
+
+
+endDrawBoard	rts
+

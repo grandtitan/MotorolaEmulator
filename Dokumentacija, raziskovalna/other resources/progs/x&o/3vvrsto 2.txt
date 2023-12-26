@@ -1,0 +1,56 @@
+		ldab #$20
+		ldx #$FB00
+clrDis	stab $0,X
+		inc count ;zacetek konca
+		inx
+		ldaa count
+		cmpa limit
+		bne clrDis
+count 	.byte 0
+limit	.byte 255
+A1		.byte 45
+A2		.byte 45
+A3		.byte 45
+B1		.byte 45
+B2		.byte 45
+B3		.byte 45
+C1		.byte 45
+C2		.byte 45
+C3		.byte 45
+win		.byte 45 ;-
+lastTrn .byte 79 ;o
+		jsr reset
+gameL	ldaa win
+		cmpa #45
+		bne gameLen ; fali se ostale del while if statementa 
+chkTrn	ldaa lastTrn |
+		cmpa #88 ;   |if trn = X
+		bne ckTrEls
+		jsr Oturn
+		ldab #79
+		stab lastTrn
+		jmp ckTrEnd
+ckTrEls jsr Xturn
+		ldab #88
+		stab lastTrn
+ckTrEnd jsr check
+		jmp gameL
+gameLen SWI
+
+check	
+
+
+reset	ldab #45
+		staa A1
+		staa A2
+		staa A3
+		staa B1
+		staa B2
+		staa B3
+		staa C1
+		staa C2
+		staa C3
+		staa win
+		ldab #79
+		staa lastTrn
+		rts

@@ -1,0 +1,22 @@
+		ldab #$20
+		ldx #$FB00
+loop	stab $0,X
+		inc count ;zacetek konca
+		inx
+		ldaa count
+		cmpa limit
+		bne loop
+count 	.byte 0
+limit	.byte 255
+A1		.str "-"
+A2		.str "-"
+A3		.str "-"
+B1		.str "-"
+B2		.str "-"
+B3		.str "-"
+C1		.str "-"
+C2		.str "-"
+C3		.str "-"
+win		.str "-"
+lastTrn .str "O"
+RESET	

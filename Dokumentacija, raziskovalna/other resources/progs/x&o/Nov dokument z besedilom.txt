@@ -1,0 +1,10 @@
+		.setb $A0,$0
+		ldab #32
+		LDY #$FB00
+ONEJ 	stab $0,Y
+		inc $A0
+		iny
+		BNE ONEJ
+		ldab #$42
+		stab $FB00
+		swi

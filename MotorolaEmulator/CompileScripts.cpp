@@ -495,10 +495,6 @@ bool MainWindow::compileMix(int ver){
                             Err("Value out of range: " + QString::number(value));
                             goto end;
                         }
-                        if (value < currentCompilerAddress){
-                            Err("Backward reference not permitted: " + QString::number(value));
-                            goto end;
-                        }
                         Memory[interruptLocations-1] = (value & 0xFF00)>>8;
                         Memory[interruptLocations] = value & 0xFF;
                         currentCompilerAddress = value;
