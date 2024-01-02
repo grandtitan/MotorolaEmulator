@@ -1217,15 +1217,12 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6800.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
-                            if (value > 255){
-                                opCode = (value >> 8) & 0xFF;
-                                opCode2 = value & 0xFF;
-                            }else{
-                                opCode = value;
-                            }
+                            opCode = (value >> 8) & 0xFF;
+                            opCode2 = value & 0xFF;
+
                         }
                         Memory[currentCompilerAddress + 1] = opCode;
                         Memory[currentCompilerAddress + 2] = opCode2;
@@ -2985,15 +2982,12 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6803.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[currentCompilerAddress + 1] = op;
                         }else{
                             int value = labelValMap[op];
-                            if (value > 255){
-                                opCode = (value >> 8) & 0xFF;
-                                opCode2 = value & 0xFF;
-                            }else{
-                                opCode = value;
-                            }
+                            opCode = (value >> 8) & 0xFF;
+                            opCode2 = value & 0xFF;
+
                         }
                         Memory[currentCompilerAddress + 1] = opCode;
                         Memory[currentCompilerAddress + 2] = opCode2;
@@ -4448,6 +4442,7 @@ int MainWindow::inputNextAddress(int curAdr, QString err){
 }
 
 bool MainWindow::reverseCompile(int ver, int begLoc){
+    bool orgSet = false;
     QString code;
     int address = 0;
     int line = 0;
@@ -4459,6 +4454,13 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             instructionList.addInstruction(address, line, 0, 0, 0);
             address++;
             line++;
+        }else if(address == begLoc && !orgSet){
+            code.append("\t.ORG " + QString::number(address) + "\n");
+            Memory[interruptLocations-1] = (address & 0xFF00)>>8;
+            Memory[interruptLocations] = address & 0xFF;
+            instructionList.addInstruction(address, line, 0, 0, 0);
+            line++;
+            orgSet = true;
         }else{
             int inSize = 1;
             int inType = -2; //  -3 m6803 -2 unkown -1 zero 0 inh 1 imm 2 dir 3 ind 4 ext 5 rel

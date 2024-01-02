@@ -37,24 +37,39 @@ private:
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
 
+    int displayStatusIndex;
+
+    struct UpdateInfo {
+        int whatToUpdate = 0;
+        uint8_t curMemory[0x10000];
+        int curCycle;
+        uint8_t curFlags;
+        uint16_t curPC;
+        uint16_t curSP;
+        uint8_t curA;
+        uint8_t curB;
+        uint16_t curX;
+    };
+    UpdateInfo globalUpdateInfo;
     void updateFlags(FlagToUpdate flag, bool value);
-    void addCellToPending(int address);
-    QList<int> pendingCells;
     void updateMemoryTab();
     void updateLinesBox();
 
-    int linesMarkLine = -1;
-    int linesMarkAddress = -1;
-    int memoryEditAddress = -1;
-    QList<QTextEdit::ExtraSelection> linesSelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> codeSelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> memorySelectionsRunTime;
-    QList<QTextEdit::ExtraSelection> linesSelectionsLines;
-    QList<QTextEdit::ExtraSelection> codeSelectionsLines;
-    QList<QTextEdit::ExtraSelection> memorySelectionsLines;
-    QList<QTextEdit::ExtraSelection> memorySelectionsMemoryEdit;
+
+    int previousRunTimeSelectionAddress = 0;
+    int previousRunTimeSelectionSMAddress = 0;
+    QVector<int> lineSelectionLines;
+    QVector<int> lineSelectionAddresses;
+    QList<QTextEdit::ExtraSelection> linesExtraSelectionsRunTime;
+    QList<QTextEdit::ExtraSelection> codeExtraSelectionsRunTime;
+    QList<QTextEdit::ExtraSelection> linesExtraSelectionsLines;
+    QList<QTextEdit::ExtraSelection> codeExtraSelectionsLines;
     void updateSelectionsRunTime(int address);
+
+
     void updateSelectionsLines(int line = -1);
+    void clearSelectionLines();
+
     void updateSelectionsMemoryEdit(int address = -1);
     void updateSelectionCompileError(int charNum);
     void clearSelection(int clearWhat);
@@ -73,11 +88,10 @@ private:
     uint16_t xRegister = 0;
     uint8_t flags = 0;
     int currentCycleNum = 1;
-    int lastInstructionCycleCount = 0;
+    int instructionCycleCount = 0;
 
     void updateUi();
     void updateCurUi();
-    void updateCurMemoryCell(int address, uint8_t curMemory[0x10000]);
     bool incrementPCOnMissingInstruction = false;
     int interruptLocations = 0xFFFF;
     int executeInstruction();
@@ -142,6 +156,24 @@ private:
     QStringList razInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "TST" };
     QStringList indInstructionsM6803 = { "ADCA", "ADCB", "ADDA", "ADDB", "ADDD", "ANDA", "ANDB", "ASL", "ASR", "BITA", "BITB", "CLR", "CMPA", "CMPB", "COM", "CPX", "DEC", "EORA", "EORB", "INC", "JMP", "JSR", "LDAA", "LDAB", "LDD", "LDS", "LDX", "LSL", "LSR", "NEG", "ORAA", "ORAB", "ROL", "ROR", "SBCA", "SBCB", "STAA", "STAB", "STD", "STS", "STX", "SUBA", "SUBB", "SUBD", "TST" };
     QStringList relInstructionsM6803 = { "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BHS", "BLE", "BLO", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BRN", "BSR", "BVC", "BVS" };
+    int cycleCountArray[256] = {
+        0, 2, 0, 0, 3, 3, 2, 2, 3, 3, 2, 2, 2, 2, 2, 2,
+        2, 2, 0, 0, 0, 0, 2, 2, 0, 2, 0, 2, 0, 0, 0, 0,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 4, 4, 3, 3, 3, 3, 5, 5, 3, 10, 4, 10, 9, 12,
+        2, 0, 0, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2,
+        2, 0, 0, 2, 2, 0, 2, 2, 2, 2, 2, 0, 2, 2, 0, 2,
+        6, 0, 0, 6, 6, 0, 6, 6, 6, 6, 6, 0, 6, 6, 3, 6,
+        6, 0, 0, 6, 6, 0, 6, 6, 6, 6, 6, 0, 6, 6, 3, 6,
+        2, 2, 2, 4, 2, 2, 2, 0, 2, 2, 2, 2, 4, 6, 3, 0,
+        3, 3, 3, 5, 3, 3, 3, 3, 3, 3, 3, 3, 5, 5, 4, 4,
+        4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 5, 5,
+        4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 5, 5,
+        2, 2, 2, 4, 2, 2, 2, 0, 2, 2, 2, 2, 3, 0, 3, 0,
+        3, 3, 3, 5, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
+        4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5,
+        4, 4, 4, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5
+    };
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *ev) override;
@@ -149,6 +181,7 @@ signals:
     void resized(const QSize& newSize);
 public slots:
     void setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int curCycle, uint8_t curFlags , uint16_t curPC, uint16_t curSP, uint8_t curA, uint8_t curB, uint16_t curX);
+    void setUiUpdateData(int whatToUpdate, int curCycle);
     void showContextMenu(const QPoint &);
     void showMnemonicInfo();
     void showInstructionInfoWindow(QString instruction, int version);
@@ -158,7 +191,6 @@ private slots:
     void handleLinesScroll();
     void handleDisplayScrollVertical();
     void handleDisplayScrollHorizontal();
-    void handleMemoryScrollHorizontal(); 
     void handleMainWindowSizeChanged(const QSize& newSize);
 
     bool on_buttonCompile_clicked();
@@ -195,5 +227,6 @@ private slots:
     void on_spinBoxBreakAt_valueChanged(int arg1);
     void on_spinBoxBreakIs_valueChanged(int arg1);
     void on_checkBoxIncrementPC_clicked(bool checked);
+    void on_tableWidgetMemory_cellChanged(int row, int column);
 };
 #endif // MAINWINDOW_H
