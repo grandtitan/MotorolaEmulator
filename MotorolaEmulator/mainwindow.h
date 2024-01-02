@@ -94,7 +94,7 @@ private:
     void updateCurUi();
     bool incrementPCOnMissingInstruction = false;
     int interruptLocations = 0xFFFF;
-    int executeInstruction();
+    void executeInstruction();
     //uint16_t yRegister = 0; //not implemented
     //bool indexRegister = true; //true x false y not implemented properly
 

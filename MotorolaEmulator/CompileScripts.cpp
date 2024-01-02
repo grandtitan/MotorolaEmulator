@@ -2,14 +2,10 @@
 #include "ui_mainwindow.h"
 #include <QStringBuilder>
 #include <QScrollBar>
-#include <iostream>
 #include <map>
-#include <iomanip>
-#include <sstream>
 #include <QTextBlock>
 #include <QString>
 #include <QTimer>
-#include <cmath>
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>

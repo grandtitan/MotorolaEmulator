@@ -3,7 +3,6 @@
 #include <QStringBuilder>
 #include <QScrollBar>
 #include <iostream>
-#include <map>
 #include <iomanip>
 #include <sstream>
 #include <QTextBlock>
@@ -19,7 +18,6 @@
 #include <QInputDialog>
 #include "InstructionList.h"
 #include <QPointer>
-#include <unordered_map>
 #include "instructioninfodialog.h"
 #include <QtConcurrent/QtConcurrentRun>
 #include <chrono>
@@ -203,6 +201,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         }
     }
     on_comboBoxDisplayStatus_currentIndexChanged(0);
+
+    for (int i = 0; i < 20; ++i)
+    {
+        QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
+        item->setTextAlignment(Qt::AlignCenter);
+        item->setFlags(item->flags() &~Qt::ItemIsEditable);
+        ui->tableWidgetSM->setItem(i, 0, item);
+        item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
+        item->setTextAlignment(Qt::AlignCenter);
+        item->setFlags(item->flags() &~Qt::ItemIsEditable);
+        ui->tableWidgetSM->setItem(i, 1, item);
+    }
 }
 MainWindow::~MainWindow()
 {
@@ -430,14 +440,9 @@ void MainWindow::updateMemoryTab()
     {
         for (int i = 0; i < 20; ++i)
         {
-            QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
-            item->setTextAlignment(Qt::AlignCenter);
-            item->setFlags(item->flags() &~Qt::ItemIsEditable);
-            ui->tableWidgetSM->setItem(i, 0, item);
-            item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
-            item->setTextAlignment(Qt::AlignCenter);
-            item->setFlags(item->flags() &~Qt::ItemIsEditable);
-            ui->tableWidgetSM->setItem(i, 1, item);
+            ui->tableWidgetSM->item(i, 0)->setText(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
+            ui->tableWidgetSM->item(i, 1)->setText(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
+            updateSelectionsRunTime(PC);
         }
     }
     else
@@ -562,7 +567,6 @@ void MainWindow::updateSelectionsLines(int line)
    ui->plainTextLines->setExtraSelections(linesExtraSelectionsRunTime + linesExtraSelectionsLines);
    ui->plainTextCode->setExtraSelections(codeExtraSelectionsRunTime + codeExtraSelectionsLines);
 }
-
 void MainWindow::clearSelectionLines(){
     linesExtraSelectionsLines.clear();
     codeExtraSelectionsLines.clear();
@@ -575,7 +579,6 @@ void MainWindow::clearSelectionLines(){
     ui->plainTextLines->setExtraSelections(linesExtraSelectionsRunTime + linesExtraSelectionsLines);
     ui->plainTextCode->setExtraSelections(codeExtraSelectionsRunTime + codeExtraSelectionsLines);
 }
-
 void MainWindow::updateSelectionsRunTime(int address)
 {
     linesExtraSelectionsRunTime.clear();
@@ -620,7 +623,6 @@ void MainWindow::updateSelectionsRunTime(int address)
     ui->plainTextLines->setExtraSelections(linesExtraSelectionsRunTime + linesExtraSelectionsLines);
     ui->plainTextCode->setExtraSelections(codeExtraSelectionsRunTime + codeExtraSelectionsLines);
 }
-
 void MainWindow::updateSelectionCompileError(int charNum)
 {
     QTextBlock codeBlock = ui->plainTextCode->document()->findBlockByLineNumber(currentCompilerLine);
@@ -984,40 +986,35 @@ void MainWindow::updateCurUi(){
         ui->lineEditZValue->setText(QString::number(bit(globalUpdateInfo.curFlags, 2)));
         ui->lineEditVValue->setText(QString::number(bit(globalUpdateInfo.curFlags, 1)));
         ui->lineEditCValue->setText(QString::number(bit(globalUpdateInfo.curFlags, 0)));
-        if (hexReg)
-        {
-        ui->lineEditPCValue->setText(QString("%1").arg(globalUpdateInfo.curPC, 4, 16, QLatin1Char('0')).toUpper());
-        ui->lineEditSPValue->setText(QString("%1").arg(globalUpdateInfo.curSP, 4, 16, QLatin1Char('0')).toUpper());
-        ui->lineEditAValue->setText(QString("%1").arg(globalUpdateInfo.curA, 2, 16, QLatin1Char('0')).toUpper());
-        ui->lineEditBValue->setText(QString("%1").arg(globalUpdateInfo.curB, 2, 16, QLatin1Char('0')).toUpper());
-        ui->lineEditXValue->setText(QString("%1").arg(globalUpdateInfo.curX, 4, 16, QLatin1Char('0')).toUpper());
+        if (hexReg){
+            ui->lineEditPCValue->setText(QString("%1").arg(globalUpdateInfo.curPC, 4, 16, QLatin1Char('0')).toUpper());
+            ui->lineEditSPValue->setText(QString("%1").arg(globalUpdateInfo.curSP, 4, 16, QLatin1Char('0')).toUpper());
+            ui->lineEditAValue->setText(QString("%1").arg(globalUpdateInfo.curA, 2, 16, QLatin1Char('0')).toUpper());
+            ui->lineEditBValue->setText(QString("%1").arg(globalUpdateInfo.curB, 2, 16, QLatin1Char('0')).toUpper());
+            ui->lineEditXValue->setText(QString("%1").arg(globalUpdateInfo.curX, 4, 16, QLatin1Char('0')).toUpper());
         }
-        else
-        {
-        ui->lineEditPCValue->setText(QString::number(globalUpdateInfo.curPC));
-        ui->lineEditSPValue->setText(QString::number(globalUpdateInfo.curSP));
-        ui->lineEditAValue->setText(QString::number(globalUpdateInfo.curA));
-        ui->lineEditBValue->setText(QString::number(globalUpdateInfo.curB));
-        ui->lineEditXValue->setText(QString::number(globalUpdateInfo.curX));
+        else{
+            ui->lineEditPCValue->setText(QString::number(globalUpdateInfo.curPC));
+            ui->lineEditSPValue->setText(QString::number(globalUpdateInfo.curSP));
+            ui->lineEditAValue->setText(QString::number(globalUpdateInfo.curA));
+            ui->lineEditBValue->setText(QString::number(globalUpdateInfo.curB));
+            ui->lineEditXValue->setText(QString::number(globalUpdateInfo.curX));
         }
         if (useCyclesPerSecond) { ui->labelRunningCycleNum->setText("Instruction cycle: " + QString::number(globalUpdateInfo.curCycle));}
         int lineNum = instructionList.getObjectByAddress(globalUpdateInfo.curPC).lineNumber;
         if (lineNum >= 0){
-            if (lineNum > previousScrollCode + autoScrollUpLimit)
-            {
+            if (lineNum > previousScrollCode + autoScrollUpLimit){
                 previousScrollCode = lineNum - autoScrollUpLimit;
                 ui->plainTextLines->verticalScrollBar()->setValue(previousScrollCode);
                 ui->plainTextCode->verticalScrollBar()->setValue(previousScrollCode);
             }
-            else if (lineNum < previousScrollCode + autoScrollDownLimit)
-            {
+            else if (lineNum < previousScrollCode + autoScrollDownLimit){
                 previousScrollCode = lineNum - autoScrollDownLimit;
                 ui->plainTextLines->verticalScrollBar()->setValue(previousScrollCode);
                 ui->plainTextCode->verticalScrollBar()->setValue(previousScrollCode);
             }
         }
         if(!simpleMemory){
-
             int firstVisibleRow = ui->tableWidgetMemory->rowAt(0);
             int lastVisibleRow = std::ceil(ui->tableWidgetMemory->rowAt(ui->tableWidgetMemory->viewport()->height() - 1));
             for (int row = firstVisibleRow; row <= lastVisibleRow; ++row) {
@@ -1033,20 +1030,55 @@ void MainWindow::updateCurUi(){
         } else{
             for (int i = 0; i < 20; ++i)
             {
-                QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
-                item->setTextAlignment(Qt::AlignCenter);
-                item->setFlags(item->flags() &~Qt::ItemIsEditable);
-                ui->tableWidgetSM->setItem(i, 0, item);
-                item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8> (globalUpdateInfo.curMemory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
-                item->setTextAlignment(Qt::AlignCenter);
-                item->setFlags(item->flags() &~Qt::ItemIsEditable);
-                ui->tableWidgetSM->setItem(i, 1, item);
+                ui->tableWidgetSM->item(i, 0)->setText(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
+                ui->tableWidgetSM->item(i, 1)->setText(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
+                updateSelectionsRunTime(PC);
             }
         }
         if(displayStatusIndex == 1){
             ui->plainTextDisplay->setPlainText(getDisplayText(globalUpdateInfo.curMemory));
+            if(ui->plainTextDisplay->hasFocus()){
+                QPoint position = QCursor::pos();
+                QPoint localMousePos = ui->plainTextDisplay->mapFromGlobal(position);
+                localMousePos.setX(localMousePos.x() - 3);
+                localMousePos.setY(localMousePos.y() - 5);
+                QFontMetrics fontMetrics(ui->plainTextDisplay->font());
+                int charWidth = fontMetrics.averageCharWidth();
+                int charHeight = fontMetrics.height();
+                int x = localMousePos.x() / charWidth;
+                int y = localMousePos.y() / charHeight;
+                if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
+                    oldCursorX = x;
+                    oldCursorY = y;
+                } else{
+                    x = oldCursorX;
+                    y = oldCursorY;
+                }
+                Memory[0xFFF2] = x;
+                Memory[0xFFF3] = y;
+            }
         }else if (displayStatusIndex == 2){
             plainTextDisplay->setPlainText(getDisplayText(globalUpdateInfo.curMemory));
+            if(plainTextDisplay->hasFocus()){
+                QPoint position = QCursor::pos();
+                QPoint localMousePos = plainTextDisplay->mapFromGlobal(position);
+                localMousePos.setX(localMousePos.x() - 3);
+                localMousePos.setY(localMousePos.y() - 5);
+                QFontMetrics fontMetrics(plainTextDisplay->font());
+                int charWidth = fontMetrics.averageCharWidth();
+                int charHeight = fontMetrics.height();
+                int x = localMousePos.x() / charWidth;
+                int y = localMousePos.y() / charHeight;
+                if(x >= 0 && x <= 53 && y >= 0 && y <= 19){
+                    oldCursorX = x;
+                    oldCursorY = y;
+                } else{
+                    x = oldCursorX;
+                    y = oldCursorY;
+                }
+                Memory[0xFFF2] = x;
+                Memory[0xFFF3] = y;
+            }
         }
         updateSelectionsRunTime(globalUpdateInfo.curPC);
     } else if(globalUpdateInfo.whatToUpdate == 2){
@@ -1373,9 +1405,8 @@ void MainWindow::stopExecution()
     ui->labelRunningCycleNum->setVisible(false);
     updateUi();
 }
-int MainWindow::executeInstruction()
+void MainWindow::executeInstruction()
 {
-    int cycleCount = 1;
     uint8_t uInt8 = 0;
     uint8_t uInt82 = 0;
     int8_t sInt8 = 0;
@@ -1398,14 +1429,13 @@ int MainWindow::executeInstruction()
         }
             break;
         case 0x01:
-            cycleCount = 2;
             PC++;
             //NOP
             break;
         case 0x04:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 3;
+
                 uInt8 = bReg &0x01;
                 uInt16 = (aReg << 8) + bReg;
                 uInt16 = (uInt16 >> 1);
@@ -1430,7 +1460,6 @@ int MainWindow::executeInstruction()
         case 0x05:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 3;
                 uInt8 = (bit(aReg, 7));
                 uInt16 = (aReg << 8) + bReg;
                 uInt16 = uInt16 << 1;
@@ -1453,7 +1482,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x06:
-            cycleCount = 2;
             updateFlags(HalfCarry, bit(aReg, 5));
             updateFlags(InterruptMask, bit(aReg, 4));
             updateFlags(Negative, bit(aReg, 3));
@@ -1463,54 +1491,44 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x07:
-            cycleCount = 2;
             aReg = flags;
             PC++;
             break;
         case 0x08:
-            cycleCount = 3;
             (*curIndReg) ++;
             updateFlags(Zero, (*curIndReg) == 0);
             PC++;
             break;
         case 0x09:
-            cycleCount = 3;
             (*curIndReg) --;
             updateFlags(Zero, (*curIndReg) == 0);
             PC++;
             break;
         case 0x0A:
-            cycleCount = 2;
             updateFlags(Overflow, 0);
             PC++;
             break;
         case 0x0B:
-            cycleCount = 2;
             updateFlags(Overflow, 1);
             PC++;
             break;
         case 0x0C:
-            cycleCount = 2;
             updateFlags(Carry, 0);
             PC++;
             break;
         case 0x0D:
-            cycleCount = 2;
             updateFlags(Carry, 1);
             PC++;
             break;
         case 0x0E:
-            cycleCount = 2;
             updateFlags(InterruptMask, 0);
             PC++;
             break;
         case 0x0F:
-            cycleCount = 2;
             updateFlags(InterruptMask, 1);
             PC++;
             break;
         case 0x10:
-            cycleCount = 2;
             uInt8 = aReg - bReg;
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -1520,7 +1538,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x11:
-            cycleCount = 2;
             uInt8 = aReg - bReg;
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -1529,7 +1546,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x16:
-            cycleCount = 2;
             bReg = aReg;
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -1537,7 +1553,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x17:
-            cycleCount = 2;
             aReg = bReg;
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -1545,7 +1560,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x19:
-            cycleCount = 2;
             uInt8 = flags &0x01;
             uInt82 = bit(flags, 5);
             uInt16 = aReg >> 4;
@@ -1601,7 +1615,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x1B:
-            cycleCount = 2;
             uInt16 = aReg + bReg;
             updateFlags(Carry, (bit(aReg, 7) && bit(bReg, 7)) || (!bit(uInt16, 7) && bit(aReg, 7)) || (bit(bReg, 7) && !bit(uInt16, 7)));
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(bReg, 3)) || (bit(aReg, 3) && !bit(uInt16, 3)) || (bit(bReg, 3) && !bit(uInt16, 3)));
@@ -1612,12 +1625,10 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x20:
-            cycleCount = 3;
             sInt8 = Memory[(PC + 1) % 0x10000];
             PC += sInt8 + 2;
             break;
         case 0x21:
-            cycleCount = 3;
             if (compilerVersionIndex >= 1)
             {
                 PC += 2;
@@ -1633,7 +1644,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x22:
-            cycleCount = 3;
             if ((bit(flags, 2) || (flags & 0x01)) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
@@ -1643,176 +1653,141 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x23:
-            cycleCount = 3;
             if (bit(flags, 2) || (flags & 0x01))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x24:
-            cycleCount = 3;
             if ((flags & 0x01) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x25:
-            cycleCount = 3;
             if ((flags & 0x01))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x26:
-            cycleCount = 3;
             if (bit(flags, 2) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x27:
-            cycleCount = 3;
             if (bit(flags, 2))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x28:
-            cycleCount = 3;
             if (bit(flags, 1) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x29:
-            cycleCount = 3;
             if (bit(flags, 1))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2A:
-            cycleCount = 3;
             if (bit(flags, 3) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2B:
-            cycleCount = 3;
             if (bit(flags, 3))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2C:
-            cycleCount = 3;
             if ((bit(flags, 3) ^ bit(flags, 1)) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2D:
-            cycleCount = 3;
             if (bit(flags, 3) ^ bit(flags, 1))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2E:
-            cycleCount = 3;
             if ((bit(flags, 2) || (bit(flags, 3) ^ bit(flags, 1))) == 0)
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x2F:
-            cycleCount = 3;
             if (bit(flags, 2) || (bit(flags, 3) ^ bit(flags, 1)))
             {
                 sInt8 = Memory[(PC + 1) % 0x10000];
                 PC += sInt8;
             }
-
             PC += 2;
             break;
         case 0x30:
-            cycleCount = 3;
             (*curIndReg) = SP + 1;
             PC++;
             break;
         case 0x31:
-            cycleCount = 3;
             SP++;
             PC++;
             break;
         case 0x32:
-            cycleCount = 4;
             SP++;
             aReg = Memory[SP];
             PC++;
             break;
         case 0x33:
-            cycleCount = 4;
             SP++;
             bReg = Memory[SP];
             PC++;
             break;
         case 0x34:
-            cycleCount = 3;
             SP--;
             PC++;
             break;
         case 0x35:
-            cycleCount = 3;
             SP = (*curIndReg) - 1;
             PC++;
             break;
         case 0x36:
-            cycleCount = 3;
             Memory[SP] = aReg;
-
             SP--;
             PC++;
             break;
         case 0x37:
-            cycleCount = 3;
             Memory[SP] = bReg;
 
             SP--;
@@ -1821,7 +1796,6 @@ int MainWindow::executeInstruction()
         case 0x38:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
                 SP++;
                 (*curIndReg) = (Memory[SP] << 8);
                 SP++;
@@ -1839,7 +1813,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x39:
-            cycleCount = 5;
             SP++;
             PC = Memory[SP] << 8;
             SP++;
@@ -1848,7 +1821,6 @@ int MainWindow::executeInstruction()
         case 0x3A:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 3;
                 (*curIndReg) = (*curIndReg) + bReg;
                 PC++;
             }
@@ -1863,7 +1835,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x3B:
-            cycleCount = 10;
             SP++;
             flags = Memory[SP];
 
@@ -1883,7 +1854,6 @@ int MainWindow::executeInstruction()
         case 0x3C:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 4;
                 Memory[SP] = ((*curIndReg) &0xFF);
 
                 Memory[SP - 1] = (((*curIndReg) >> 8) &0xFF);
@@ -1904,7 +1874,6 @@ int MainWindow::executeInstruction()
         case 0x3D:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 10;
                 uInt16 = static_cast<uint16_t> (aReg) *static_cast<uint16_t> (bReg);
                 updateFlags(Carry, (uInt16 >> 8) != 0);
                 aReg = (uInt16 >> 8);
@@ -1922,7 +1891,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x3E:
-            cycleCount = 9;
             if (lastInput != -1)
             {
                 PC++;
@@ -1931,7 +1899,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x3F:
-            cycleCount = 12;
             PC++;
             Memory[SP] = PC &0xFF;
             SP--;
@@ -1957,7 +1924,6 @@ int MainWindow::executeInstruction()
             PC = (Memory[(interruptLocations - 5)] << 8) + Memory[(interruptLocations - 4)];
             break;
         case 0x40:
-            cycleCount = 2;
             aReg = 0x0 - aReg;
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -1966,7 +1932,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x43:
-            cycleCount = 2;
             aReg = 0xFF - aReg;
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -1975,7 +1940,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x44:
-            cycleCount = 2;
             uInt8 = (aReg & 0x1);
             aReg = (aReg >> 1);
             updateFlags(Negative, 0);
@@ -1985,7 +1949,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x46:
-            cycleCount = 2;
             uInt8 = (aReg & 0x01);
             aReg = aReg >> 1;
             aReg += (flags & 0x01) << 7;
@@ -1996,7 +1959,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x47:
-            cycleCount = 2;
             uInt8 = aReg &0x01;
             updateFlags(Carry, uInt8);
             aReg = (aReg >> 1) + (aReg & 0x80);
@@ -2007,7 +1969,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x48:
-            cycleCount = 2;
             uInt8 = bit(aReg, 7);
             updateFlags(Carry, uInt8);
             aReg = aReg << 1;
@@ -2017,7 +1978,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x49:
-            cycleCount = 2;
             uInt8 = bit(aReg, 7);
             aReg = (aReg << 1) + (flags & 0x01);
             updateFlags(Carry, uInt8);
@@ -2027,7 +1987,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x4A:
-            cycleCount = 2;
             updateFlags(Overflow, aReg == 0x80);
             aReg--;
             updateFlags(Negative, bit(aReg, 7));
@@ -2035,7 +1994,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x4C:
-            cycleCount = 2;
             updateFlags(Overflow, aReg == 0x7F);
             aReg++;
             updateFlags(Negative, bit(aReg, 7));
@@ -2043,7 +2001,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x4D:
-            cycleCount = 2;
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
             updateFlags(Overflow, 0);
@@ -2051,7 +2008,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x4F:
-            cycleCount = 2;
             aReg = 0;
             updateFlags(Negative, 0);
             updateFlags(Zero, 1);
@@ -2060,7 +2016,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x50:
-            cycleCount = 2;
             bReg = 0x0 - bReg;
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -2069,7 +2024,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x53:
-            cycleCount = 2;
             bReg = 0xFF - bReg;
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -2078,7 +2032,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x54:
-            cycleCount = 2;
             uInt8 = (bReg & 0x1);
             bReg = (bReg >> 1);
             updateFlags(Negative, 0);
@@ -2088,7 +2041,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x56:
-            cycleCount = 2;
             uInt8 = (bReg & 0x01);
             bReg = bReg >> 1;
             bReg += (flags & 0x01) << 7;
@@ -2099,7 +2051,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x57:
-            cycleCount = 2;
             uInt8 = bReg &0x01;
             updateFlags(Carry, uInt8);
             bReg = (bReg >> 1) + (bReg & 0x80);
@@ -2110,7 +2061,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x58:
-            cycleCount = 2;
             uInt8 = bit(bReg, 7);
             updateFlags(Carry, uInt8);
             bReg = bReg << 1;
@@ -2121,7 +2071,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x59:
-            cycleCount = 2;
             uInt8 = bit(bReg, 7);
             bReg = (bReg << 1) + (flags & 0x01);
             updateFlags(Carry, uInt8);
@@ -2132,7 +2081,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x5A:
-            cycleCount = 2;
             updateFlags(Overflow, bReg == 0x80);
             bReg--;
             updateFlags(Negative, bit(bReg, 7));
@@ -2141,7 +2089,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x5C:
-            cycleCount = 2;
             updateFlags(Overflow, bReg == 0x7F);
             bReg++;
             updateFlags(Negative, bit(bReg, 7));
@@ -2150,7 +2097,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x5D:
-            cycleCount = 2;
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
             updateFlags(Overflow, 0);
@@ -2158,7 +2104,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x5F:
-            cycleCount = 2;
             bReg = 0;
             updateFlags(Negative, 0);
             updateFlags(Zero, 1);
@@ -2168,7 +2113,6 @@ int MainWindow::executeInstruction()
             PC++;
             break;
         case 0x60:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = 0x0 - Memory[adr];
             updateFlags(Negative, bit(Memory[adr], 7));
@@ -2179,7 +2123,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x63:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = 0xFF - Memory[adr];
             updateFlags(Negative, bit(Memory[adr], 7));
@@ -2190,7 +2133,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x64:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt8 = (Memory[adr] &0x1);
             Memory[adr] = (Memory[adr] >> 1);
@@ -2202,7 +2144,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x66:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt8 = (Memory[adr] &0x01);
             Memory[adr] = Memory[adr] >> 1;
@@ -2215,7 +2156,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x67:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt8 = (Memory[adr] &0x01);
             updateFlags(Carry, uInt8);
@@ -2227,7 +2167,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x68:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt8 = bit(Memory[adr], 7);
             updateFlags(Carry, uInt8);
@@ -2239,7 +2178,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x69:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt8 = bit(Memory[adr], 7);
             Memory[adr] = (Memory[adr] << 1) + (flags & 0x01);
@@ -2251,7 +2189,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x6A:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             updateFlags(Overflow, Memory[adr] == 0x80);
             Memory[adr]--;
@@ -2261,7 +2198,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x6C:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             updateFlags(Overflow, Memory[adr] == 0x7F);
             Memory[adr]++;
@@ -2271,7 +2207,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x6D:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             updateFlags(Negative, bit(Memory[adr], 7));
             updateFlags(Zero, Memory[adr] == 0);
@@ -2280,11 +2215,9 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x6E:
-            cycleCount = 3;
             PC = ((Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000);
             break;
         case 0x6F:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = 0;
             updateFlags(Negative, 0);
@@ -2295,7 +2228,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x70:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = 0x0 - Memory[adr];
             updateFlags(Negative, bit(Memory[adr], 7));
@@ -2306,7 +2238,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x73:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = 0xFF - Memory[adr];
             updateFlags(Negative, bit(Memory[adr], 7));
@@ -2317,7 +2248,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x74:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt8 = (Memory[adr] &0x1);
             Memory[adr] = (Memory[adr] >> 1);
@@ -2329,7 +2259,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x76:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt8 = (Memory[adr] &0x01);
             Memory[adr] = Memory[adr] >> 1;
@@ -2342,7 +2271,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x77:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt8 = (Memory[adr] &0x01);
             updateFlags(Carry, uInt8);
@@ -2354,7 +2282,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x78:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt8 = bit(Memory[adr], 7);
             updateFlags(Carry, uInt8);
@@ -2366,7 +2293,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x79:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt8 = bit(Memory[adr], 7);
             Memory[adr] = (Memory[adr] << 1) + (flags & 0x01);
@@ -2378,7 +2304,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x7A:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             updateFlags(Overflow, Memory[adr] == 0x80);
             Memory[adr]--;
@@ -2388,7 +2313,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x7C:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             updateFlags(Overflow, Memory[adr] == 0x7F);
             Memory[adr]++;
@@ -2398,7 +2322,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x7D:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             updateFlags(Negative, bit(Memory[adr], 7));
             updateFlags(Zero, Memory[adr] == 0);
@@ -2407,11 +2330,9 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x7E:
-            cycleCount = 3;
             PC = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             break;
         case 0x7F:
-            cycleCount = 6;
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = 0;
             updateFlags(Negative, 0);
@@ -2422,7 +2343,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x80:
-            cycleCount = 2;
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2434,7 +2354,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x81:
-            cycleCount = 2;
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2444,7 +2363,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x82:
-            cycleCount = 2;
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = aReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -2458,8 +2376,6 @@ int MainWindow::executeInstruction()
         case 0x83:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 4;
-
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 uInt16 = (aReg << 8) + bReg;
                 uInt162 = uInt16 - adr;
@@ -2483,7 +2399,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x84:
-            cycleCount = 2;
             aReg = (aReg &Memory[(PC + 1) % 0x10000]);
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2492,7 +2407,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x85:
-            cycleCount = 2;
             uInt8 = (aReg &Memory[(PC + 1) % 0x10000]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -2500,7 +2414,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x86:
-            cycleCount = 2;
             aReg = Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2509,7 +2422,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x88:
-            cycleCount = 2;
             aReg = aReg ^ Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2518,7 +2430,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x89:
-            cycleCount = 2;
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt16 = aReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2531,7 +2442,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x8A:
-            cycleCount = 2;
             aReg = aReg | Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2540,7 +2450,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x8B:
-            cycleCount = 2;
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt16 = aReg + uInt8;
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2553,7 +2462,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x8C:
-            cycleCount = 4;
             uInt16 = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt162 = (*curIndReg) - uInt16;
             updateFlags(Negative, bit(uInt162, 15));
@@ -2562,7 +2470,6 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0x8D:
-            cycleCount = 6;
             sInt8 = Memory[(PC + 1) % 0x10000];
             PC += 2;
             Memory[SP] = (PC & 0xFF);
@@ -2574,7 +2481,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x8E:
-            cycleCount = 3;
             SP = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             updateFlags(Negative, bit(SP, 15));
             updateFlags(Zero, SP == 0);
@@ -2583,7 +2489,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x90:
-            cycleCount = 3;
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2595,7 +2500,6 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x91:
-            cycleCount = 3;
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2605,7 +2509,6 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x92:
-            cycleCount = 3;
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = aReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -2619,7 +2522,7 @@ int MainWindow::executeInstruction()
         case 0x93:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
                 uInt8 = Memory[(PC + 1) % 0x10000];
                 adr = (Memory[uInt8] << 8) + Memory[uInt8 + 1];
                 uInt16 = (aReg << 8) + bReg;
@@ -2644,7 +2547,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x94:
-            cycleCount = 3;
+
             aReg = (aReg &Memory[Memory[(PC + 1) % 0x10000]]);
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2653,7 +2556,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x95:
-            cycleCount = 3;
+
             uInt8 = (aReg &Memory[Memory[(PC + 1) % 0x10000]]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -2661,7 +2564,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x96:
-            cycleCount = 3;
+
             aReg = Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2670,7 +2573,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x97:
-            cycleCount = 3;
+
             adr = Memory[(PC + 1) % 0x10000];
             Memory[adr] = aReg;
             updateFlags(Negative, bit(aReg, 7));
@@ -2680,7 +2583,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x98:
-            cycleCount = 3;
+
             aReg = aReg ^ Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2689,7 +2592,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x99:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt16 = aReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2702,7 +2605,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x9A:
-            cycleCount = 3;
+
             aReg = aReg | Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2711,7 +2614,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x9B:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt16 = aReg + uInt8;
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2724,7 +2627,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x9C:
-            cycleCount = 5;
+
             adr = Memory[(PC + 1) % 0x10000];
             uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             uInt162 = (*curIndReg) - uInt16;
@@ -2734,7 +2637,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0x9D:
-            cycleCount = 5;
+
             if (compilerVersionIndex >= 1)
             {
                 adr = Memory[(PC + 1) % 0x10000];
@@ -2757,7 +2660,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x9E:
-            cycleCount = 4;
+
             adr = Memory[(PC + 1) % 0x10000];
             SP = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit(SP, 15));
@@ -2767,7 +2670,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0x9F:
-            cycleCount = 4;
+
             adr = Memory[(PC + 1) % 0x10000];
             Memory[adr] = SP >> 8;
             Memory[(adr + 1) % 0x10000] = (SP & 0xFF);
@@ -2779,7 +2682,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA0:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2791,7 +2694,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xA1:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2801,7 +2704,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA2:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = aReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -2815,7 +2718,7 @@ int MainWindow::executeInstruction()
         case 0xA3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 6;
+
                 uInt8 = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
                 adr = (Memory[uInt8] << 8) + Memory[uInt8 + 1];
                 uInt16 = (aReg << 8) + bReg;
@@ -2840,7 +2743,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xA4:
-            cycleCount = 4;
+
             aReg = (aReg &Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000]);
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2849,7 +2752,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA5:
-            cycleCount = 4;
+
             uInt8 = (aReg &Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -2857,7 +2760,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA6:
-            cycleCount = 4;
+
             aReg = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2866,7 +2769,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA7:
-            cycleCount = 4;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = aReg;
             updateFlags(Negative, bit(aReg, 7));
@@ -2876,7 +2779,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA8:
-            cycleCount = 4;
+
             aReg = aReg ^ Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2885,7 +2788,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xA9:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt16 = aReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2898,7 +2801,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xAA:
-            cycleCount = 4;
+
             aReg = aReg | Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -2907,7 +2810,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xAB:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt16 = aReg + uInt8;
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -2920,7 +2823,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xAC:
-            cycleCount = 6;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             uInt162 = (*curIndReg) - uInt16;
@@ -2930,7 +2833,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xAD:
-            cycleCount = 6;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             PC += 2;
             Memory[SP] = (PC & 0xFF);
@@ -2942,7 +2845,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xAE:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             SP = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit(SP, 15));
@@ -2952,7 +2855,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xAF:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = SP >> 8;
             Memory[(adr + 1) % 0x10000] = (SP & 0xFF);
@@ -2964,7 +2867,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xB0:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2976,7 +2879,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xB1:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = aReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -2986,7 +2889,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB2:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = aReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -3000,7 +2903,7 @@ int MainWindow::executeInstruction()
         case 0xB3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 6;
+
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 adr = (Memory[adr] << 8) + Memory[adr + 1];
                 uInt16 = (aReg << 8) + bReg;
@@ -3025,7 +2928,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xB4:
-            cycleCount = 4;
+
             aReg = (aReg &Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]]);
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -3034,7 +2937,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB5:
-            cycleCount = 4;
+
             uInt8 = (aReg &Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -3042,7 +2945,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB6:
-            cycleCount = 4;
+
             aReg = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -3051,7 +2954,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB7:
-            cycleCount = 4;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = aReg;
             updateFlags(Negative, bit(aReg, 7));
@@ -3061,7 +2964,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB8:
-            cycleCount = 4;
+
             aReg = aReg ^ Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -3070,7 +2973,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xB9:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt16 = aReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -3083,7 +2986,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xBA:
-            cycleCount = 4;
+
             aReg = aReg | Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(aReg, 7));
             updateFlags(Zero, aReg == 0);
@@ -3092,7 +2995,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xBB:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt16 = aReg + uInt8;
             updateFlags(HalfCarry, (bit(aReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(aReg, 3)));
@@ -3105,7 +3008,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xBC:
-            cycleCount = 6;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             uInt162 = (*curIndReg) - uInt16;
@@ -3115,7 +3018,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xBD:
-            cycleCount = 6;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             PC += 3;
             Memory[SP] = (PC & 0xFF);
@@ -3127,7 +3030,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xBE:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             SP = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit(SP, 15));
@@ -3137,7 +3040,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xBF:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = SP >> 8;
             Memory[(adr + 1) % 0x10000] = (SP & 0xFF);
@@ -3149,7 +3052,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xC0:
-            cycleCount = 2;
+
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3161,7 +3064,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xC1:
-            cycleCount = 2;
+
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3171,7 +3074,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xC2:
-            cycleCount = 2;
+
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt82 = bReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -3185,7 +3088,7 @@ int MainWindow::executeInstruction()
         case 0xC3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 4;
+
 
                 uInt16 = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 uInt162 = (aReg << 8) + bReg;
@@ -3210,7 +3113,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xC4:
-            cycleCount = 2;
+
             bReg = (bReg &Memory[(PC + 1) % 0x10000]);
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3219,7 +3122,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xC5:
-            cycleCount = 2;
+
             uInt8 = (bReg &Memory[(PC + 1) % 0x10000]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -3227,7 +3130,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xC6:
-            cycleCount = 2;
+
             bReg = Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3236,7 +3139,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xC8:
-            cycleCount = 2;
+
             bReg = bReg ^ Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3245,7 +3148,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xC9:
-            cycleCount = 2;
+
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt16 = bReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3258,7 +3161,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xCA:
-            cycleCount = 2;
+
             bReg = bReg | Memory[(PC + 1) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3267,7 +3170,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xCB:
-            cycleCount = 2;
+
             uInt8 = Memory[(PC + 1) % 0x10000];
             uInt16 = bReg + uInt8;
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3282,7 +3185,7 @@ int MainWindow::executeInstruction()
         case 0xCC:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 3;
+
 
                 uInt16 = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 updateFlags(Negative, bit(uInt16, 15));
@@ -3304,7 +3207,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xCE:
-            cycleCount = 3;
+
             (*curIndReg) = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             updateFlags(Negative, bit((*curIndReg), 15));
             updateFlags(Zero, (*curIndReg) == 0);
@@ -3313,7 +3216,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xD0:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3325,7 +3228,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xD1:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3335,7 +3238,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD2:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt82 = bReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -3349,7 +3252,7 @@ int MainWindow::executeInstruction()
         case 0xD3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
 
                 adr = Memory[(PC + 1) % 0x10000];
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3375,7 +3278,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xD4:
-            cycleCount = 3;
+
             bReg = (bReg &Memory[Memory[(PC + 1) % 0x10000]]);
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3384,7 +3287,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD5:
-            cycleCount = 3;
+
             uInt8 = (bReg &Memory[Memory[(PC + 1) % 0x10000]]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -3392,7 +3295,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD6:
-            cycleCount = 3;
+
             bReg = Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3401,7 +3304,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD7:
-            cycleCount = 3;
+
             adr = Memory[(PC + 1) % 0x10000];
             Memory[adr] = bReg;
             updateFlags(Negative, bit(bReg, 7));
@@ -3411,7 +3314,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD8:
-            cycleCount = 3;
+
             bReg = bReg ^ Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3420,7 +3323,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xD9:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt16 = bReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3433,7 +3336,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xDA:
-            cycleCount = 3;
+
             bReg = bReg | Memory[Memory[(PC + 1) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3442,7 +3345,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xDB:
-            cycleCount = 3;
+
             uInt8 = Memory[Memory[(PC + 1) % 0x10000]];
             uInt16 = bReg + uInt8;
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3457,7 +3360,7 @@ int MainWindow::executeInstruction()
         case 0xDC:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 4;
+
 
                 adr = Memory[(PC + 1) % 0x10000];
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3482,7 +3385,7 @@ int MainWindow::executeInstruction()
         case 0xDD:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 4;
+
                 adr = Memory[(PC + 1) % 0x10000];
                 Memory[adr] = aReg;
                 Memory[adr + 1] = bReg;
@@ -3504,7 +3407,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xDE:
-            cycleCount = 4;
+
             adr = Memory[(PC + 1) % 0x10000];
             (*curIndReg) = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit((*curIndReg), 15));
@@ -3514,7 +3417,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xDF:
-            cycleCount = 4;
+
             adr = Memory[(PC + 1) % 0x10000];
             Memory[adr] = (*curIndReg) >> 8;
             Memory[(adr + 1) % 0x10000] = ((*curIndReg) &0xFF);
@@ -3526,7 +3429,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE0:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3538,7 +3441,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xE1:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3548,7 +3451,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE2:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt82 = bReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -3562,7 +3465,7 @@ int MainWindow::executeInstruction()
         case 0xE3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 6;
+
                 adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
                 uInt162 = (aReg << 8) + bReg;
@@ -3587,7 +3490,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xE4:
-            cycleCount = 4;
+
             bReg = (bReg &Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000]);
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3596,7 +3499,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE5:
-            cycleCount = 4;
+
             uInt8 = (bReg &Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -3604,7 +3507,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE6:
-            cycleCount = 4;
+
             bReg = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3613,7 +3516,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE7:
-            cycleCount = 4;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = bReg;
             updateFlags(Negative, bit(bReg, 7));
@@ -3623,7 +3526,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE8:
-            cycleCount = 4;
+
             bReg = bReg ^ Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3632,7 +3535,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xE9:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt16 = bReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3645,7 +3548,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xEA:
-            cycleCount = 4;
+
             bReg = bReg | Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3654,7 +3557,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xEB:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000];
             uInt16 = bReg + uInt8;
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3669,7 +3572,7 @@ int MainWindow::executeInstruction()
         case 0xEC:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
 
                 adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3694,7 +3597,7 @@ int MainWindow::executeInstruction()
         case 0xED:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
                 adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
                 Memory[adr] = aReg;
                 Memory[adr + 1] = bReg;
@@ -3716,7 +3619,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xEE:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             (*curIndReg) = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit((*curIndReg), 15));
@@ -3726,7 +3629,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xEF:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
             Memory[adr] = (*curIndReg) >> 8;
             Memory[(adr + 1) % 0x10000] = ((*curIndReg) &0xFF);
@@ -3738,7 +3641,7 @@ int MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xF0:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3750,7 +3653,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xF1:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = bReg - uInt8;
             updateFlags(Negative, bit(uInt82, 7));
@@ -3760,7 +3663,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF2:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt82 = bReg - uInt8 - (flags & 0x1);
             updateFlags(Negative, bit(uInt82, 7));
@@ -3774,7 +3677,7 @@ int MainWindow::executeInstruction()
         case 0xF3:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 6;
+
 
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
@@ -3800,7 +3703,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xF4:
-            cycleCount = 4;
+
             bReg = (bReg &Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]]);
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3809,7 +3712,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF5:
-            cycleCount = 4;
+
             uInt8 = (bReg &Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]]);
             updateFlags(Negative, bit(uInt8, 7));
             updateFlags(Zero, uInt8 == 0);
@@ -3817,7 +3720,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF6:
-            cycleCount = 4;
+
             bReg = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3826,7 +3729,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF7:
-            cycleCount = 4;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = bReg;
             updateFlags(Negative, bit(bReg, 7));
@@ -3836,7 +3739,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF8:
-            cycleCount = 4;
+
             bReg = bReg ^ Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3845,7 +3748,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xF9:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt16 = bReg + uInt8 + (flags & 0x01);
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3858,7 +3761,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xFA:
-            cycleCount = 4;
+
             bReg = bReg | Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             updateFlags(Negative, bit(bReg, 7));
             updateFlags(Zero, bReg == 0);
@@ -3867,7 +3770,7 @@ int MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xFB:
-            cycleCount = 4;
+
             uInt8 = Memory[(Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000]];
             uInt16 = bReg + uInt8;
             updateFlags(HalfCarry, (bit(bReg, 3) && bit(uInt8, 3)) || (bit(uInt8, 3) && !bit(uInt16, 3)) || (!bit(uInt16, 3) && bit(bReg, 3)));
@@ -3882,7 +3785,7 @@ int MainWindow::executeInstruction()
         case 0xFC:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 uInt16 = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
                 updateFlags(Negative, bit(uInt16, 15));
@@ -3906,7 +3809,7 @@ int MainWindow::executeInstruction()
         case 0xFD:
             if (compilerVersionIndex >= 1)
             {
-                cycleCount = 5;
+
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 Memory[adr] = aReg;
                 Memory[adr + 1] = bReg;
@@ -3928,7 +3831,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xFE:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             (*curIndReg) = (Memory[adr] << 8) + Memory[(adr + 1) % 0x10000];
             updateFlags(Negative, bit((*curIndReg), 15));
@@ -3938,7 +3841,7 @@ int MainWindow::executeInstruction()
 
             break;
         case 0xFF:
-            cycleCount = 5;
+
             adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
             Memory[adr] = (*curIndReg) >> 8;
             Memory[(adr + 1) % 0x10000] = ((*curIndReg) &0xFF);
@@ -3959,8 +3862,6 @@ int MainWindow::executeInstruction()
     }
 
     PC = PC % 0x10000;
-
-    return cycleCount;
 }
 
 bool MainWindow::on_buttonCompile_clicked()

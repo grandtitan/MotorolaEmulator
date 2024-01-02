@@ -9894,7 +9894,7 @@ QPushButton:pressed{
    </widget>
    <widget class="QGroupBox" name="groupBoxSimpleMemory">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -9941,40 +9941,16 @@ QPushButton:pressed{
      <bool>false</bool>
     </property>
     <widget class="QTableWidget" name="tableWidgetSM">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>130</x>
        <y>20</y>
-       <width>507</width>
+       <width>241</width>
        <height>625</height>
       </rect>
-     </property>
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>204</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>204</red>
-           <green>204</green>
-           <blue>204</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled/>
-      </palette>
      </property>
      <property name="font">
       <font>
@@ -10137,6 +10113,8 @@ QPushButton:pressed{
       <number>16</number>
      </property>
     </widget>
+    <zorder>spinBox</zorder>
+    <zorder>tableWidgetSM</zorder>
    </widget>
    <widget class="QTableWidget" name="tableWidget">
     <property name="enabled">
@@ -10759,9 +10737,9 @@ QPushButton:pressed{
    <zorder>comboBoxVersionSelector</zorder>
    <zorder>buttonSwitchWrite</zorder>
    <zorder>labelWritingMode</zorder>
-   <zorder>groupBoxSimpleMemory</zorder>
    <zorder>lineCodeLinesSeperator</zorder>
    <zorder>tableWidgetMemory</zorder>
+   <zorder>groupBoxSimpleMemory</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
