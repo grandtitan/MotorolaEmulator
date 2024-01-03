@@ -3930,7 +3930,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>40</y>
+        <y>10</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3943,7 +3943,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>60</y>
+        <y>30</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3959,7 +3959,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>80</y>
+        <y>50</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -3975,7 +3975,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>200</y>
+        <y>220</y>
         <width>42</width>
         <height>25</height>
        </rect>
@@ -3994,7 +3994,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>290</x>
-        <y>230</y>
+        <y>250</y>
         <width>41</width>
         <height>25</height>
        </rect>
@@ -4013,7 +4013,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>200</y>
+        <y>220</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -4026,7 +4026,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>230</y>
+        <y>250</y>
         <width>281</width>
         <height>21</height>
        </rect>
@@ -4039,7 +4039,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>170</y>
+        <y>190</y>
         <width>341</width>
         <height>21</height>
        </rect>
@@ -4052,7 +4052,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>100</y>
+        <y>70</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -4068,7 +4068,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>150</y>
+        <y>170</y>
         <width>241</width>
         <height>22</height>
        </rect>
@@ -4084,7 +4084,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>120</y>
+        <y>90</y>
         <width>501</width>
         <height>22</height>
        </rect>
@@ -4103,7 +4103,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>260</y>
+        <y>280</y>
         <width>131</width>
         <height>24</height>
        </rect>
@@ -4131,7 +4131,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>260</y>
+        <y>280</y>
         <width>131</width>
         <height>21</height>
        </rect>
@@ -4144,7 +4144,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>290</y>
+        <y>310</y>
         <width>81</width>
         <height>21</height>
        </rect>
@@ -4157,7 +4157,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>91</x>
-        <y>290</y>
+        <y>310</y>
         <width>41</width>
         <height>25</height>
        </rect>
@@ -4176,7 +4176,7 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>139</x>
-        <y>290</y>
+        <y>310</y>
         <width>131</width>
         <height>24</height>
        </rect>
@@ -4204,13 +4204,26 @@ QPushButton:pressed{
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>10</y>
+        <y>120</y>
         <width>261</width>
         <height>22</height>
        </rect>
       </property>
       <property name="text">
        <string>increment PC on unkown instruction</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBoxWAIJumps">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>140</y>
+        <width>261</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>WAI calls jumps to IRQ interrupt</string>
       </property>
      </widget>
     </widget>
@@ -10638,7 +10651,7 @@ QPushButton:pressed{
      <bool>false</bool>
     </attribute>
     <attribute name="verticalHeaderDefaultSectionSize">
-     <number>20</number>
+     <number>22</number>
     </attribute>
     <column>
      <property name="text">
@@ -10747,7 +10760,7 @@ QPushButton:pressed{
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

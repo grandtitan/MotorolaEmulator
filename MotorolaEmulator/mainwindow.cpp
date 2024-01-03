@@ -56,8 +56,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         for (int col = 0; col < ui->tableWidgetMemory->columnCount(); ++col) {
             QTableWidgetItem *item = new QTableWidgetItem("00");
-           // item->setFlags(item->flags() ^ Qt::ItemIsEditable);
-            //ITEM->setFlags(item->flags() & ~Qt::ItemIsSelectable);
             item->setBackground(QBrush(memoryCellDefaultColor));
             item->setTextAlignment(Qt::AlignCenter);
             QFont cellFont(font, fontSize, QFont::Bold);
@@ -168,7 +166,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     ui->plainTextDisplay->installEventFilter(this);
     ui->plainTextLines->installEventFilter(this);
-    //ui->plainTextCode->installEventFilter(this);
     plainTextDisplay->installEventFilter(this);
 
     ui->buttonSwitchWrite->setVisible(false);
@@ -493,17 +490,14 @@ void MainWindow::PrintConsole(const QString &text, int type)
     QString consoleText;
     if (type == -1)
     {
-        // DEBUG
         consoleText = "DEBUG: " + ("Ln:" + QString::number(currentCompilerLine)) + " " + text;
     }
     else if (type == 0)
     {
-        // ERROR
         consoleText = "ERROR: " + text;
     }
     else if (type == 1)
     {
-        //WARN
         consoleText = "WARN: " + text;
     }
     else
@@ -1099,7 +1093,6 @@ void MainWindow::setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int
     globalUpdateInfo.curX = curX;
     globalUpdateInfo.whatToUpdate = whatToUpdate;
 }
-
 void MainWindow::setUiUpdateData(int whatToUpdate, int curCycle){
     globalUpdateInfo.curCycle = curCycle;
     globalUpdateInfo.whatToUpdate = whatToUpdate;
@@ -1891,10 +1884,37 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x3E:
-            if (lastInput != -1)
-            {
-                PC++;
-                lastInput = -1;
+            if(WAIStatus == 0){
+                if(WAIJumpsToInterrupt){
+                    PC++;
+                    Memory[SP] = PC & 0xFF;
+                    SP--;
+                    Memory[SP] = (PC >> 8) & 0xFF;
+                    SP--;
+                    Memory[SP] = xRegister & 0xFF;
+                    SP--;
+                    Memory[SP] = (xRegister >> 8) & 0xFF;
+                    SP--;
+                    Memory[SP] = aReg;
+                    SP--;
+                    Memory[SP] = bReg;
+                    SP--;
+                    Memory[SP] = flags;
+                    SP--;
+                    updateFlags(InterruptMask, 1);
+                    PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                }
+                WAIStatus++;
+            }
+            if(WAIJumpsToInterrupt){
+                if(bit(flags,4)){
+                    TU NE DELA
+                }
+            }else{
+                if (lastInput != -1){
+                    PC++;
+                    lastInput = -1;
+                }
             }
 
             break;
@@ -4491,7 +4511,6 @@ void MainWindow::on_buttonTidyUp_clicked()
 {
     QStringList lines = ui->plainTextCode->toPlainText().split("\n");
 
-    // Find the longest label and calculate tabCount
     int maxLabelLength = 0;
     for (const QString &line: lines)
     {
@@ -4616,5 +4635,11 @@ void MainWindow::on_tableWidgetMemory_cellChanged(int row, int column)
             }
         }
     }
+}
+
+
+void MainWindow::on_checkBoxWAIJumps_clicked(bool checked)
+{
+    WAIJumpsToInterrupt = checked;
 }
 

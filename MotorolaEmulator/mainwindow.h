@@ -77,6 +77,8 @@ private:
     void PrintConsole(const QString& text, int type);
     void Err(const QString& text);
 
+    int WAIStatus = 0;
+    bool WAIJumpsToInterrupt = false;
     int pendingInterrupt = 0; //1 RST //2 NMI //3 IRQ
     int oldCursorX = 0;
     int oldCursorY = 0;
@@ -228,5 +230,6 @@ private slots:
     void on_spinBoxBreakIs_valueChanged(int arg1);
     void on_checkBoxIncrementPC_clicked(bool checked);
     void on_tableWidgetMemory_cellChanged(int row, int column);
+    void on_checkBoxWAIJumps_clicked(bool checked);
 };
 #endif // MAINWINDOW_H
