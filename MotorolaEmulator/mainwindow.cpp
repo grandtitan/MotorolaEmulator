@@ -1132,19 +1132,21 @@ void MainWindow::startExecution() {
                                 instructionCycleCount = cycleCountArray[Memory[PC]];
                                 break;
                             case 1:
-                                instructionCycleCount = 5;
+                               executeInstruction();
+ instructionCycleCount = 5;
                                 pendingInterrupt+=3;
                                 break;
                             case 2:
-                                instructionCycleCount = 13;
+                                executeInstruction(); instructionCycleCount = 13;
                                 pendingInterrupt+=3;
                                 break;
                             case 3:
-                                if (!bit(flags, 4)) {
+                              executeInstruction();
+  if (!bit(flags, 4)) {
                                     instructionCycleCount = 13;
                                     pendingInterrupt+=3;
                                 }else{
-                                    executeInstruction();
+                                    
                                     instructionCycleCount = cycleCountArray[Memory[PC]];
                                 }
                                 break;
