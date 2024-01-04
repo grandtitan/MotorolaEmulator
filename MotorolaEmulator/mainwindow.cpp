@@ -1126,7 +1126,76 @@ void MainWindow::startExecution() {
                                 QMetaObject::invokeMethod(this, "setUiUpdateData", Qt::QueuedConnection,Q_ARG(int, 2),Q_ARG(int, currentCycleNum));
                             }
                         }else{
-                            executeInstruction();
+                            switch(pendingInterrupt){
+                            case 0:
+                                executeInstruction();
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                break;
+                            case 1:
+                                instructionCycleCount = 5;
+                                pendingInterrupt+=3;
+                                break;
+                            case 2:
+                                instructionCycleCount = 13;
+                                pendingInterrupt+=3;
+                                break;
+                            case 3:
+                                if (!bit(flags, 4)) {
+                                    instructionCycleCount = 13;
+                                    pendingInterrupt+=3;
+                                }else{
+                                    executeInstruction();
+                                    instructionCycleCount = cycleCountArray[Memory[PC]];
+                                }
+                                break;
+                            case 4:
+                                updateFlags(InterruptMask, 1);
+                                PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                pendingInterrupt = 0;
+                                break;
+                            case 5:
+                                Memory[SP] = PC & 0xFF;
+                                SP--;
+                                Memory[SP] = (PC >> 8) & 0xFF;
+                                SP--;
+                                Memory[SP] = xRegister & 0xFF;
+                                SP--;
+                                Memory[SP] = (xRegister >> 8) & 0xFF;
+                                SP--;
+                                Memory[SP] = aReg;
+                                SP--;
+                                Memory[SP] = bReg;
+                                SP--;
+                                Memory[SP] = flags;
+                                SP--;
+                                updateFlags(InterruptMask, 1);
+                                PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                pendingInterrupt = 0;
+                                break;
+                            case 6:
+                                Memory[SP] = PC & 0xFF;
+                                SP--;
+                                Memory[SP] = (PC >> 8) & 0xFF;
+                                SP--;
+                                Memory[SP] = xRegister & 0xFF;
+                                SP--;
+                                Memory[SP] = (xRegister >> 8) & 0xFF;
+                                SP--;
+                                Memory[SP] = aReg;
+                                SP--;
+                                Memory[SP] = bReg;
+                                SP--;
+                                Memory[SP] = flags;
+                                SP--;
+                                updateFlags(InterruptMask, 1);
+                                PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                pendingInterrupt = 0;
+                                break;
+                            }
+
                             switch (pendingInterrupt) {
                             case 0:
                                 break;
@@ -1134,6 +1203,7 @@ void MainWindow::startExecution() {
                                 updateFlags(InterruptMask, 1);
                                 PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
                                 pendingInterrupt = 0;
+                                WAIStatus = false;
                                 break;
                             case 2:
                                 Memory[SP] = PC & 0xFF;
@@ -1153,6 +1223,7 @@ void MainWindow::startExecution() {
                                 updateFlags(InterruptMask, 1);
                                 PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
                                 pendingInterrupt = 0;
+                                WAIStatus = false;
                                 break;
                             case 3:
                                 if (!bit(flags, 4)) {
@@ -1172,6 +1243,7 @@ void MainWindow::startExecution() {
                                     SP--;
                                     updateFlags(InterruptMask, 1);
                                     PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                                    WAIStatus = false;
                                 }
                                 pendingInterrupt = 0;
                                 break;
@@ -1245,7 +1317,11 @@ void MainWindow::startExecution() {
                                 }
                                 break;
                             }
-                            instructionCycleCount = cycleCountArray[Memory[PC]];
+                            if(WAIStatus == 0){
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                            }else{
+                                instructionCycleCount = 0;
+                            }
                             currentCycleNum = 1;
                             if(i+1 == stepSkipCount){
                                 QMetaObject::invokeMethod(this, "setUiUpdateData", Qt::QueuedConnection,Q_ARG(int, 1),Q_ARG(const uint8_t*, Memory),Q_ARG(int, currentCycleNum),Q_ARG(uint8_t, flags),Q_ARG(uint16_t, PC),Q_ARG(uint16_t, SP),Q_ARG(uint8_t, aReg),Q_ARG(uint8_t, bReg),Q_ARG(uint16_t, xRegister));
@@ -1260,6 +1336,7 @@ void MainWindow::startExecution() {
                             updateFlags(InterruptMask, 1);
                             PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
                             pendingInterrupt = 0;
+                            WAIStatus = false;
                             break;
                         case 2:
                             Memory[SP] = PC & 0xFF;
@@ -1279,6 +1356,7 @@ void MainWindow::startExecution() {
                             updateFlags(InterruptMask, 1);
                             PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
                             pendingInterrupt = 0;
+                            WAIStatus = false;
                             break;
                         case 3:
                             if (!bit(flags, 4)) {
@@ -1298,8 +1376,11 @@ void MainWindow::startExecution() {
                                 SP--;
                                 updateFlags(InterruptMask, 1);
                                 PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                                WAIStatus = false;
                             } else {
-                                executeInstruction();
+                                if(WAIStatus == false){
+                                    executeInstruction();
+                                }
                             }
                             pendingInterrupt = 0;
                             break;
@@ -1884,9 +1965,10 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x3E:
-            if(WAIStatus == 0){
+            WAIStatus = true;
+            if (lastInput != -1){
+                PC++;
                 if(WAIJumpsToInterrupt){
-                    PC++;
                     Memory[SP] = PC & 0xFF;
                     SP--;
                     Memory[SP] = (PC >> 8) & 0xFF;
@@ -1903,42 +1985,28 @@ void MainWindow::executeInstruction()
                     SP--;
                     updateFlags(InterruptMask, 1);
                     PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                    if(pendingInterrupt == 0){
+                        pendingInterrupt = 3;
+                    }
                 }
-                WAIStatus++;
+                lastInput = -1;
             }
-            if(WAIJumpsToInterrupt){
-                if(bit(flags,4)){
-                    TU NE DELA
-                }
-            }else{
-                if (lastInput != -1){
-                    PC++;
-                    lastInput = -1;
-                }
-            }
-
             break;
         case 0x3F:
             PC++;
             Memory[SP] = PC &0xFF;
             SP--;
             Memory[SP] = (PC >> 8) &0xFF;
-
             SP--;
             Memory[SP] = (*curIndReg) &0xFF;
-
             SP--;
             Memory[SP] = ((*curIndReg) >> 8) &0xFF;
-
             SP--;
             Memory[SP] = aReg;
-
             SP--;
             Memory[SP] = bReg;
-
             SP--;
             Memory[SP] = flags;
-
             SP--;
             updateFlags(InterruptMask, 1);
             PC = (Memory[(interruptLocations - 5)] << 8) + Memory[(interruptLocations - 4)];
@@ -4577,7 +4645,10 @@ void MainWindow::on_buttonTidyUp_clicked()
 }
 void MainWindow::on_buttonRST_clicked()
 {
-    pendingInterrupt = 1;
+    if (pendingInterrupt == 0)
+    {
+        pendingInterrupt = 1;
+    }
 }
 void MainWindow::on_buttonNMI_clicked()
 {
