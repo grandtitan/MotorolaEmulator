@@ -28,16 +28,14 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QString softwareVersion = "1.5";
-    QFutureWatcher<void> futureWatcher;
-    int lastInput = -1;
+    QString softwareVersion = "1.6";
 private:
     Ui::MainWindow *ui;
     ExternalDisplay *externalDisplay;
     InstructionList instructionList;
     QPlainTextEdit *plainTextDisplay;
-
-    int displayStatusIndex;
+    QFutureWatcher<void> futureWatcher;
+    int processorVersionIndex = 0;
 
     struct UpdateInfo {
         int whatToUpdate = 0;
@@ -50,14 +48,14 @@ private:
         uint8_t curB;
         uint16_t curX;
     };
-    UpdateInfo globalUpdateInfo;
+
+    void handleResize(QSize size);
+
     void updateFlags(FlagToUpdate flag, bool value);
     void updateMemoryTab();
     void updateLinesBox();
 
-
     int previousRunTimeSelectionAddress = 0;
-    int previousRunTimeSelectionSMAddress = 0;
     QVector<int> lineSelectionLines;
     QVector<int> lineSelectionAddresses;
     QList<QTextEdit::ExtraSelection> linesExtraSelectionsRunTime;
@@ -65,60 +63,52 @@ private:
     QList<QTextEdit::ExtraSelection> linesExtraSelectionsLines;
     QList<QTextEdit::ExtraSelection> codeExtraSelectionsLines;
     void updateSelectionsRunTime(int address);
-
-
     void updateSelectionsLines(int line = -1);
     void clearSelectionLines();
-
-    void updateSelectionsMemoryEdit(int address = -1);
     void updateSelectionCompileError(int charNum);
-    void clearSelection(int clearWhat);
+    QTimer *uiUpdateTimer;
+    float uiUpdateSpeed = 256;
+    void updateIfReady();
+    void updateUi();
+    UpdateInfo globalUpdateInfo;
+    void updateCurUi();
 
     void PrintConsole(const QString& text, int type);
     void Err(const QString& text);
 
-    int WAIStatus = 0;
-    bool WAIJumpsToInterrupt = false;
+    int displayStatusIndex;
+    bool IRQOnKeyPressed = false;
+    bool WAIStatus = false;
     int pendingInterrupt = 0; //1 RST //2 NMI //3 IRQ
+    int lastInput = -1;
     int oldCursorX = 0;
     int oldCursorY = 0;
-    uint8_t backupMemory[0x10000] = {};
 
     uint8_t Memory[0x10000] = {};
+    uint8_t backupMemory[0x10000] = {};
     uint8_t aReg = 0,bReg = 0;
     uint16_t PC = 0, SP = 0x00FF;
     uint16_t xRegister = 0;
     uint8_t flags = 0;
+    int interruptLocations = 0xFFFF;
     int currentCycleNum = 1;
     int instructionCycleCount = 0;
-
-    void updateUi();
-    void updateCurUi();
-    bool incrementPCOnMissingInstruction = false;
-    int interruptLocations = 0xFFFF;
-    void executeInstruction();
     //uint16_t yRegister = 0; //not implemented
-    //bool indexRegister = true; //true x false y not implemented properly
+    //bool indexRegister = true; //true x false y not implemented
 
-    void updateIfReady();
-    QTimer *uiUpdateTimer;
-    float uiUpdateSpeed = 256;
     int stepSkipCount = 0;
     int executionSpeed = 0;
     bool running = false;
     void stopExecution();
     void startExecution();
+    void executeInstruction();
     void resetEmulator(bool failedCompile);
     int breakWhenIndex = 0;
     int breakAtValue = 0;
     int breakIsValue = 0;
 
-
-
-    int previousScrollCode = 0;
-    int compilerVersionIndex = 0;
     int currentCompilerLine = 0;
-    int currentCompilerAddress = 0;
+    uint16_t currentCompilerAddress = 0;
     std::unordered_map<QString, int> labelValMap;
     std::unordered_map<int, QString> callLabelMap;
     std::unordered_map<int, QString> callLabelRelMap;
@@ -128,10 +118,10 @@ private:
     void setCompileStatus(bool isCompile);
     QString uncompiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(255,30,30);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(255, 0, 50);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(255, 0, 50);\n}";
     QString compiledButton = "QPushButton{\n	color: rgb(0,0,0);\n	background-color: rgb(225,225,225);\n	border: 2px solid rgb(0,180,0);\n}\nQPushButton:hover{\n    background-color: rgb(229, 241, 251);\n    border: 2px solid rgb(0, 180, 20);\n}\nQPushButton:pressed{\n background-color: rgb(204, 228, 247);\n border: 2px solid rgb(0, 180, 20);\n}";
-
     int inputNextAddress(int curAdr, QString err);
     bool reverseCompile(int ver, int begLoc);
 
+    bool incrementPCOnMissingInstruction = false;
     bool simpleMemory = false;
     int currentSMScroll = 0;
     bool writeToMemory = false;
@@ -140,6 +130,7 @@ private:
     bool compileOnRun = true;
     int autoScrollUpLimit = 20;
     int autoScrollDownLimit = 5;
+    int previousScrollCode = 0;
 
     QStringList specialInstructions = { ".EQU", ".BYTE", ".ORG", ".WORD", ".RMB", ".SETB", ".SETW", ".STR" };
     QStringList allInstructionsM6800 = { "ABA", "ADCA", "ADCB", "ADDA", "ADDB", "ANDA", "ANDB", "ASL", "ASLA", "ASLB", "ASR", "ASRA", "ASRB", "BCC", "BCS", "BEQ", "BGE", "BGT", "BHI", "BITA", "BITB", "BLE", "BLS", "BLT", "BMI", "BNE", "BPL", "BRA", "BSR", "BVC", "BVS", "CBA", "CLC", "CLI", "CLR", "CLRA", "CLRB", "CLV", "CMPA", "CMPB", "COM", "COMA", "COMB", "CPX", "DAA", "DEC", "DECA", "DECB", "DES", "DEX", "EORA", "EORB", "INC", "INCA", "INCB", "INS", "INX", "JMP", "JSR", "LDAA", "LDAB", "LDS", "LDX", "LSR", "LSRA", "LSRB", "NEG", "NEGA", "NEGB", "NOP", "ORAA", "ORAB", "PSHA", "PSHB", "PULA", "PULB", "ROL", "ROLA", "ROLB", "ROR", "RORA", "RORB", "RTI", "RTS", "SBA", "SBCA", "SBCB", "SEC", "SEI", "SEV", "STAA", "STAB", "STS", "STX", "SUBA", "SUBB", "SWI", "TAB", "TAP", "TBA", "TPA", "TST", "TSTA", "TSTB", "TSX", "TXS", "WAI" };
@@ -179,8 +170,6 @@ private:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *ev) override;
-signals:
-    void resized(const QSize& newSize);
 public slots:
     void setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int curCycle, uint8_t curFlags , uint16_t curPC, uint16_t curSP, uint8_t curA, uint8_t curB, uint16_t curX);
     void setUiUpdateData(int whatToUpdate, int curCycle);
@@ -193,7 +182,6 @@ private slots:
     void handleLinesScroll();
     void handleDisplayScrollVertical();
     void handleDisplayScrollHorizontal();
-    void handleMainWindowSizeChanged(const QSize& newSize);
 
     bool on_buttonCompile_clicked();
     void on_plainTextCode_textChanged();
@@ -230,6 +218,6 @@ private slots:
     void on_spinBoxBreakIs_valueChanged(int arg1);
     void on_checkBoxIncrementPC_clicked(bool checked);
     void on_tableWidgetMemory_cellChanged(int row, int column);
-    void on_checkBoxWAIJumps_clicked(bool checked);
+    void on_checkBoxIRQOnKeyPress_clicked(bool checked);
 };
 #endif // MAINWINDOW_H

@@ -26,13 +26,17 @@ const QColor memoryCellDefaultColor =  QColor(230,230,255);
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    QWidget::setWindowTitle("Motorola M68XX Emulator-" + softwareVersion);
+
     instructionList.clear();
+
+
     externalDisplay = new ExternalDisplay(this);
     plainTextDisplay = externalDisplay->findChild<QPlainTextEdit*> ("plainTextDisplay");
     connect(externalDisplay, &QDialog::finished, [=]() {
         ui->comboBoxDisplayStatus->setCurrentIndex(0);
     });
-    QWidget::setWindowTitle("Motorola M68XX Emulator-" + softwareVersion);
+
     const int memWidth = 28;
     const int memHeight = 20;
     const int fontSize = 9;
@@ -71,7 +75,29 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         columnHeaderItem->setFont(columnHeaderFont);
     }
     ui->tableWidgetMemory->setTextElideMode(Qt::ElideNone);
+    for (int row = 0; row < ui->tableWidgetMemory->rowCount(); row++) {
+        for (int col = 0; col < ui->tableWidgetMemory->columnCount(); col++) {
+            QTableWidgetItem* item = ui->tableWidgetMemory->item(row, col);
+            item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+        }
+    }
+    ui->groupBoxSimpleMemory->setVisible(false);
+    ui->groupBoxSimpleMemory->setEnabled(false);
+    for (int i = 0; i < 20; ++i)
+    {
+        QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
+        item->setTextAlignment(Qt::AlignCenter);
+        item->setFlags(item->flags() &~Qt::ItemIsEditable);
+        ui->tableWidgetSM->setItem(i, 0, item);
+        item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
+        item->setTextAlignment(Qt::AlignCenter);
+        item->setFlags(item->flags() &~Qt::ItemIsEditable);
+        ui->tableWidgetSM->setItem(i, 1, item);
+    }
     updateMemoryTab();
+
     ui->treeWidget->sortByColumn(0, Qt::AscendingOrder);
     for (int col = 0; col < ui->treeWidget->columnCount(); ++col)
     {
@@ -96,7 +122,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->treeWidget->setColumnWidth(col, 30);
         }
     }
-
     for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row)
     {
         QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
@@ -116,7 +141,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             }
         }
     }
-
     for (int row = 0; row < ui->treeWidget->topLevelItemCount(); ++row)
     {
         QTreeWidgetItem *item = ui->treeWidget->topLevelItem(row);
@@ -150,66 +174,37 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningIndicatior->setText("Operation/second: " + QString::number(std::pow(2, ui->comboBoxSpeedSelector->currentIndex())));
-
     ui->labelRunningCycleNum->setVisible(false);
     ui->labelRunningCycleNum->setText("Instruction cycle: ");
-    connect(ui->plainTextCode->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleCodeVerticalScrollBarValueChanged);
-    connect(ui->plainTextLines->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleLinesScroll);
-
-    connect(ui->plainTextDisplay->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollVertical);
-    connect(ui->plainTextDisplay->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollHorizontal);
-
-    connect(this, &MainWindow::resized, this, &MainWindow::handleMainWindowSizeChanged);
-
-    ui->groupBoxSimpleMemory->setVisible(false);
-    ui->groupBoxSimpleMemory->setEnabled(false);
-
-    ui->plainTextDisplay->installEventFilter(this);
-    ui->plainTextLines->installEventFilter(this);
-    plainTextDisplay->installEventFilter(this);
-
     ui->buttonSwitchWrite->setVisible(false);
     ui->labelWritingMode->setVisible(false);
     ui->buttonSwitchWrite->setEnabled(false);
     ui->labelWritingMode->setEnabled(false);
-
     ui->labelAt->setVisible(false);
     ui->spinBoxBreakAt->setVisible(false);
+
+    connect(ui->plainTextCode->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleCodeVerticalScrollBarValueChanged);
+    connect(ui->plainTextLines->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleLinesScroll);
+    connect(ui->plainTextDisplay->verticalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollVertical);
+    connect(ui->plainTextDisplay->horizontalScrollBar(), &QScrollBar::valueChanged, this, &MainWindow::handleDisplayScrollHorizontal);
+
+    ui->plainTextDisplay->installEventFilter(this);
+    ui->plainTextLines->installEventFilter(this);
+    plainTextDisplay->installEventFilter(this);
 
     uiUpdateTimer = new QTimer(this);
     connect(uiUpdateTimer, &QTimer::timeout, this, &MainWindow::updateIfReady);
 
     ui->plainTextCode->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->plainTextCode, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(const QPoint &)));
-
     ui->plainTextCode->moveCursor(QTextCursor::End);
-
     QFontMetrics metrics(ui->plainTextCode->font());
     ui->plainTextCode->setTabStopDistance(metrics.horizontalAdvance(' ') *ui->spinBoxTabWidth->value());
 
     on_comboBoxSpeedSelector_activated(ui->comboBoxSpeedSelector->currentIndex());
-
-    for (int row = 0; row < ui->tableWidgetMemory->rowCount(); row++) {
-        for (int col = 0; col < ui->tableWidgetMemory->columnCount(); col++) {
-            QTableWidgetItem* item = ui->tableWidgetMemory->item(row, col);
-            item->setFlags(item->flags() & ~Qt::ItemIsSelectable);
-            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
-            item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
-        }
-    }
     on_comboBoxDisplayStatus_currentIndexChanged(0);
 
-    for (int i = 0; i < 20; ++i)
-    {
-        QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(currentSMScroll + i, 4, 16, QChar('0')).toUpper());
-        item->setTextAlignment(Qt::AlignCenter);
-        item->setFlags(item->flags() &~Qt::ItemIsEditable);
-        ui->tableWidgetSM->setItem(i, 0, item);
-        item = new QTableWidgetItem(QString("%1").arg(static_cast<quint8> (Memory[currentSMScroll + i]), 2, 16, QChar('0').toUpper()));
-        item->setTextAlignment(Qt::AlignCenter);
-        item->setFlags(item->flags() &~Qt::ItemIsEditable);
-        ui->tableWidgetSM->setItem(i, 1, item);
-    }
+
 }
 MainWindow::~MainWindow()
 {
@@ -658,23 +653,21 @@ void MainWindow::handleCodeVerticalScrollBarValueChanged(int value)
 {
     ui->plainTextLines->verticalScrollBar()->setValue(value);
 }
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    QMainWindow::resizeEvent(event);
-    emit resized(this->size());
-}
-void MainWindow::handleMainWindowSizeChanged(const QSize &newSize)
-{
+int displayPossible = 0;
+void MainWindow::handleResize(QSize newSize){
     int buttonYoffset = 30;
     int buttonY = newSize.height() - buttonYoffset;
     if (newSize.width() >= 1785)
     {
+
         ui->frameDisplay->setGeometry(newSize.width() - 875, 10, 498, 350);
         if (ui->comboBoxDisplayStatus->count() == 2) {
             ui->comboBoxDisplayStatus->insertItem(1, "Main Window");
         }
-
-
+        if(!displayPossible){
+            ui->comboBoxDisplayStatus->setCurrentIndex(1);
+            displayPossible = true;
+        }
         ui->plainTextCode->setGeometry(ui->checkBoxAdvancedInfo->isChecked() ? 190 : 110, ui->plainTextCode->y(), ui->checkBoxAdvancedInfo->isChecked() ? (newSize.width() - 1589) : (newSize.width() - 1509), newSize.height() - buttonYoffset - 17);
         ui->tableWidgetMemory->setGeometry(newSize.width() - 1390, ui->tableWidgetMemory->y(), ui->tableWidgetMemory->width(), newSize.height() - buttonYoffset - 17);
         ui->groupBoxSimpleMemory->setGeometry(newSize.width() - 1390, ui->groupBoxSimpleMemory->y(), ui->groupBoxSimpleMemory->width(), ui->groupBoxSimpleMemory->height());
@@ -689,6 +682,7 @@ void MainWindow::handleMainWindowSizeChanged(const QSize &newSize)
     }
     else
     {
+        displayPossible = false;
         if(ui->comboBoxDisplayStatus->currentIndex() == 1){
             ui->comboBoxDisplayStatus->setCurrentIndex(0);
         }
@@ -717,6 +711,11 @@ void MainWindow::handleMainWindowSizeChanged(const QSize &newSize)
     ui->plainTextConsole->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
     ui->plainTextInfo->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
     ui->treeWidget->setGeometry(5, 5, ui->tabWidget->width() - 15, ui->tabWidget->height() - 35);
+}
+void MainWindow::resizeEvent(QResizeEvent *event)
+{
+    QMainWindow::resizeEvent(event);
+    handleResize(this->size());
 }
 void MainWindow::on_plainTextCode_textChanged()
 {
@@ -770,107 +769,62 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
         {
             return true;
         }
-    }else if(displayStatusIndex == 1){
-        if (obj == ui->plainTextDisplay)
+    }else if(obj == plainTextDisplay || obj == ui->plainTextDisplay){
+        if (event->type() == QEvent::KeyPress)
         {
-            if (event->type() == QEvent::KeyPress)
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
+            if (keyEvent->key() <= Qt::Key_AsciiTilde)
             {
-                QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
-                if (keyEvent->key() <= Qt::Key_AsciiTilde)
-                {
-                    char asciiValue = static_cast<uint8_t> (keyEvent->key());
-                    Memory[0xFFF0] = asciiValue;
-                    lastInput = asciiValue;
+                char asciiValue = static_cast<uint8_t> (keyEvent->key());
+                Memory[0xFFF0] = asciiValue;
+                lastInput = asciiValue;
+                if(IRQOnKeyPressed){
+                    if(pendingInterrupt == 0){
+                        pendingInterrupt = 3;
+                    }
+                }else if(WAIStatus){
+                    if(pendingInterrupt == 0){
+                        pendingInterrupt = 3;
+                    }
                 }
+            }
 
-                return true;
-            }
-            else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick)
-            {
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
-                if (mouseEvent->button() == Qt::LeftButton)
-                {
-                    Memory[0xFFF1] = 1;
-                }
-                else if (mouseEvent->button() == Qt::RightButton)
-                {
-                    Memory[0xFFF1] = 2;
-                }
-                else if (mouseEvent->button() == Qt::MiddleButton)
-                {
-                    Memory[0xFFF1] = 3;
-                }
-
-                return true;
-            }
-            else if (event->type() == QMouseEvent::MouseButtonRelease)
-            {
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
-                if (mouseEvent->button() == Qt::LeftButton)
-                {
-                    Memory[0xFFF1] = 4;
-                }
-                else if (mouseEvent->button() == Qt::RightButton)
-                {
-                    Memory[0xFFF1] = 5;
-                }
-                else if (mouseEvent->button() == Qt::MiddleButton)
-                {
-                    Memory[0xFFF1] = 6;
-                }
-                return true;
-            }
+            return true;
         }
-    } else if(displayStatusIndex == 2){
-        if (obj == plainTextDisplay)
+        else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick)
         {
-            if (event->type() == QEvent::KeyPress)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
+            if (mouseEvent->button() == Qt::LeftButton)
             {
-                QKeyEvent *keyEvent = static_cast<QKeyEvent*> (event);
-                if (keyEvent->key() <= Qt::Key_AsciiTilde)
-                {
-                    char asciiValue = static_cast<uint8_t> (keyEvent->key());
-                    Memory[0xFFF0] = asciiValue;
-                    lastInput = asciiValue;
-                }
+                Memory[0xFFF1] = 1;
+            }
+            else if (mouseEvent->button() == Qt::RightButton)
+            {
+                Memory[0xFFF1] = 2;
+            }
+            else if (mouseEvent->button() == Qt::MiddleButton)
+            {
+                Memory[0xFFF1] = 3;
+            }
 
-                return true;
-            }
-            else if (event->type() == QMouseEvent::MouseButtonPress || event->type() == QMouseEvent::MouseButtonDblClick)
+            return true;
+        }
+        else if (event->type() == QMouseEvent::MouseButtonRelease)
+        {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
+            if (mouseEvent->button() == Qt::LeftButton)
             {
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
-                if (mouseEvent->button() == Qt::LeftButton)
-                {
-                    Memory[0xFFF1] = 1;
-                }
-                else if (mouseEvent->button() == Qt::RightButton)
-                {
-                    Memory[0xFFF1] = 2;
-                }
-                else if (mouseEvent->button() == Qt::MiddleButton)
-                {
-                    Memory[0xFFF1] = 3;
-                }
-
-                return true;
+                Memory[0xFFF1] = 4;
             }
-            else if (event->type() == QMouseEvent::MouseButtonRelease)
+            else if (mouseEvent->button() == Qt::RightButton)
             {
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent*> (event);
-                if (mouseEvent->button() == Qt::LeftButton)
-                {
-                    Memory[0xFFF1] = 4;
-                }
-                else if (mouseEvent->button() == Qt::RightButton)
-                {
-                    Memory[0xFFF1] = 5;
-                }
-                else if (mouseEvent->button() == Qt::MiddleButton)
-                {
-                    Memory[0xFFF1] = 6;
-                }
-                return true;
+                Memory[0xFFF1] = 5;
             }
+            else if (mouseEvent->button() == Qt::MiddleButton)
+            {
+                Memory[0xFFF1] = 6;
+            }
+            return true;
         }
     }
 
@@ -905,6 +859,8 @@ void MainWindow::resetEmulator(bool failedCompile)
     SP = 0x00FF;
     flags = 0xD0;
     lastInput = -1;
+    WAIStatus = false;
+    pendingInterrupt = 0;
     globalUpdateInfo.whatToUpdate = 0;
     std::memcpy(Memory, backupMemory, sizeof(backupMemory));
     PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
@@ -1129,25 +1085,43 @@ void MainWindow::startExecution() {
                             switch(pendingInterrupt){
                             case 0:
                                 executeInstruction();
-                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                if(WAIStatus){
+                                    instructionCycleCount = 0;
+                                }else{
+                                    instructionCycleCount = cycleCountArray[Memory[PC]];
+                                }
                                 break;
                             case 1:
-                               executeInstruction();
- instructionCycleCount = 5;
+                                executeInstruction();
+                                instructionCycleCount = 5;
                                 pendingInterrupt+=3;
                                 break;
                             case 2:
-                                executeInstruction(); instructionCycleCount = 13;
+                                executeInstruction();
+                                if(WAIStatus){
+                                    instructionCycleCount = 5;
+                                }else{
+                                    instructionCycleCount = 13;
+                                }
                                 pendingInterrupt+=3;
                                 break;
                             case 3:
-                              executeInstruction();
-  if (!bit(flags, 4)) {
-                                    instructionCycleCount = 13;
+                                executeInstruction();
+                                if (!bit(flags, 4)) {
+                                    if(WAIStatus){
+                                        instructionCycleCount = 5;
+                                    }else{
+                                        instructionCycleCount = 13;
+                                    }
                                     pendingInterrupt+=3;
                                 }else{
-                                    
-                                    instructionCycleCount = cycleCountArray[Memory[PC]];
+
+                                    if(WAIStatus){
+                                        instructionCycleCount = 0;
+                                    }else{
+                                        instructionCycleCount = cycleCountArray[Memory[PC]];
+                                    }
+                                    pendingInterrupt = 0;
                                 }
                                 break;
                             case 4:
@@ -1155,80 +1129,10 @@ void MainWindow::startExecution() {
                                 PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
                                 instructionCycleCount = cycleCountArray[Memory[PC]];
                                 pendingInterrupt = 0;
+                                WAIStatus = false;
                                 break;
                             case 5:
-                                Memory[SP] = PC & 0xFF;
-                                SP--;
-                                Memory[SP] = (PC >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = xRegister & 0xFF;
-                                SP--;
-                                Memory[SP] = (xRegister >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = aReg;
-                                SP--;
-                                Memory[SP] = bReg;
-                                SP--;
-                                Memory[SP] = flags;
-                                SP--;
-                                updateFlags(InterruptMask, 1);
-                                PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
-                                instructionCycleCount = cycleCountArray[Memory[PC]];
-                                pendingInterrupt = 0;
-                                break;
-                            case 6:
-                                Memory[SP] = PC & 0xFF;
-                                SP--;
-                                Memory[SP] = (PC >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = xRegister & 0xFF;
-                                SP--;
-                                Memory[SP] = (xRegister >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = aReg;
-                                SP--;
-                                Memory[SP] = bReg;
-                                SP--;
-                                Memory[SP] = flags;
-                                SP--;
-                                updateFlags(InterruptMask, 1);
-                                PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
-                                instructionCycleCount = cycleCountArray[Memory[PC]];
-                                pendingInterrupt = 0;
-                                break;
-                            }
-
-                            switch (pendingInterrupt) {
-                            case 0:
-                                break;
-                            case 1:
-                                updateFlags(InterruptMask, 1);
-                                PC = (Memory[interruptLocations - 1] << 8) + Memory[interruptLocations];
-                                pendingInterrupt = 0;
-                                WAIStatus = false;
-                                break;
-                            case 2:
-                                Memory[SP] = PC & 0xFF;
-                                SP--;
-                                Memory[SP] = (PC >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = xRegister & 0xFF;
-                                SP--;
-                                Memory[SP] = (xRegister >> 8) & 0xFF;
-                                SP--;
-                                Memory[SP] = aReg;
-                                SP--;
-                                Memory[SP] = bReg;
-                                SP--;
-                                Memory[SP] = flags;
-                                SP--;
-                                updateFlags(InterruptMask, 1);
-                                PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
-                                pendingInterrupt = 0;
-                                WAIStatus = false;
-                                break;
-                            case 3:
-                                if (!bit(flags, 4)) {
+                                if(!WAIStatus){
                                     Memory[SP] = PC & 0xFF;
                                     SP--;
                                     Memory[SP] = (PC >> 8) & 0xFF;
@@ -1243,13 +1147,41 @@ void MainWindow::startExecution() {
                                     SP--;
                                     Memory[SP] = flags;
                                     SP--;
-                                    updateFlags(InterruptMask, 1);
-                                    PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                                }else{
                                     WAIStatus = false;
                                 }
+                                updateFlags(InterruptMask, 1);
+                                PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
+                                pendingInterrupt = 0;
+                                break;
+                            case 6:
+                                if(!WAIStatus){
+                                    Memory[SP] = PC & 0xFF;
+                                    SP--;
+                                    Memory[SP] = (PC >> 8) & 0xFF;
+                                    SP--;
+                                    Memory[SP] = xRegister & 0xFF;
+                                    SP--;
+                                    Memory[SP] = (xRegister >> 8) & 0xFF;
+                                    SP--;
+                                    Memory[SP] = aReg;
+                                    SP--;
+                                    Memory[SP] = bReg;
+                                    SP--;
+                                    Memory[SP] = flags;
+                                    SP--;
+                                }else{
+                                    WAIStatus = false;
+                                }
+                                updateFlags(InterruptMask, 1);
+                                PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
+                                instructionCycleCount = cycleCountArray[Memory[PC]];
                                 pendingInterrupt = 0;
                                 break;
                             }
+
+
                             switch (breakWhenIndex) {
                             case 0:
                                 break;
@@ -1319,11 +1251,7 @@ void MainWindow::startExecution() {
                                 }
                                 break;
                             }
-                            if(WAIStatus == 0){
-                                instructionCycleCount = cycleCountArray[Memory[PC]];
-                            }else{
-                                instructionCycleCount = 0;
-                            }
+
                             currentCycleNum = 1;
                             if(i+1 == stepSkipCount){
                                 QMetaObject::invokeMethod(this, "setUiUpdateData", Qt::QueuedConnection,Q_ARG(int, 1),Q_ARG(const uint8_t*, Memory),Q_ARG(int, currentCycleNum),Q_ARG(uint8_t, flags),Q_ARG(uint16_t, PC),Q_ARG(uint16_t, SP),Q_ARG(uint8_t, aReg),Q_ARG(uint8_t, bReg),Q_ARG(uint16_t, xRegister));
@@ -1341,27 +1269,7 @@ void MainWindow::startExecution() {
                             WAIStatus = false;
                             break;
                         case 2:
-                            Memory[SP] = PC & 0xFF;
-                            SP--;
-                            Memory[SP] = (PC >> 8) & 0xFF;
-                            SP--;
-                            Memory[SP] = xRegister & 0xFF;
-                            SP--;
-                            Memory[SP] = (xRegister >> 8) & 0xFF;
-                            SP--;
-                            Memory[SP] = aReg;
-                            SP--;
-                            Memory[SP] = bReg;
-                            SP--;
-                            Memory[SP] = flags;
-                            SP--;
-                            updateFlags(InterruptMask, 1);
-                            PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
-                            pendingInterrupt = 0;
-                            WAIStatus = false;
-                            break;
-                        case 3:
-                            if (!bit(flags, 4)) {
+                            if(!WAIStatus){
                                 Memory[SP] = PC & 0xFF;
                                 SP--;
                                 Memory[SP] = (PC >> 8) & 0xFF;
@@ -1376,6 +1284,34 @@ void MainWindow::startExecution() {
                                 SP--;
                                 Memory[SP] = flags;
                                 SP--;
+                            }else{
+                                WAIStatus = false;
+                            }
+                            updateFlags(InterruptMask, 1);
+                            PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
+                            pendingInterrupt = 0;
+                            WAIStatus = false;
+                            break;
+                        case 3:
+                            if (!bit(flags, 4)) {
+                                if(!WAIStatus){
+                                    Memory[SP] = PC & 0xFF;
+                                    SP--;
+                                    Memory[SP] = (PC >> 8) & 0xFF;
+                                    SP--;
+                                    Memory[SP] = xRegister & 0xFF;
+                                    SP--;
+                                    Memory[SP] = (xRegister >> 8) & 0xFF;
+                                    SP--;
+                                    Memory[SP] = aReg;
+                                    SP--;
+                                    Memory[SP] = bReg;
+                                    SP--;
+                                    Memory[SP] = flags;
+                                    SP--;
+                                }else{
+                                    WAIStatus = false;
+                                }
                                 updateFlags(InterruptMask, 1);
                                 PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
                                 WAIStatus = false;
@@ -1509,7 +1445,7 @@ void MainWindow::executeInstruction()
             //NOP
             break;
         case 0x04:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 uInt8 = bReg &0x01;
@@ -1534,7 +1470,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x05:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 uInt8 = (bit(aReg, 7));
                 uInt16 = (aReg << 8) + bReg;
@@ -1705,7 +1641,7 @@ void MainWindow::executeInstruction()
             PC += sInt8 + 2;
             break;
         case 0x21:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 PC += 2;
             }
@@ -1870,7 +1806,7 @@ void MainWindow::executeInstruction()
             PC++;
             break;
         case 0x38:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 SP++;
                 (*curIndReg) = (Memory[SP] << 8);
@@ -1895,7 +1831,7 @@ void MainWindow::executeInstruction()
             PC += Memory[SP];
             break;
         case 0x3A:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 (*curIndReg) = (*curIndReg) + bReg;
                 PC++;
@@ -1928,7 +1864,7 @@ void MainWindow::executeInstruction()
             SP++;
             break;
         case 0x3C:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 Memory[SP] = ((*curIndReg) &0xFF);
 
@@ -1948,7 +1884,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x3D:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 uInt16 = static_cast<uint16_t> (aReg) *static_cast<uint16_t> (bReg);
                 updateFlags(Carry, (uInt16 >> 8) != 0);
@@ -1967,31 +1903,22 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x3E:
-            WAIStatus = true;
-            if (lastInput != -1){
-                PC++;
-                if(WAIJumpsToInterrupt){
-                    Memory[SP] = PC & 0xFF;
-                    SP--;
-                    Memory[SP] = (PC >> 8) & 0xFF;
-                    SP--;
-                    Memory[SP] = xRegister & 0xFF;
-                    SP--;
-                    Memory[SP] = (xRegister >> 8) & 0xFF;
-                    SP--;
-                    Memory[SP] = aReg;
-                    SP--;
-                    Memory[SP] = bReg;
-                    SP--;
-                    Memory[SP] = flags;
-                    SP--;
-                    updateFlags(InterruptMask, 1);
-                    PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
-                    if(pendingInterrupt == 0){
-                        pendingInterrupt = 3;
-                    }
-                }
-                lastInput = -1;
+            if(WAIStatus == false){
+                Memory[SP] = (PC+1) & 0xFF;
+                SP--;
+                Memory[SP] = (PC >> 8) & 0xFF;
+                SP--;
+                Memory[SP] = xRegister & 0xFF;
+                SP--;
+                Memory[SP] = (xRegister >> 8) & 0xFF;
+                SP--;
+                Memory[SP] = aReg;
+                SP--;
+                Memory[SP] = bReg;
+                SP--;
+                Memory[SP] = flags;
+                SP--;
+                WAIStatus = true;
             }
             break;
         case 0x3F:
@@ -2464,7 +2391,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x83:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
                 uInt16 = (aReg << 8) + bReg;
@@ -2610,7 +2537,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0x93:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 uInt8 = Memory[(PC + 1) % 0x10000];
@@ -2728,7 +2655,7 @@ void MainWindow::executeInstruction()
             break;
         case 0x9D:
 
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
                 adr = Memory[(PC + 1) % 0x10000];
                 PC += 2;
@@ -2806,7 +2733,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xA3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 uInt8 = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
@@ -2991,7 +2918,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xB3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
@@ -3176,7 +3103,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xC3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3273,7 +3200,7 @@ void MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xCC:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3340,7 +3267,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xD3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3448,7 +3375,7 @@ void MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xDC:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3473,7 +3400,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xDD:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = Memory[(PC + 1) % 0x10000];
@@ -3553,7 +3480,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xE3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
@@ -3660,7 +3587,7 @@ void MainWindow::executeInstruction()
             PC += 2;
             break;
         case 0xEC:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3685,7 +3612,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xED:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = (Memory[(PC + 1) % 0x10000] + *curIndReg) % 0x10000;
@@ -3765,7 +3692,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xF3:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
 
@@ -3873,7 +3800,7 @@ void MainWindow::executeInstruction()
             PC += 3;
             break;
         case 0xFC:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
@@ -3897,7 +3824,7 @@ void MainWindow::executeInstruction()
 
             break;
         case 0xFD:
-            if (compilerVersionIndex >= 1)
+            if (processorVersionIndex >= 1)
             {
 
                 adr = (Memory[(PC + 1) % 0x10000] << 8) + Memory[(PC + 2) % 0x10000];
@@ -3951,7 +3878,6 @@ void MainWindow::executeInstruction()
             break;
     }
 
-    PC = PC % 0x10000;
 }
 
 bool MainWindow::on_buttonCompile_clicked()
@@ -3960,7 +3886,7 @@ bool MainWindow::on_buttonCompile_clicked()
     if (!writeToMemory)
     {
         bool ok = false;
-        ok = compileMix(compilerVersionIndex);
+        ok = compileMix(processorVersionIndex);
         resetEmulator(!ok);
         return ok;
     }
@@ -3974,7 +3900,7 @@ bool MainWindow::on_buttonCompile_clicked()
             int number = text.toInt(&iok);
             if (iok && number >= 0 && number <= 0xFFFF)
             {
-                bool cok = reverseCompile(compilerVersionIndex, number);
+                bool cok = reverseCompile(processorVersionIndex, number);
                 resetEmulator(!cok);
                 return cok;
             }
@@ -3993,7 +3919,7 @@ bool MainWindow::on_buttonCompile_clicked()
 }
 void MainWindow::on_comboBoxVersionSelector_currentIndexChanged(int index)
 {
-    compilerVersionIndex = index;
+    processorVersionIndex = index;
     setCompileStatus(false);
     resetEmulator(true);
 
@@ -4251,7 +4177,7 @@ void MainWindow::on_checkBoxAdvancedInfo_clicked(bool checked)
 
     updateSelectionsLines();
     updateSelectionsRunTime(PC);
-    handleMainWindowSizeChanged(MainWindow::size());
+    handleResize(this->size());
 
 }
 void MainWindow::on_checkBoxCompileOnRun_clicked(bool checked)
@@ -4711,8 +4637,9 @@ void MainWindow::on_tableWidgetMemory_cellChanged(int row, int column)
 }
 
 
-void MainWindow::on_checkBoxWAIJumps_clicked(bool checked)
+
+void MainWindow::on_checkBoxIRQOnKeyPress_clicked(bool checked)
 {
-    WAIJumpsToInterrupt = checked;
+    IRQOnKeyPressed = checked;
 }
 

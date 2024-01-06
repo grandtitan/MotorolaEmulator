@@ -55,7 +55,6 @@ bool MainWindow::compileMix(int ver){
     QStringList lines = code.split("\n");
     int charNum = 0;
 	foreach (QString line, lines) {
-        currentCompilerAddress = currentCompilerAddress % 0xFFFF;
         int instructionAddress = currentCompilerAddress;
         QString label;
         QString in;
@@ -535,7 +534,7 @@ bool MainWindow::compileMix(int ver){
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
                         Memory[currentCompilerAddress] = opCode;
-                        Memory[currentCompilerAddress+1] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode2;
                         if(label != ""){
                             if (labelValMap.count(label) == 0) {
                                 labelValMap[label] = currentCompilerAddress;
@@ -1035,7 +1034,7 @@ bool MainWindow::compileMix(int ver){
                     opCode = signedValue & 0xFF;
                 }
                 Memory[currentCompilerAddress] = inCode;
-                Memory[currentCompilerAddress + 1] = opCode;
+                Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                 currentCompilerAddress += 2;
             }
             else if (op.contains(",")) { // IND
@@ -1047,7 +1046,7 @@ bool MainWindow::compileMix(int ver){
                 if (op[0].isLetter()) {
                     if(labelValMap.count(op) == 0){
                         opCode = 0;
-                        callLabelMap[currentCompilerAddress + 1] = op;
+                        callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                     }else{
                         int value = labelValMap[op];
                         if (value > 255){
@@ -1202,7 +1201,7 @@ bool MainWindow::compileMix(int ver){
                     }
                 }
                 Memory[currentCompilerAddress] = inCode;
-                Memory[currentCompilerAddress + 1] = opCode;
+                Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                 currentCompilerAddress += 2;
             }
             else if (op.startsWith("#")) {
@@ -1213,15 +1212,15 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6800.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelRazMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[(currentCompilerAddress+1) % 0x10000] = op;
                         }else{
                             int value = labelValMap[op];
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
 
                         }
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         if (true) {
                             if (in == "CPX") {
                                 inCode = 0x8C;
@@ -1243,7 +1242,7 @@ bool MainWindow::compileMix(int ver){
                     else if (takInstructionsM6800.contains(in)) { //tak LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
@@ -1322,7 +1321,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                         currentCompilerAddress += 2;
                     }
                     else {
@@ -1343,8 +1342,8 @@ bool MainWindow::compileMix(int ver){
                         if (value < 0x10000) {
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             if (true) {
                                 if (in == "CPX") {
                                     inCode = 0x8C;
@@ -1438,7 +1437,7 @@ bool MainWindow::compileMix(int ver){
                                 }
                             }
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                             currentCompilerAddress += 2;
                         }
                         else {
@@ -1552,7 +1551,7 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = value;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                         currentCompilerAddress += 2;
                     }
                     else if (value < 0x10000) {
@@ -1685,8 +1684,8 @@ bool MainWindow::compileMix(int ver){
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         currentCompilerAddress += 3;
                     }
                     else {
@@ -1825,8 +1824,8 @@ bool MainWindow::compileMix(int ver){
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         currentCompilerAddress += 3;
                     }
                     else {
@@ -1969,7 +1968,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelRazMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[(currentCompilerAddress+1) % 0x10000] = op;
                             opCode = 0;
                         }
                         Memory[currentCompilerAddress] = inCode;
@@ -2064,7 +2063,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                             opCode = 0;
                         }
                         Memory[currentCompilerAddress] = inCode;
@@ -2167,7 +2166,7 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = value;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                             currentCompilerAddress += 2;
                         }
                         else if (value < 0x10000) {
@@ -2300,8 +2299,8 @@ bool MainWindow::compileMix(int ver){
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             currentCompilerAddress += 3;
                         }
                         else {
@@ -2440,8 +2439,8 @@ bool MainWindow::compileMix(int ver){
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             currentCompilerAddress += 3;
                         }
                         else {
@@ -2745,7 +2744,7 @@ bool MainWindow::compileMix(int ver){
                 }
                 bool ok;
                 if (op[0].isLetter()) {
-                    callLabelRelMap[currentCompilerAddress + 1] = op;
+                    callLabelRelMap[(currentCompilerAddress+1) % 0x10000] = op;
                     opCode = 0;
                 }
                 else if (op.startsWith('$')) {
@@ -2788,7 +2787,7 @@ bool MainWindow::compileMix(int ver){
                     opCode = signedValue & 0xFF;
                 }
                 Memory[currentCompilerAddress] = inCode;
-                Memory[currentCompilerAddress + 1] = opCode;
+                Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                 currentCompilerAddress += 2;
             }
             else if (op.contains(",")) { // IND
@@ -2800,7 +2799,7 @@ bool MainWindow::compileMix(int ver){
                 if (op[0].isLetter()) {
                     if(labelValMap.count(op) == 0){
                         opCode = 0;
-                        callLabelMap[currentCompilerAddress + 1] = op;
+                        callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                     }else{
                         int value = labelValMap[op];
                         if (value > 255){
@@ -2967,7 +2966,7 @@ bool MainWindow::compileMix(int ver){
                     }
                 }
                 Memory[currentCompilerAddress] = inCode;
-                Memory[currentCompilerAddress + 1] = opCode;
+                Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                 currentCompilerAddress += 2;
             }
             else if (op.startsWith("#")) {
@@ -2978,15 +2977,15 @@ bool MainWindow::compileMix(int ver){
                     if (takRazInstructionsM6803.indexOf(in) != -1) { // TAK RAZ LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelRazMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[(currentCompilerAddress+1) % 0x10000] = op;
                         }else{
                             int value = labelValMap[op];
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
 
                         }
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         if (true) {
                             if (in == "ADDD") {
                                 inCode = 0xC3;
@@ -3017,7 +3016,7 @@ bool MainWindow::compileMix(int ver){
                     else if (takInstructionsM6803.contains(in)) { //tak LAB
                         if(labelValMap.count(op) == 0){
                             opCode = 0;
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                         }else{
                             int value = labelValMap[op];
                             if (value > 255){
@@ -3096,7 +3095,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                         currentCompilerAddress += 2;
                     }
                     else {
@@ -3117,8 +3116,8 @@ bool MainWindow::compileMix(int ver){
                         if (value < 0x10000) {
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             if (true) {
                                 if (in == "ADDD") {
                                     inCode = 0xC3;
@@ -3221,7 +3220,7 @@ bool MainWindow::compileMix(int ver){
                                 }
                             }
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                             currentCompilerAddress += 2;
                         }
                         else {
@@ -3350,7 +3349,7 @@ bool MainWindow::compileMix(int ver){
                         }
                         opCode = value;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                         currentCompilerAddress += 2;
                     }
                     else if (value < 0x10000) {
@@ -3495,8 +3494,8 @@ bool MainWindow::compileMix(int ver){
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         currentCompilerAddress += 3;
                     }
                     else {
@@ -3647,8 +3646,8 @@ bool MainWindow::compileMix(int ver){
                         opCode = (value >> 8) & 0xFF;
                         opCode2 = value & 0xFF;
                         Memory[currentCompilerAddress] = inCode;
-                        Memory[currentCompilerAddress + 1] = opCode;
-                        Memory[currentCompilerAddress + 2] = opCode2;
+                        Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                        Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                         currentCompilerAddress += 3;
                     }
                     else {
@@ -3803,7 +3802,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelRazMap[currentCompilerAddress + 1] = op;
+                            callLabelRazMap[(currentCompilerAddress+1) % 0x10000] = op;
                             opCode = 0;
                         }
                         Memory[currentCompilerAddress] = inCode;
@@ -3913,7 +3912,7 @@ bool MainWindow::compileMix(int ver){
                             }
                         }
                         if (op[0].isLetter()) {
-                            callLabelMap[currentCompilerAddress + 1] = op;
+                            callLabelMap[(currentCompilerAddress+1) % 0x10000] = op;
                             opCode = 0;
                         }
                         Memory[currentCompilerAddress] = inCode;
@@ -4031,7 +4030,7 @@ bool MainWindow::compileMix(int ver){
                             }
                             opCode = value;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
                             currentCompilerAddress += 2;
                         }
                         else if (value < 0x10000) {
@@ -4164,8 +4163,8 @@ bool MainWindow::compileMix(int ver){
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             currentCompilerAddress += 3;
                         }
                         else {
@@ -4316,8 +4315,8 @@ bool MainWindow::compileMix(int ver){
                             opCode = (value >> 8) & 0xFF;
                             opCode2 = value & 0xFF;
                             Memory[currentCompilerAddress] = inCode;
-                            Memory[currentCompilerAddress + 1] = opCode;
-                            Memory[currentCompilerAddress + 2] = opCode2;
+                            Memory[(currentCompilerAddress+1) % 0x10000] = opCode;
+                            Memory[(currentCompilerAddress+2) % 0x10000] = opCode2;
                             currentCompilerAddress += 3;
                         }
                         else {
@@ -5434,37 +5433,37 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
             else if(inType == 1){
                     code.append("\t" + in + " ");
                     if(inSize == 2){
-                        opCode = Memory[address+1 % 0xFFFF];
-                        code.append("#" + QString::number(Memory[address+1 % 0xFFFF],10) + "\n");
+                        opCode = Memory[address+1 % 0x10000];
+                        code.append("#" + QString::number(Memory[address+1 % 0x10000],10) + "\n");
                     }else{
-                        opCode = Memory[address+1 % 0xFFFF];
-                        opCode2 = Memory[address+2 % 0xFFFF];
-                        code.append("#" + QString::number((Memory[address+1 % 0xFFFF] << 8) + Memory[address+2 % 0xFFFF],10) + "\n");
+                        opCode = Memory[address+1 % 0x10000];
+                        opCode2 = Memory[address+2 % 0x10000];
+                        code.append("#" + QString::number((Memory[address+1 % 0x10000] << 8) + Memory[address+2 % 0x10000],10) + "\n");
                     }
             }
             else if(inType == 2){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    opCode = Memory[address+1 % 0xFFFF];
-                    code.append(QString::number(Memory[address+1 % 0xFFFF],10) + "\n");
+                    opCode = Memory[address+1 % 0x10000];
+                    code.append(QString::number(Memory[address+1 % 0x10000],10) + "\n");
             }
             else if(inType == 3){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    opCode = Memory[address+1 % 0xFFFF];
-                    code.append(QString::number(Memory[address+1 % 0xFFFF],10) + ","+ "X" + "\n");
+                    opCode = Memory[address+1 % 0x10000];
+                    code.append(QString::number(Memory[address+1 % 0x10000],10) + ","+ "X" + "\n");
             }
             else if(inType == 4){
                     inSize = 3;
                     code.append("\t" + in + " ");
-                    opCode = Memory[address+1 % 0xFFFF];
-                    opCode2 = Memory[address+2 % 0xFFFF];
-                    code.append(QString::number((Memory[address+1 % 0xFFFF] << 8) + Memory[address+2 % 0xFFFF],10) + "\n");
+                    opCode = Memory[address+1 % 0x10000];
+                    opCode2 = Memory[address+2 % 0x10000];
+                    code.append(QString::number((Memory[address+1 % 0x10000] << 8) + Memory[address+2 % 0x10000],10) + "\n");
             }
             else if(inType == 5){
                     inSize = 2;
                     code.append("\t" + in + " ");
-                    int8_t num = static_cast<int8_t>(Memory[address+1 % 0xFFFF]);
+                    int8_t num = static_cast<int8_t>(Memory[address+1 % 0x10000]);
                     if(num == -1){
                         code.append("0 ;Relative address FF is out of bounds and cannot be reverse compiled\n");
                         PrintConsole("Relative address FF is out of bounds and cannot be reverse compiled",1);
@@ -5475,7 +5474,7 @@ bool MainWindow::reverseCompile(int ver, int begLoc){
                     } else{
                         code.append(QString::number(num,10) + "\n");
                     }
-                    opCode = Memory[address+1 % 0xFFFF];
+                    opCode = Memory[address+1 % 0x10000];
             }
             instructionList.addInstruction(address, line, Memory[address], opCode, opCode2);
             line++;
