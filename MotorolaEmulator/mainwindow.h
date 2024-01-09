@@ -172,7 +172,6 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 public slots:
     void setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int curCycle, uint8_t curFlags , uint16_t curPC, uint16_t curSP, uint8_t curA, uint8_t curB, uint16_t curX);
-    void setUiUpdateData(int whatToUpdate, int curCycle);
     void showContextMenu(const QPoint &);
     void showMnemonicInfo();
     void showInstructionInfoWindow(QString instruction, int version);

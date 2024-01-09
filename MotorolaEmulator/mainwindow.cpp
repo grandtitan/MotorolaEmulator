@@ -1049,10 +1049,6 @@ void MainWindow::setUiUpdateData(int whatToUpdate, const uint8_t* curMemory, int
     globalUpdateInfo.curX = curX;
     globalUpdateInfo.whatToUpdate = whatToUpdate;
 }
-void MainWindow::setUiUpdateData(int whatToUpdate, int curCycle){
-    globalUpdateInfo.curCycle = curCycle;
-    globalUpdateInfo.whatToUpdate = whatToUpdate;
-}
 
 
 void MainWindow::startExecution() {
@@ -1079,7 +1075,7 @@ void MainWindow::startExecution() {
                         if(currentCycleNum < instructionCycleCount){
                             currentCycleNum++;
                             if(i+1 == stepSkipCount){
-                                QMetaObject::invokeMethod(this, "setUiUpdateData", Qt::QueuedConnection,Q_ARG(int, 2),Q_ARG(int, currentCycleNum));
+                                QMetaObject::invokeMethod(this, "setUiUpdateData", Qt::QueuedConnection,Q_ARG(int, 1),Q_ARG(const uint8_t*, Memory),Q_ARG(int, currentCycleNum),Q_ARG(uint8_t, flags),Q_ARG(uint16_t, PC),Q_ARG(uint16_t, SP),Q_ARG(uint8_t, aReg),Q_ARG(uint8_t, bReg),Q_ARG(uint16_t, xRegister));
                             }
                         }else{
                             switch(pendingInterrupt){
@@ -1180,8 +1176,6 @@ void MainWindow::startExecution() {
                                 pendingInterrupt = 0;
                                 break;
                             }
-
-
                             switch (breakWhenIndex) {
                             case 0:
                                 break;
