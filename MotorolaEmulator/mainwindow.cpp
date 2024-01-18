@@ -1111,7 +1111,6 @@ void MainWindow::startExecution() {
                                     }
                                     pendingInterrupt+=3;
                                 }else{
-
                                     if(WAIStatus){
                                         instructionCycleCount = 0;
                                     }else{
@@ -1278,8 +1277,6 @@ void MainWindow::startExecution() {
                                 SP--;
                                 Memory[SP] = flags;
                                 SP--;
-                            }else{
-                                WAIStatus = false;
                             }
                             updateFlags(InterruptMask, 1);
                             PC = (Memory[(interruptLocations - 3)] << 8) + Memory[(interruptLocations - 2)];
@@ -1303,8 +1300,6 @@ void MainWindow::startExecution() {
                                     SP--;
                                     Memory[SP] = flags;
                                     SP--;
-                                }else{
-                                    WAIStatus = false;
                                 }
                                 updateFlags(InterruptMask, 1);
                                 PC = (Memory[(interruptLocations - 7)] << 8) + Memory[(interruptLocations - 6)];
@@ -4629,8 +4624,6 @@ void MainWindow::on_tableWidgetMemory_cellChanged(int row, int column)
         }
     }
 }
-
-
 
 void MainWindow::on_checkBoxIRQOnKeyPress_clicked(bool checked)
 {
