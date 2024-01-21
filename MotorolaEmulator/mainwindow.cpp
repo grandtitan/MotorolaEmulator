@@ -1387,7 +1387,7 @@ void MainWindow::startExecution() {
                     }
                 }
 
-            }
+           }
 
         }
         QMetaObject::invokeMethod(this, "stopUiUpdateTimer", Qt::QueuedConnection);
@@ -1396,15 +1396,16 @@ void MainWindow::startExecution() {
 }
 void MainWindow::stopUiUpdateTimer(){
     uiUpdateTimer->stop();
-    stopExecution();
-}
-void MainWindow::stopExecution()
-{
-    running = false;
     futureWatcher.waitForFinished();
     ui->labelRunningIndicatior->setVisible(false);
     ui->labelRunningCycleNum->setVisible(false);
     updateUi();
+}
+void MainWindow::stopExecution()
+{
+    qDebug() << "stop";
+    running = false;
+    futureWatcher.waitForFinished();
 }
 void MainWindow::executeInstruction()
 {
@@ -3901,7 +3902,7 @@ bool MainWindow::on_buttonCompile_clicked()
         }
         else
         {
-            PrintConsole("Decompile canceled", 1);
+            PrintConsole("Disassembly canceled", 1);
             return false;
         }
     }
@@ -4141,8 +4142,8 @@ void MainWindow::on_comboBoxSpeedSelector_activated(int index)
     executionSpeed = std::pow(2, index);
     ui -> labelRunningIndicatior -> setText("Operation/second: " + QString::number(executionSpeed));
     stepSkipCount = std::ceil(executionSpeed / uiUpdateSpeed);
+    qDebug() <<executionSpeed << stepSkipCount  << int(std::ceil(1000000000.0 / executionSpeed))<< uiUpdateSpeed;
     executionSpeed = std::ceil(1000000000.0 / executionSpeed);
-
 }
 void MainWindow::on_checkBoxHexRegs_clicked(bool checked)
 {

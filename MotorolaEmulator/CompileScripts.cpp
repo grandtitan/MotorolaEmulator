@@ -4431,7 +4431,7 @@ int MainWindow::inputNextAddress(int curAdr, QString err){
             return -1;
         }
     } else {
-        PrintConsole("Decompile canceled",1);
+        PrintConsole("Disassembly canceled",1);
         return -1;
     }
 }
